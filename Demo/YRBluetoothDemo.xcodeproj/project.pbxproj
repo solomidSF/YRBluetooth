@@ -110,10 +110,10 @@
 		7D5284CF1C342AEB00775DD1 /* _YRBTMessageBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTMessageBuffer.m; sourceTree = "<group>"; };
 		7D5284D01C342AEB00775DD1 /* _YRBTMessaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTMessaging.h; sourceTree = "<group>"; };
 		7D5284D11C342AEB00775DD1 /* _YRBTMessagingTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTMessagingTypes.h; sourceTree = "<group>"; };
-		7D5284D31C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTRemoteRequestCallbacks.h; sourceTree = "<group>"; };
-		7D5284D41C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTRemoteRequestCallbacks.m; sourceTree = "<group>"; };
-		7D5284D71C342AEB00775DD1 /* YRBTMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRBTMessage.h; sourceTree = "<group>"; };
-		7D5284D81C342AEB00775DD1 /* YRBTMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRBTMessage.m; sourceTree = "<group>"; };
+		7D5284D31C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _YRBTRemoteRequestCallbacks.h; path = OLD/_YRBTRemoteRequestCallbacks.h; sourceTree = "<group>"; };
+		7D5284D41C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _YRBTRemoteRequestCallbacks.m; path = OLD/_YRBTRemoteRequestCallbacks.m; sourceTree = "<group>"; };
+		7D5284D71C342AEB00775DD1 /* YRBTMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YRBTMessage.h; path = OLD/YRBTMessage.h; sourceTree = "<group>"; };
+		7D5284D81C342AEB00775DD1 /* YRBTMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YRBTMessage.m; path = OLD/YRBTMessage.m; sourceTree = "<group>"; };
 		7D5284DA1C342AEB00775DD1 /* _YRBTChunkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTChunkProvider.h; sourceTree = "<group>"; };
 		7D5284DB1C342AEB00775DD1 /* _YRBTChunkProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTChunkProvider.m; sourceTree = "<group>"; };
 		7D5284DC1C342AEB00775DD1 /* _YRBTChunksContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTChunksContainer.h; sourceTree = "<group>"; };
@@ -274,14 +274,14 @@
 		7D5284A41C342AEB00775DD1 /* Devices */ = {
 			isa = PBXGroup;
 			children = (
-				7D5284A51C342AEB00775DD1 /* _YRBTDeviceStorage.h */,
-				7D5284A61C342AEB00775DD1 /* _YRBTDeviceStorage.m */,
-				7D5284A71C342AEB00775DD1 /* YRBTClientDevice.h */,
-				7D5284A81C342AEB00775DD1 /* YRBTClientDevice.m */,
 				7D5284A91C342AEB00775DD1 /* YRBTRemoteDevice.h */,
 				7D5284AA1C342AEB00775DD1 /* YRBTRemoteDevice.m */,
+				7D5284A71C342AEB00775DD1 /* YRBTClientDevice.h */,
+				7D5284A81C342AEB00775DD1 /* YRBTClientDevice.m */,
 				7D5284AB1C342AEB00775DD1 /* YRBTServerDevice.h */,
 				7D5284AC1C342AEB00775DD1 /* YRBTServerDevice.m */,
+				7D5284A51C342AEB00775DD1 /* _YRBTDeviceStorage.h */,
+				7D5284A61C342AEB00775DD1 /* _YRBTDeviceStorage.m */,
 			);
 			path = Devices;
 			sourceTree = "<group>";
@@ -289,10 +289,10 @@
 		7D5284AD1C342AEB00775DD1 /* HighLevelAbstractions */ = {
 			isa = PBXGroup;
 			children = (
-				7D5284AE1C342AEB00775DD1 /* YRBTClient.h */,
-				7D5284AF1C342AEB00775DD1 /* YRBTClient.m */,
 				7D5284B01C342AEB00775DD1 /* YRBTPeer.h */,
 				7D5284B11C342AEB00775DD1 /* YRBTPeer.m */,
+				7D5284AE1C342AEB00775DD1 /* YRBTClient.h */,
+				7D5284AF1C342AEB00775DD1 /* YRBTClient.m */,
 				7D5284B21C342AEB00775DD1 /* YRBTServer.h */,
 				7D5284B31C342AEB00775DD1 /* YRBTServer.m */,
 			);
@@ -302,20 +302,20 @@
 		7D5284B41C342AEB00775DD1 /* InternalCategories */ = {
 			isa = PBXGroup;
 			children = (
-				7D5284B51C342AEB00775DD1 /* YRBTClientDevice+Private.h */,
-				7D5284B61C342AEB00775DD1 /* YRBTClientDevice+Private.m */,
-				7D5284B71C342AEB00775DD1 /* YRBTMessage+Private.h */,
-				7D5284B81C342AEB00775DD1 /* YRBTMessage+Private.m */,
-				7D5284B91C342AEB00775DD1 /* YRBTMessageOperation+Private.h */,
-				7D5284BA1C342AEB00775DD1 /* YRBTMessageOperation+Private.m */,
 				7D5284BB1C342AEB00775DD1 /* YRBTPeer+Private.h */,
 				7D5284BC1C342AEB00775DD1 /* YRBTPeer+Private.m */,
+				7D5284B71C342AEB00775DD1 /* YRBTMessage+Private.h */,
+				7D5284B81C342AEB00775DD1 /* YRBTMessage+Private.m */,
 				7D5284BD1C342AEB00775DD1 /* YRBTRemoteDevice+Private.h */,
 				7D5284BE1C342AEB00775DD1 /* YRBTRemoteDevice+Private.m */,
-				7D5284BF1C342AEB00775DD1 /* YRBTRemoteMessageRequest+Private.h */,
-				7D5284C01C342AEB00775DD1 /* YRBTRemoteMessageRequest+Private.m */,
+				7D5284B51C342AEB00775DD1 /* YRBTClientDevice+Private.h */,
+				7D5284B61C342AEB00775DD1 /* YRBTClientDevice+Private.m */,
 				7D5284C11C342AEB00775DD1 /* YRBTServerDevice+Private.h */,
 				7D5284C21C342AEB00775DD1 /* YRBTServerDevice+Private.m */,
+				7D5284B91C342AEB00775DD1 /* YRBTMessageOperation+Private.h */,
+				7D5284BA1C342AEB00775DD1 /* YRBTMessageOperation+Private.m */,
+				7D5284BF1C342AEB00775DD1 /* YRBTRemoteMessageRequest+Private.h */,
+				7D5284C01C342AEB00775DD1 /* YRBTRemoteMessageRequest+Private.m */,
 			);
 			path = InternalCategories;
 			sourceTree = "<group>";
@@ -323,15 +323,14 @@
 		7D5284C31C342AEB00775DD1 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				7D5284C91C342AEB00775DD1 /* Messaging */,
+				7D5284ED1C342AEB00775DD1 /* Operations */,
+				7D5284F31C342AEB00775DD1 /* Services */,
 				7D5284C41C342AEB00775DD1 /* _YRBTRegisteredCallbacks.h */,
 				7D5284C51C342AEB00775DD1 /* _YRBTRegisteredCallbacks.m */,
 				7D5284C61C342AEB00775DD1 /* BTPrefix.h */,
 				7D5284C71C342AEB00775DD1 /* Constants.h */,
 				7D5284C81C342AEB00775DD1 /* Constants.m */,
-				7D5284C91C342AEB00775DD1 /* Messaging */,
-				7D5284ED1C342AEB00775DD1 /* Operations */,
-				7D5284F21C342AEB00775DD1 /* SendingQueue */,
-				7D5284F31C342AEB00775DD1 /* Services */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -339,6 +338,12 @@
 		7D5284C91C342AEB00775DD1 /* Messaging */ = {
 			isa = PBXGroup;
 			children = (
+				7D5284D91C342AEB00775DD1 /* YRBTChunkProvider */,
+				7D5284E01C342AEB00775DD1 /* YRBTMessageChunks */,
+				7D5284D71C342AEB00775DD1 /* YRBTMessage.h */,
+				7D5284D81C342AEB00775DD1 /* YRBTMessage.m */,
+				7D5284D31C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.h */,
+				7D5284D41C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.m */,
 				7D5284CA1C342AEB00775DD1 /* _YRBTChunkGenerator.h */,
 				7D5284CB1C342AEB00775DD1 /* _YRBTChunkGenerator.m */,
 				7D5284CC1C342AEB00775DD1 /* _YRBTChunkParser.h */,
@@ -347,38 +352,8 @@
 				7D5284CF1C342AEB00775DD1 /* _YRBTMessageBuffer.m */,
 				7D5284D01C342AEB00775DD1 /* _YRBTMessaging.h */,
 				7D5284D11C342AEB00775DD1 /* _YRBTMessagingTypes.h */,
-				7D5284D21C342AEB00775DD1 /* OLD */,
-				7D5284D91C342AEB00775DD1 /* YRBTChunkProvider */,
-				7D5284E01C342AEB00775DD1 /* YRBTMessageChunks */,
 			);
 			path = Messaging;
-			sourceTree = "<group>";
-		};
-		7D5284D21C342AEB00775DD1 /* OLD */ = {
-			isa = PBXGroup;
-			children = (
-				7D5284D31C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.h */,
-				7D5284D41C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.m */,
-				7D5284D51C342AEB00775DD1 /* ReadStreams */,
-				7D5284D61C342AEB00775DD1 /* WriteStreams */,
-				7D5284D71C342AEB00775DD1 /* YRBTMessage.h */,
-				7D5284D81C342AEB00775DD1 /* YRBTMessage.m */,
-			);
-			path = OLD;
-			sourceTree = "<group>";
-		};
-		7D5284D51C342AEB00775DD1 /* ReadStreams */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ReadStreams;
-			sourceTree = "<group>";
-		};
-		7D5284D61C342AEB00775DD1 /* WriteStreams */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = WriteStreams;
 			sourceTree = "<group>";
 		};
 		7D5284D91C342AEB00775DD1 /* YRBTChunkProvider */ = {
@@ -424,21 +399,14 @@
 			path = Operations;
 			sourceTree = "<group>";
 		};
-		7D5284F21C342AEB00775DD1 /* SendingQueue */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SendingQueue;
-			sourceTree = "<group>";
-		};
 		7D5284F31C342AEB00775DD1 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				7D5284F41C342AEB00775DD1 /* _YRBTServices.h */,
 				7D5284F51C342AEB00775DD1 /* ConnectionService */,
 				7D5284FE1C342AEB00775DD1 /* ErrorService */,
 				7D5285011C342AEB00775DD1 /* ScanningService */,
 				7D5285041C342AEB00775DD1 /* StreamingService */,
+				7D5284F41C342AEB00775DD1 /* _YRBTServices.h */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -446,10 +414,10 @@
 		7D5284F51C342AEB00775DD1 /* ConnectionService */ = {
 			isa = PBXGroup;
 			children = (
-				7D5284F61C342AEB00775DD1 /* _YRBTConnectionService.h */,
-				7D5284F71C342AEB00775DD1 /* _YRBTConnectionService.m */,
 				7D5284F81C342AEB00775DD1 /* ConnectionOperation */,
 				7D5284FB1C342AEB00775DD1 /* ConnectionOperationStack */,
+				7D5284F61C342AEB00775DD1 /* _YRBTConnectionService.h */,
+				7D5284F71C342AEB00775DD1 /* _YRBTConnectionService.m */,
 			);
 			path = ConnectionService;
 			sourceTree = "<group>";
@@ -493,9 +461,9 @@
 		7D5285041C342AEB00775DD1 /* StreamingService */ = {
 			isa = PBXGroup;
 			children = (
+				7D5285071C342AEB00775DD1 /* Operations */,
 				7D5285051C342AEB00775DD1 /* _YRBTStreamingService.h */,
 				7D5285061C342AEB00775DD1 /* _YRBTStreamingService.m */,
-				7D5285071C342AEB00775DD1 /* Operations */,
 			);
 			path = StreamingService;
 			sourceTree = "<group>";

@@ -13,8 +13,7 @@
 // Devices
 #import "YRBTServerDevice+Private.h"
 
-// TODO:
-static NSTimeInterval const kConnectionTimeoutInterval = 1010.0f;
+static NSTimeInterval const kConnectionTimeoutInterval = 10.0f;
 
 @implementation _YRBTConnectionOperationStack {
     NSMutableArray *_operations;
