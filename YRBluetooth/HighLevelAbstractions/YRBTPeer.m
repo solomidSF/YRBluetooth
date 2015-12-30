@@ -32,6 +32,7 @@
 
 #import "_YRBTMessagingTypes.h"
 
+// TODO: Rethink MTU.
 // For iPhone 5/6 iOS 8.0 I found that max MTU can be 512, but let's cut down that value, so other messages can be sent faster.
 static int32_t const kDefaultClientMTU = 128;
 static int32_t const kMaxClientMTU = 512;
@@ -97,11 +98,10 @@ static int32_t const kMaxClientMTU = 512;
                                                                                                             final:NO];
     
     [self.callbacks registerCallbacks:callbacks
-                     forOperation:operation];
+                         forOperation:operation];
 }
 
-- (void)registerReceivedRemoteRequestForUnknownOperation:(YRBTReceivedRemoteRequestCallback)requestCallback
-{
+- (void)registerReceivedRemoteRequestForUnknownOperation:(YRBTReceivedRemoteRequestCallback)requestCallback {
     _YRBTRemoteRequestCallbacks *callbacks = [_YRBTRemoteRequestCallbacks callbacksWithWillReceiveRequestCallback:NULL
                                                                                           receivedRequestCallback:requestCallback
                                                                                         receivingProgressCallback:NULL

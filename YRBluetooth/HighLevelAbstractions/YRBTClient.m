@@ -326,7 +326,7 @@ CBPeripheralDelegate
 
 #pragma mark - <CBCentralManagerDelegate>
 
-// TODO: In next versions we can use multicast delegate.
+// TODO: In next versions use multicast delegate.
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
     BTDebugMsg(@"[YRBTClient]: Central manager state changed: %d", (int32_t)central.state);
     
