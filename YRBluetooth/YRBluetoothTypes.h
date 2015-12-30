@@ -1,10 +1,27 @@
 //
-//  YRBTTypes.h
-//  BluetoothTestProject
+// YRBluetoothTypes.h
 //
-//  Created by Yuriy Romanchenko on 2/23/15.
-//  Copyright (c) 2015 Yuriy Romanchenko. All rights reserved.
+// The MIT License (MIT)
 //
+// Copyright (c) 2015 Yuri R.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 #ifndef __YRBluetoothTypes__
 #define __YRBluetoothTypes__
@@ -14,8 +31,6 @@
 @class YRBTMessage;
 @class YRBTRemoteDevice;
 @class YRBTServerDevice;
-@class YRBTReceivingMessageOperation;
-@class YRBTSendingMessageOperation;
 @class YRBTMessageOperation;
 @class YRBTRemoteMessageRequest;
 
@@ -50,6 +65,8 @@ typedef enum {
 typedef void (^YRBTProgressCallback) (uint32_t currentBytes,
 									  uint32_t totalBytes);
 
+typedef void (^YRBTFailureCallback) (NSError *error);
+
 // === Sending-related === //
 typedef void (^YRBTSuccessSendCallback) (YRBTMessageOperation *operation);
 
@@ -67,42 +84,12 @@ typedef YRBTMessageOperation *(^YRBTReceivedRemoteRequestCallback) (YRBTRemoteMe
 
 typedef void (^YRBTRemoteRequestFailureCallback) (YRBTRemoteMessageRequest *request, NSError *error);
 
-// TODO: DEPRECATED.
-
-
-
-typedef void (^YRBTWillReceiveMessageCallback) (YRBTReceivingMessageOperation *operation);
-
-typedef void (^YRBTFailureCallback) (NSError *error);
-
-typedef void (^YRBTFailureWithReceiveOperationCallback) (YRBTReceivingMessageOperation *operation,
-                                                         NSError *error);
-
-typedef void (^YRBTReceivedMessageCallback) (YRBTReceivingMessageOperation *operation,
-                                             YRBTMessage *incomingMessage,
-                                             YRBTMessage **responseMessage,
-                                             BOOL wantsResponse,
-                                             YRBTSuccessSendCallback *successSend,
-                                             YRBTFailureCallback *sendFailure,
-                                             YRBTProgressCallback *sendProgress);
-
-
-// TODO: DEPRECATED
-typedef void (^YRBTSuccessSendWithDeviceCallback) (YRBTRemoteDevice *receiver);
-
-typedef void (^YRBTSuccessSendWithDevicesCallback) (NSArray *receivers);
-
-typedef void (^YRBTFailureWithDevicesCallback) (NSArray *devices,
-                                                NSError *error);
-
-typedef void (^YRBTFailureWithDeviceCallback) (YRBTRemoteDevice *device,
-                                               NSError *error);
-
 // === Scanning/Connection related === //
-
 typedef void (^YRBTFoundDevicesCallback) (NSArray *foundDevices);
 typedef void (^YRBTContiniousScanCallback) (YRBTServerDevice *device);
 typedef void (^YRBTSuccessfulConnectionCallback) (YRBTServerDevice *device);
+typedef void (^YRBTFailureWithDeviceCallback) (YRBTRemoteDevice *device,
+                                               NSError *error);
 
 // ====== //
 

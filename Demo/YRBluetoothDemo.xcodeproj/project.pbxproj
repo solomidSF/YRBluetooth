@@ -11,7 +11,6 @@
 		7D5284961C3429F200775DD1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D52848D1C3429F200775DD1 /* Assets.xcassets */; };
 		7D5284971C3429F200775DD1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D52848F1C3429F200775DD1 /* LaunchScreen.storyboard */; };
 		7D5284981C3429F200775DD1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D5284901C3429F200775DD1 /* Main.storyboard */; };
-		7D5284991C3429F200775DD1 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7D5284921C3429F200775DD1 /* Info.plist */; };
 		7D52849A1C3429F200775DD1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284931C3429F200775DD1 /* main.m */; };
 		7D52849F1C342A9D00775DD1 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52849E1C342A9D00775DD1 /* HomeViewController.m */; };
 		7D52850C1C342AEB00775DD1 /* CoreBluetooth+YRBTPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284A31C342AEB00775DD1 /* CoreBluetooth+YRBTPrivate.m */; };
@@ -250,7 +249,7 @@
 		7D5284A01C342AEB00775DD1 /* YRBluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				7D5284AD1C342AEB00775DD1 /* HighLevelAbstractions */,
+				7D5284AD1C342AEB00775DD1 /* High Level Abstractions */,
 				7D5284A41C342AEB00775DD1 /* Devices */,
 				7D5284C31C342AEB00775DD1 /* Model */,
 				7D5284A11C342AEB00775DD1 /* Categories */,
@@ -286,7 +285,7 @@
 			path = Devices;
 			sourceTree = "<group>";
 		};
-		7D5284AD1C342AEB00775DD1 /* HighLevelAbstractions */ = {
+		7D5284AD1C342AEB00775DD1 /* High Level Abstractions */ = {
 			isa = PBXGroup;
 			children = (
 				7D5284B01C342AEB00775DD1 /* YRBTPeer.h */,
@@ -296,6 +295,7 @@
 				7D5284B21C342AEB00775DD1 /* YRBTServer.h */,
 				7D5284B31C342AEB00775DD1 /* YRBTServer.m */,
 			);
+			name = "High Level Abstractions";
 			path = HighLevelAbstractions;
 			sourceTree = "<group>";
 		};
@@ -534,7 +534,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7D5284991C3429F200775DD1 /* Info.plist in Resources */,
 				7D5284981C3429F200775DD1 /* Main.storyboard in Resources */,
 				7D5284961C3429F200775DD1 /* Assets.xcassets in Resources */,
 				7D5284971C3429F200775DD1 /* LaunchScreen.storyboard in Resources */,
