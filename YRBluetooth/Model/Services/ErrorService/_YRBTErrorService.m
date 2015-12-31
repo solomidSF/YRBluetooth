@@ -31,20 +31,25 @@
 
 + (NSError *)buildErrorForCode:(YRBTErrorCode)code {
     static NSArray *errorDescriptions = nil;
-#error Errors
-    errorDescriptions = @[
-                          @"Bluetooth is not enabled!",
-                          @"Device isn't connected to server.",
-                          @"Failed to establish communication channel.",
-                          @"Failed to connect to server.",
-                          @"Connection timeout.",
-                          @"Disconnected from server.",
-                          @"Failed to receive message.",
-                          @"Failed to send message.",
-                          @"Failed to receive message due to timeout.",
-                          @"Failed to send message due to timeout.",
-                          @"Failed to connect to server due to timeout."
-                          ];
+    
+    if (!errorDescriptions) {
+        errorDescriptions = @[
+                              @"Unknown error.",
+                              @"Bluetooth is not enabled.",
+                              @"Device isn't connected.",
+                              @"Connected to device but communication channel is not established.",
+                              @"Failed to establish communication channel.",
+                              @"Failed to connect to device.",
+                              @"Connection timeout.",
+                              @"Disconnected from device.",
+                              @"Failed to receive remote request.",
+                              @"Received unsupported chunk.",
+                              @"Failed to send message.",
+                              @"Failed to send message because no receivers left.",
+                              @"Failed to receive remote request due to timeout.",
+                              @"Failed to send message due to timeout.",
+                              ];
+    }
     
     return [NSError errorWithDomain:kYRBTErrorDomain
                                code:code
