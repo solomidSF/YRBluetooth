@@ -36,30 +36,64 @@
 
 static NSString *const kYRBTErrorDomain = @"YRBTErrorDomain";
 
-typedef enum {
-    // Bluetooth is not enabled.
+typedef NS_ENUM(int32_t, YRBTErrorCode) {
+    /**
+     *  Unknown error. No information available.
+     */
+    kYRBTErrorUnknown,
+    /**
+     *  Bluetooth is off.
+     */
     kYRBTErrorCodeBluetoothOff,
-    // Device isn't connected.
+    /**
+     *  Device isn't connected.
+     */
     kYRBTErrorCodeNotConnected,
-    // Failed to establish communication channel.
+    /**
+     *  Device is connected, but communication channel is not yet established.
+     */
+    kYRBTErrorCodeCommunicationChannelNotEstablished,
+    /**
+     *  Failed to establish communication channel between devices.
+     */
     kYRBTErrorCodeFailedToEstablishCommunicationChannel,
-    // Couldn't connect to server.
+    /**
+     *  Failed to connect to device.
+     */
     kYRBTErrorCodeFailedToConnect,
-    // Failed to connect to server due to timeout.
+    /**
+     *  Failed to connect to device because of timeout.
+     */
     kYRBTErrorCodeConnectionTimeout,
-    // Disconnected from server.
+    /**
+     *  Disconnected from device.
+     */
     kYRBTErrorCodeDisconnected,
-    // Failed to receive message.
+    /**
+     *  Failed to receive remote request.
+     */
     kYRBTErrorCodeReceivingFailed,
-    // Failed to send message.
+    /**
+     *  Received incorrect chunk layout.
+     */
+    kYRBTErrorCodeReceivedIncorrectChunk,
+    /**
+     *  Failed to complete message operation.
+     */
     kYRBTErrorCodeSendingFailed,
-    // Receiving timeout.
+    /**
+     *  There is no receivers left to receive message.
+     */
+    kYRBTErrorCodeNoReceivers,
+    /**
+     *  Timeout for remote request.
+     */
     kYRBTErrorCodeReceiveTimeout,
-    // Send timeout.
+    /**
+     *  Timeout for message operation.
+     */
     kYRBTErrorCodeSendTimeout,
-    // Timeout for connect request.
-    YRBTErrorCodeConnectionTimeout
-} YRBTErrorCode;
+};
 
 // === Common === //
 typedef void (^YRBTProgressCallback) (uint32_t currentBytes,

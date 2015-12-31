@@ -190,8 +190,15 @@ CBPeripheralDelegate
         operation.status = kYRBTMessageOperationStatusFailed;
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            !failure ? : failure(operation,
-                                 [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNotConnected]);
+            NSError *error = nil;
+            
+            if (server.connectionState == kYRBTConnectionStateNotConnected) {
+                error = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNotConnected];
+            } else {
+                error = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeCommunicationChannelNotEstablished];
+            }
+            
+            !failure ? : failure(operation, error);
         });
     }
 }
@@ -232,8 +239,16 @@ CBPeripheralDelegate
         operation.status = kYRBTMessageOperationStatusFailed;
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            !failure ? : failure(operation,
-                                 [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNotConnected]);
+            // TODO: Create separate method.
+            NSError *error = nil;
+            
+            if (server.connectionState == kYRBTConnectionStateNotConnected) {
+                error = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNotConnected];
+            } else {
+                error = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeCommunicationChannelNotEstablished];
+            }
+            
+            !failure ? : failure(operation, error);
         });
         
         return operation;
@@ -312,8 +327,16 @@ CBPeripheralDelegate
                     forCharacteristic:device.sendCharacteristic
                                  type:CBCharacteristicWriteWithResponse];
     } else {
-        // TODO: Disconnected error.
-        !_currentWriteCompletion ? : _currentWriteCompletion(NO, nil);
+        // TODO: Create separate method.
+        NSError *error = nil;
+        
+        if (device.connectionState == kYRBTConnectionStateNotConnected) {
+            error = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNotConnected];
+        } else {
+            error = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeCommunicationChannelNotEstablished];
+        }
+        
+        !_currentWriteCompletion ? : _currentWriteCompletion(NO, error);
     }
 }
 

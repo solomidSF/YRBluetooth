@@ -269,8 +269,7 @@ CBPeripheralManagerDelegate
     } else {
         operation.status = kYRBTMessageOperationStatusFailed;
         
-        // TODO: No receivers error.
-        operation.failureCallback ? : operation.failureCallback(operation, nil);
+        operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNoReceivers]);
         
         return operation;
     }
@@ -323,7 +322,7 @@ CBPeripheralManagerDelegate
         };
         
         [self sendMessage:nil
-            operationName:@"_YRBTDeviceName" // TODO: Const and NON OVERRIDDEN
+            operationName:@"_YRBTDeviceName" // TODO: Const
                  toClient:device
           withSuccessSend:NULL
          responseCallback:responseCallback
@@ -348,7 +347,7 @@ CBPeripheralManagerDelegate
 - (void)parseReceivedWriteRequests:(NSArray *)writeRequests {
     if (writeRequests.count > 1) {
         // TODO: Not tested. Couldn't reproduce more than 1 write request.
-        NSLog(@"WOW WOW! HOLD ON. DEBUG THIS, MAAN");
+        NSLog(@"YRBluetooth <WARNING>: Got more than 1 write request!");
     }
     
     CBATTError resultingError = CBATTErrorSuccess;
@@ -407,7 +406,6 @@ CBPeripheralManagerDelegate
                                          forCharacteristic:self.sendCharacteristic
                                       onSubscribedCentrals:[operation.receivers valueForKey:@"central"]];
     
-    // TODO: Debug info
     if (didUpdate) {
         BTDebugMsg(@"[YRBTServer]: Did send chunk %@ for operation: %@", chunk, operation);
         !_currentWriteCompletion ? : _currentWriteCompletion(YES, nil);
@@ -449,7 +447,6 @@ CBPeripheralManagerDelegate
         if ([service.UUID isEqual:internalServiceUUID()]) {
             for (YRBTClientDevice *device in self.connectedDevices) {
                 if (!device.didPerformHandshake) {
-                    // TODO: Request device name.
                     [self requestNameForDevice:device];
                 }
             }
@@ -467,7 +464,7 @@ CBPeripheralManagerDelegate
         
         device.connectionState = kYRBTConnectionStateConnected;
  
-        // TODO:
+        // TODO: Check/Test/Integrate into component.
         [peripheral setDesiredConnectionLatency:CBPeripheralManagerConnectionLatencyLow
                                      forCentral:central];
         
@@ -497,7 +494,7 @@ CBPeripheralManagerDelegate
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral didReceiveReadRequest:(CBATTRequest *)request {
-    BTDebugMsg(@"[YRBluetooth]: YRBTServer doesn't support read request for dynamic characteristics!");
+    BTDebugMsg(@"[YRBluetooth]: <WARNING> YRBTServer doesn't support read request for dynamic characteristics!");
     
     [peripheral respondToRequest:request
                       withResult:CBATTErrorReadNotPermitted];
@@ -512,11 +509,11 @@ CBPeripheralManagerDelegate
         _streamingService.pendingOperation) {
 
         NSArray *receivers = [[_streamingService.pendingOperation receivers] valueForKey:@"central"];
+        
         BOOL didUpdate = [_nativePeripheralManager updateValue:[_streamingService.pendingChunk packedChunkData]
                                              forCharacteristic:self.sendCharacteristic
                                           onSubscribedCentrals:receivers];
         
-        // TODO: Debug info
         if (didUpdate) {
             BTDebugMsg(@"Did send chunk![ReadyToUpdate]");
             
