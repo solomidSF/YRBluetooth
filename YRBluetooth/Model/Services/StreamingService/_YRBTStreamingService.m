@@ -119,8 +119,8 @@ _YRBTChunkParserDelegate
             [_provider invalidateChunkGenerationForOperation:operation];
             
             operation.status = kYRBTMessageOperationStatusCancelled;
-
-            !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelled]);
+            !operation.failureCallback ? : operation.failureCallback(operation,
+                                                                     [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelled]);
             
             YRBTMessageOperation *cancelOperation = [YRBTMessageOperation cancelOperationForOperation:operation];
             
@@ -157,8 +157,8 @@ _YRBTChunkParserDelegate
         [self invalidateRemoteRequest:request];
 
         request.status = kYRBTRemoteMessageRequestStatusCancelled;
-
-        !request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelled]);
+        !request.failureCallback ? : request.failureCallback(request,
+                                                             [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelled]);
         
         YRBTMessageOperation *cancelOperation = [YRBTMessageOperation cancelOperationForRemoteRequest:request];
         
@@ -184,8 +184,8 @@ _YRBTChunkParserDelegate
                 [_provider invalidateChunkGenerationForOperation:operation];
                 
 				operation.status = kYRBTMessageOperationStatusFailed;
-
-                !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNoReceivers]);
+                !operation.failureCallback ? : operation.failureCallback(operation,
+                                                                         [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNoReceivers]);
 				
 				if (_pendingOperation == operation) {
 					// If current message to be written was this one and we don't have receivers for it anymore - resume chunk generation and perform cleanup.
@@ -205,7 +205,6 @@ _YRBTChunkParserDelegate
             [self invalidateRemoteRequest:request];
             
             request.status = kYRBTRemoteMessageRequestStatusFailed;
-
             request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected]);
         }
     }
@@ -221,7 +220,6 @@ _YRBTChunkParserDelegate
         [_provider invalidateChunkGenerationForOperation:operation];
         
         operation.status = kYRBTMessageOperationStatusFailed;
-
         !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendingFailed]);
 	}
 	
@@ -433,29 +431,54 @@ _YRBTChunkParserDelegate
         // Is sender in this chunk means that remote is sender of request.
         BOOL isSearchingForResponse = cancelLayout.isSender;
         
-        NSLog(@"[_YRBTStreamingService]: Remote cancel. Message id: %d. Is response: %d",
+        NSLog(@"[_YRBTStreamingService]: Remote cancel. Message id: %d. Is response: %d, remote: %@",
               cancelLayout.messageID,
-              isSearchingForResponse);
+              isSearchingForResponse,
+              sender);
         
         for (YRBTMessageOperation *operation in [_operations copy]) {
+            // Find operation that remote request to cancel.
             if (operation.messageID == cancelLayout.messageID &&
                 isSearchingForResponse == operation.isResponse) {
                 
-                NSLog(@"[_YRBTStreamingService]: Found operation to remove: %@", operation);
+                NSLog(@"[_YRBTStreamingService]: Found operation remote requested to cancel: %@", operation);
                 
+                // Check if operation is still in progress.
                 if (operation.status == kYRBTMessageOperationStatusWaiting ||
                     operation.status == kYRBTMessageOperationStatusSending ||
                     operation.status == kYRBTMessageOperationStatusReceiving) {
-                    
-                    [self invalidateOperation:operation];
-                    
-                    [_provider invalidateChunkGenerationForOperation:operation];
-                    
-                    operation.status = kYRBTMessageOperationStatusCancelledByRemote;
 
-                    !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelledByRemote]);
+                    __kindof YRBTRemoteDevice *device = [_storage deviceForPeer:sender];
+
+                    // Remove remote from the list of receivers for given operation.
+                    if ([operation.mutableReceivers containsObject:device]) {
+                        [operation.mutableReceivers removeObject:device];
+                        
+                        if (operation.mutableReceivers.count == 0) {
+                            NSLog(@"[_YRBTStreamingService]: No receivers left for %@", operation);
+                            
+                            [self invalidateOperation:operation];
+                            
+                            [_provider invalidateChunkGenerationForOperation:operation];
+                            
+                            operation.status = kYRBTMessageOperationStatusCancelledByRemote;
+                            !operation.failureCallback ? : operation.failureCallback(operation,
+                                                                                     [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelledByRemote]);
+                            
+                            if (_pendingOperation == operation) {
+                                // If current message to be written was this one and we don't have receivers for it anymore - resume chunk generation and perform cleanup.
+                                [_provider resume];
+                                
+                                _pendingChunk = nil;
+                                _pendingOperation = nil;
+                            }
+                        } else {
+                            // TODO: Update MTU for operation.
+                        }
+                    }
                 }
                 
+                break;
             }
         }
         
@@ -470,7 +493,8 @@ _YRBTChunkParserDelegate
                     
                     request.status = kYRBTRemoteMessageRequestStatusCancelledByRemote;
 
-                    !request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelledByRemote]);
+                    !request.failureCallback ? : request.failureCallback(request,
+                                                                         [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelledByRemote]);
                 }
             }
         }
