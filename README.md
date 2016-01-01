@@ -17,7 +17,7 @@ YRBluetooth in development state and currently it will produce a lot of debug ou
 
 ## Version history
 
-### v0.1.0-alpha
+### v0.1.1-alpha
 First release. Scanning/Connecting/Sending/Receiving/Errors functionality.
 
 ### v0.1.0-alpha
