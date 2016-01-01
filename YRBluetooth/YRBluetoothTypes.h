@@ -93,6 +93,14 @@ typedef NS_ENUM(int32_t, YRBTErrorCode) {
      *  Timeout for message operation.
      */
     kYRBTErrorCodeSendTimeout,
+    /**
+     *  Message operation was cancelled.
+     */
+    kYRBTErrorCodeSendCancelled,
+    /**
+     *  Message operation was cancelled by remote.
+     */
+    kYRBTErrorCodeSendCancelledByRemote,
 };
 
 // === Common === //

@@ -402,10 +402,10 @@
 		7D5284F31C342AEB00775DD1 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				7D5284F51C342AEB00775DD1 /* ConnectionService */,
-				7D5284FE1C342AEB00775DD1 /* ErrorService */,
 				7D5285011C342AEB00775DD1 /* ScanningService */,
+				7D5284F51C342AEB00775DD1 /* ConnectionService */,
 				7D5285041C342AEB00775DD1 /* StreamingService */,
+				7D5284FE1C342AEB00775DD1 /* ErrorService */,
 				7D5284F41C342AEB00775DD1 /* _YRBTServices.h */,
 			);
 			path = Services;

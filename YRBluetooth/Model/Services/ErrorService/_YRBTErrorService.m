@@ -48,6 +48,8 @@
                               @"Failed to send message because no receivers left.",
                               @"Failed to receive remote request due to timeout.",
                               @"Failed to send message due to timeout.",
+                              @"Cancelled.",
+                              @"Cancelled by remote."
                               ];
     }
     
