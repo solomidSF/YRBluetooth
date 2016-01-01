@@ -10,6 +10,11 @@ YRBluetooth is simple and easy to use bluetooth framework for iOS devices.
 ## Current state
 YRBluetooth in development state and currently it will produce a lot of debug output into console. Basic features like scanning/connecting/sending/receiving are implemented.
 
+## Future improvements
+- Create dependency mechanism for operations like in NSOperationQueue.
+- Create logging with log levels.
+- Write demo projects.
+
 ## Version history
 
 ### v0.1.0-alpha
