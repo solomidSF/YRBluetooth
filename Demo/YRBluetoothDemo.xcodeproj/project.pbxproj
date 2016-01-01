@@ -52,7 +52,6 @@
 		7D5285301C342AEB00775DD1 /* _YRBTErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285001C342AEB00775DD1 /* _YRBTErrorService.m */; };
 		7D5285311C342AEB00775DD1 /* _YRBTScanningService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285031C342AEB00775DD1 /* _YRBTScanningService.m */; };
 		7D5285321C342AEB00775DD1 /* _YRBTStreamingService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285061C342AEB00775DD1 /* _YRBTStreamingService.m */; };
-		7D5285331C342AEB00775DD1 /* _YRBTWriteOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285091C342AEB00775DD1 /* _YRBTWriteOperation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -148,8 +147,6 @@
 		7D5285031C342AEB00775DD1 /* _YRBTScanningService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTScanningService.m; sourceTree = "<group>"; };
 		7D5285051C342AEB00775DD1 /* _YRBTStreamingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTStreamingService.h; sourceTree = "<group>"; };
 		7D5285061C342AEB00775DD1 /* _YRBTStreamingService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTStreamingService.m; sourceTree = "<group>"; };
-		7D5285081C342AEB00775DD1 /* _YRBTWriteOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTWriteOperation.h; sourceTree = "<group>"; };
-		7D5285091C342AEB00775DD1 /* _YRBTWriteOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTWriteOperation.m; sourceTree = "<group>"; };
 		7D52850A1C342AEB00775DD1 /* YRBluetooth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRBluetooth.h; sourceTree = "<group>"; };
 		7D52850B1C342AEB00775DD1 /* YRBluetoothTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRBluetoothTypes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -461,20 +458,10 @@
 		7D5285041C342AEB00775DD1 /* StreamingService */ = {
 			isa = PBXGroup;
 			children = (
-				7D5285071C342AEB00775DD1 /* Operations */,
 				7D5285051C342AEB00775DD1 /* _YRBTStreamingService.h */,
 				7D5285061C342AEB00775DD1 /* _YRBTStreamingService.m */,
 			);
 			path = StreamingService;
-			sourceTree = "<group>";
-		};
-		7D5285071C342AEB00775DD1 /* Operations */ = {
-			isa = PBXGroup;
-			children = (
-				7D5285081C342AEB00775DD1 /* _YRBTWriteOperation.h */,
-				7D5285091C342AEB00775DD1 /* _YRBTWriteOperation.m */,
-			);
-			path = Operations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -556,7 +543,6 @@
 				7D52852D1C342AEB00775DD1 /* _YRBTConnectionService.m in Sources */,
 				7D5285271C342AEB00775DD1 /* _YRBTInternalChunk.m in Sources */,
 				7D5285211C342AEB00775DD1 /* YRBTMessage.m in Sources */,
-				7D5285331C342AEB00775DD1 /* _YRBTWriteOperation.m in Sources */,
 				7D52852A1C342AEB00775DD1 /* _YRBTRegularMessageChunk.m in Sources */,
 				7D52849A1C3429F200775DD1 /* main.m in Sources */,
 				7D52850D1C342AEB00775DD1 /* _YRBTDeviceStorage.m in Sources */,

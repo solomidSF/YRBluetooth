@@ -41,8 +41,6 @@
 
 typedef void (^YRBTWriteCompletionHandler) (BOOL success, NSError *cbError);
 
-// TODO: REFACTOR COMPLETELY.
-
 @class YRBTRemoteMessageRequest;
 @class _YRBTOutgoingMessage;
 @class _YRBTChunk;

@@ -38,9 +38,6 @@
 #import "_YRBTErrorService.h"
 #import "_YRBTDeviceStorage.h"
 
-// Operations.
-#import "_YRBTWriteOperation.h"
-
 // General Types.
 #import "_YRBTMessaging.h"
 #import "YRBluetoothTypes.h"
@@ -573,9 +570,7 @@ _YRBTChunkParserDelegate
                           remoteRequest);
 
                     // TODO: Create <no response> operation.
-                    YRBTMessageOperation *cancelOperation = [YRBTMessageOperation cancelOperationForRemoteRequest:remoteRequest];
-                    
-                    [self scheduleOperation:cancelOperation];
+                    [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteRequest:remoteRequest]];
                 }
 			}
         }

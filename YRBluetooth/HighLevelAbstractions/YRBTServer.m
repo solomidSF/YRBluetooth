@@ -31,7 +31,6 @@
 
 // Services
 #import "_YRBTStreamingService.h"
-#import "_YRBTWriteOperation.h"
 
 // PrivateModel
 #import "_YRBTRegisteredCallbacks.h"
