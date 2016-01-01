@@ -48,15 +48,6 @@
 #pragma mark - NSObject
 
 - (NSString *)description {
-    static NSArray *readableObjectType = nil;
-    
-    if (!readableObjectType) {
-        readableObjectType = @[@"Custom",
-                               @"Array",
-                               @"Dictionary",
-                               @"String"];
-    }
-    
     return [NSString stringWithFormat:@"%@ Chunk: %@", [super description], [[NSString alloc] initWithData:self.operationNameUTFChunk encoding:NSUTF8StringEncoding]];
 }
 

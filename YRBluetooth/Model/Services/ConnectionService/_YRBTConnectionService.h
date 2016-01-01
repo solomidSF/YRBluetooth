@@ -54,14 +54,6 @@
 
 - (void)disconnectFromServer:(YRBTServerDevice *)server;
 
-#pragma mark - Cleanup
-
-/**
- *  Invalidates all operations in connection service.
- */
-- (void)invalidate;
-- (void)invalidateWithError:(NSError *)error;
-
 #pragma mark - Convenience Methods
 
 // ==== Convenience methods that should be delegated here ==== //
@@ -85,5 +77,13 @@
 - (void)handlePeripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
                                                                                         cbError:(NSError *)error;
 // ========= //
+
+#pragma mark - Cleanup
+
+/**
+ *  Invalidates all operations in connection service.
+ */
+- (void)invalidate;
+- (void)invalidateWithError:(NSError *)error;
 
 @end

@@ -42,9 +42,9 @@
                successCallback:(YRBTSuccessfulConnectionCallback)successCallback
                   failureBlock:(YRBTFailureWithDeviceCallback)failureCallback {
     if (self = [super init]) {
-        self.serverDevice = device;
-        self.successCallback = successCallback;
-        self.failureCallback = failureCallback;
+        _serverDevice = device;
+        _successCallback = successCallback;
+        _failureCallback = failureCallback;
     }
     
     return self;

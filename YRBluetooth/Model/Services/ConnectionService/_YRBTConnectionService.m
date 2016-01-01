@@ -162,39 +162,6 @@ TimeoutDelegate
     [_centralManager cancelPeripheralConnection:server.peripheral];
 }
 
-#pragma mark - Cleanup
-
-- (void)invalidate {
-    BTDebugMsg(@"[_YRBTConnectionService]: Will invalidate. Current connected devices: %d. Pending connection operations: %d. Total peripherals awaiting to connect: %d",
-               (int32_t)_connectedDevices.count,
-               (int32_t)[_operationStack operations].count,
-               (int32_t)[_operationStack peripherals].count);
-    
-    for (CBPeripheral *peripheral in [_operationStack peripherals]) {
-        // Set all pending peripheral devices state to non-connected.
-        [_centralManager cancelPeripheralConnection:peripheral];
-    }
-    
-    [_operationStack invalidate];
-    [_connectedDevices removeAllObjects];
-}
-
-- (void)invalidateWithError:(NSError *)error {
-    BTDebugMsg(@"[_YRBTConnectionService]: Will invalidate with error %@. Current connected devices: %d. Pending connection operations: %d. Total peripherals awaiting to connect: %d",
-               error,
-               (int32_t)_connectedDevices.count,
-               (int32_t)[_operationStack operations].count,
-               (int32_t)[_operationStack peripherals].count);
-
-    for (CBPeripheral *peripheral in [_operationStack peripherals]) {
-        [self notifyFailureForPeripheralAndDisconnect:peripheral
-                                            withError:error];
-    }
-    
-    [_operationStack invalidate];
-    [_connectedDevices removeAllObjects];
-}
-
 #pragma mark - Convenience Methods
 
 - (void)handleDidConnectPeripheral:(CBPeripheral *)peripheral {    
@@ -223,10 +190,10 @@ TimeoutDelegate
     YRBTServerDevice *disconnectingDevice = [_storage deviceForPeer:peripheral];
     BTDebugMsg(@"[_YRBTConnectionService]: Disconnected from device: %@. Error: %@", disconnectingDevice, error);
     
-    // Notify all connection establishing waiters about failure.
-    NSError *resultingError = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected];
-    
     if (error) {
+        // Notify all connection establishing waiters about failure.
+        NSError *resultingError = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected];
+
         // According to documentation error will be filled in if we didn't call cancelPeripheralConnection:
         [self notifyFailureForPeripheralAndDisconnect:peripheral
                                             withError:resultingError];
@@ -236,7 +203,7 @@ TimeoutDelegate
 }
 
 - (void)handlePeripheral:(CBPeripheral *)peripheral didInvalidateServices:(NSArray *)services {
-    BTDebugMsg(@"[_YRBTConnectionService]: Server %@ invalidated %@ services.", [_storage deviceForPeer:peripheral], services);
+    BTDebugMsg(@"[_YRBTConnectionService]: Device %@ invalidated %@ services.", [_storage deviceForPeer:peripheral], services);
 
     if ([[services valueForKey:@"UUID"] containsObject:internalServiceUUID()]) {
         [self notifyFailureForPeripheralAndDisconnect:peripheral
@@ -264,7 +231,7 @@ TimeoutDelegate
             }
         }
     } else {
-        NSError *resultingError = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeFailedToConnect];
+        NSError *resultingError = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeFailedToEstablishCommunicationChannel];
         
         [self notifyFailureForPeripheralAndDisconnect:peripheral
                                             withError:resultingError];
@@ -282,11 +249,6 @@ TimeoutDelegate
         YRBTServerDevice *device = [_storage deviceForPeer:peripheral];
         NSAssert(device.receiveCharacteristic, @"Receive characteristic must be present in order to establish communication channel!");
         NSAssert(device.sendCharacteristic, @"Send characteristic must be present in order to establish communication channel!");
-
-        NSError *resultingError = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeFailedToEstablishCommunicationChannel];
-        
-        [self notifyFailureForPeripheralAndDisconnect:peripheral
-                                            withError:resultingError];
     }
     
     if (!error) {
@@ -322,6 +284,42 @@ TimeoutDelegate
                                                 withError:resultingError];
         }
     }
+}
+
+#pragma mark - Cleanup
+
+- (void)invalidate {
+    BTDebugMsg(@"[_YRBTConnectionService]: Will invalidate. Current connected devices: %d. Pending connection operations: %d. Total peripherals awaiting to connect: %d",
+               (int32_t)_connectedDevices.count,
+               (int32_t)[_operationStack operations].count,
+               (int32_t)[_operationStack peripherals].count);
+    
+    for (CBPeripheral *peripheral in [_operationStack peripherals]) {
+        [_centralManager cancelPeripheralConnection:peripheral];
+    }
+
+    for (CBPeripheral *peripheral in _connectedDevices) {
+        [_centralManager cancelPeripheralConnection:peripheral];
+    }
+
+    [_operationStack invalidate];
+    [_connectedDevices removeAllObjects];
+}
+
+- (void)invalidateWithError:(NSError *)error {
+    BTDebugMsg(@"[_YRBTConnectionService]: Will invalidate with error %@. Current connected devices: %d. Pending connection operations: %d. Total peripherals awaiting to connect: %d",
+               error,
+               (int32_t)_connectedDevices.count,
+               (int32_t)[_operationStack operations].count,
+               (int32_t)[_operationStack peripherals].count);
+    
+    for (CBPeripheral *peripheral in [_operationStack peripherals]) {
+        [self notifyFailureForPeripheralAndDisconnect:peripheral
+                                            withError:error];
+    }
+    
+    [_operationStack invalidate];
+    [_connectedDevices removeAllObjects];
 }
 
 #pragma mark - Private

@@ -42,7 +42,7 @@ static void *kCallingQueueDummyValue = (void *)0xCAFEBABE;
     BOOL _isInvalidating;
     
     BOOL _paused;
-    NSMutableArray *_chunkContainers;
+    NSMutableArray *_chunkContainers; // TODO: Not needed.
     _YRBTContainerPriorityQueue *_containerPriorityQueue;
     
     _YRBTChunk *_pendingGeneratedChunk;
