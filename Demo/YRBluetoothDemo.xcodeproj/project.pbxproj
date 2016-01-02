@@ -52,6 +52,14 @@
 		7D5285301C342AEB00775DD1 /* _YRBTErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285001C342AEB00775DD1 /* _YRBTErrorService.m */; };
 		7D5285311C342AEB00775DD1 /* _YRBTScanningService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285031C342AEB00775DD1 /* _YRBTScanningService.m */; };
 		7D5285321C342AEB00775DD1 /* _YRBTStreamingService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285061C342AEB00775DD1 /* _YRBTStreamingService.m */; };
+		7D5285371C36A2E300775DD1 /* ClientChatSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285361C36A2E300775DD1 /* ClientChatSession.m */; };
+		7D52853A1C36A7FB00775DD1 /* ServerChatSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285391C36A7FB00775DD1 /* ServerChatSession.m */; };
+		7D52853D1C36AB1100775DD1 /* ChatSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52853C1C36AB1100775DD1 /* ChatSession.m */; };
+		7D5285401C36ABF000775DD1 /* ClientChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52853F1C36ABF000775DD1 /* ClientChatViewController.m */; };
+		7D5285431C36ABFD00775DD1 /* ServerChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285421C36ABFD00775DD1 /* ServerChatViewController.m */; };
+		7D5285491C36F70A00775DD1 /* Chat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285481C36F70A00775DD1 /* Chat.m */; };
+		7D52854C1C36F7AF00775DD1 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52854B1C36F7AF00775DD1 /* User.m */; };
+		7D52854F1C36F84800775DD1 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52854E1C36F84800775DD1 /* Message.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -149,6 +157,23 @@
 		7D5285061C342AEB00775DD1 /* _YRBTStreamingService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTStreamingService.m; sourceTree = "<group>"; };
 		7D52850A1C342AEB00775DD1 /* YRBluetooth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRBluetooth.h; sourceTree = "<group>"; };
 		7D52850B1C342AEB00775DD1 /* YRBluetoothTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRBluetoothTypes.h; sourceTree = "<group>"; };
+		7D5285351C36A2E300775DD1 /* ClientChatSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientChatSession.h; sourceTree = "<group>"; };
+		7D5285361C36A2E300775DD1 /* ClientChatSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientChatSession.m; sourceTree = "<group>"; };
+		7D5285381C36A7FB00775DD1 /* ServerChatSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerChatSession.h; sourceTree = "<group>"; };
+		7D5285391C36A7FB00775DD1 /* ServerChatSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerChatSession.m; sourceTree = "<group>"; };
+		7D52853B1C36AB1100775DD1 /* ChatSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatSession.h; sourceTree = "<group>"; };
+		7D52853C1C36AB1100775DD1 /* ChatSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatSession.m; sourceTree = "<group>"; };
+		7D52853E1C36ABF000775DD1 /* ClientChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientChatViewController.h; sourceTree = "<group>"; };
+		7D52853F1C36ABF000775DD1 /* ClientChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientChatViewController.m; sourceTree = "<group>"; };
+		7D5285411C36ABFD00775DD1 /* ServerChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerChatViewController.h; sourceTree = "<group>"; };
+		7D5285421C36ABFD00775DD1 /* ServerChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerChatViewController.m; sourceTree = "<group>"; };
+		7D5285461C36F61A00775DD1 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
+		7D5285471C36F70A00775DD1 /* Chat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chat.h; sourceTree = "<group>"; };
+		7D5285481C36F70A00775DD1 /* Chat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Chat.m; sourceTree = "<group>"; };
+		7D52854A1C36F7AF00775DD1 /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		7D52854B1C36F7AF00775DD1 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		7D52854D1C36F84800775DD1 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
+		7D52854E1C36F84800775DD1 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,7 +218,9 @@
 			children = (
 				7D5284881C3429F200775DD1 /* AppDelegate.h */,
 				7D5284891C3429F200775DD1 /* AppDelegate.m */,
+				7D5285451C36F60700775DD1 /* Auxiliary */,
 				7D52849B1C342A9600775DD1 /* Components */,
+				7D5285341C36A2C100775DD1 /* Model */,
 				7D52849C1C342A9D00775DD1 /* ViewControllers */,
 			);
 			path = Classes;
@@ -239,6 +266,10 @@
 			children = (
 				7D52849D1C342A9D00775DD1 /* HomeViewController.h */,
 				7D52849E1C342A9D00775DD1 /* HomeViewController.m */,
+				7D52853E1C36ABF000775DD1 /* ClientChatViewController.h */,
+				7D52853F1C36ABF000775DD1 /* ClientChatViewController.m */,
+				7D5285411C36ABFD00775DD1 /* ServerChatViewController.h */,
+				7D5285421C36ABFD00775DD1 /* ServerChatViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -464,6 +495,33 @@
 			path = StreamingService;
 			sourceTree = "<group>";
 		};
+		7D5285341C36A2C100775DD1 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				7D52853B1C36AB1100775DD1 /* ChatSession.h */,
+				7D52853C1C36AB1100775DD1 /* ChatSession.m */,
+				7D5285351C36A2E300775DD1 /* ClientChatSession.h */,
+				7D5285361C36A2E300775DD1 /* ClientChatSession.m */,
+				7D5285381C36A7FB00775DD1 /* ServerChatSession.h */,
+				7D5285391C36A7FB00775DD1 /* ServerChatSession.m */,
+				7D5285471C36F70A00775DD1 /* Chat.h */,
+				7D5285481C36F70A00775DD1 /* Chat.m */,
+				7D52854A1C36F7AF00775DD1 /* User.h */,
+				7D52854B1C36F7AF00775DD1 /* User.m */,
+				7D52854D1C36F84800775DD1 /* Message.h */,
+				7D52854E1C36F84800775DD1 /* Message.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7D5285451C36F60700775DD1 /* Auxiliary */ = {
+			isa = PBXGroup;
+			children = (
+				7D5285461C36F61A00775DD1 /* Config.h */,
+			);
+			path = Auxiliary;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -535,15 +593,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D52852E1C342AEB00775DD1 /* _YRBTConnectionOperation.m in Sources */,
+				7D5285491C36F70A00775DD1 /* Chat.m in Sources */,
 				7D5285171C342AEB00775DD1 /* YRBTPeer+Private.m in Sources */,
 				7D52850C1C342AEB00775DD1 /* CoreBluetooth+YRBTPrivate.m in Sources */,
 				7D5285291C342AEB00775DD1 /* _YRBTOperationNameChunk.m in Sources */,
 				7D52851B1C342AEB00775DD1 /* _YRBTRegisteredCallbacks.m in Sources */,
 				7D5285251C342AEB00775DD1 /* _YRBTChunk.m in Sources */,
+				7D5285371C36A2E300775DD1 /* ClientChatSession.m in Sources */,
 				7D52852D1C342AEB00775DD1 /* _YRBTConnectionService.m in Sources */,
 				7D5285271C342AEB00775DD1 /* _YRBTInternalChunk.m in Sources */,
 				7D5285211C342AEB00775DD1 /* YRBTMessage.m in Sources */,
 				7D52852A1C342AEB00775DD1 /* _YRBTRegularMessageChunk.m in Sources */,
+				7D5285401C36ABF000775DD1 /* ClientChatViewController.m in Sources */,
 				7D52849A1C3429F200775DD1 /* main.m in Sources */,
 				7D52850D1C342AEB00775DD1 /* _YRBTDeviceStorage.m in Sources */,
 				7D5285201C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.m in Sources */,
@@ -555,6 +616,7 @@
 				7D52851D1C342AEB00775DD1 /* _YRBTChunkGenerator.m in Sources */,
 				7D5285191C342AEB00775DD1 /* YRBTRemoteMessageRequest+Private.m in Sources */,
 				7D5285231C342AEB00775DD1 /* _YRBTChunksContainer.m in Sources */,
+				7D5285431C36ABFD00775DD1 /* ServerChatViewController.m in Sources */,
 				7D5284941C3429F200775DD1 /* AppDelegate.m in Sources */,
 				7D52851A1C342AEB00775DD1 /* YRBTServerDevice+Private.m in Sources */,
 				7D52852C1C342AEB00775DD1 /* YRBTRemoteMessageRequest.m in Sources */,
@@ -566,6 +628,8 @@
 				7D5285311C342AEB00775DD1 /* _YRBTScanningService.m in Sources */,
 				7D52852B1C342AEB00775DD1 /* YRBTMessageOperation.m in Sources */,
 				7D52851C1C342AEB00775DD1 /* Constants.m in Sources */,
+				7D52854C1C36F7AF00775DD1 /* User.m in Sources */,
+				7D52854F1C36F84800775DD1 /* Message.m in Sources */,
 				7D5285131C342AEB00775DD1 /* YRBTServer.m in Sources */,
 				7D5285321C342AEB00775DD1 /* _YRBTStreamingService.m in Sources */,
 				7D5285261C342AEB00775DD1 /* _YRBTHeaderChunk.m in Sources */,
@@ -574,7 +638,9 @@
 				7D52851E1C342AEB00775DD1 /* _YRBTChunkParser.m in Sources */,
 				7D52850E1C342AEB00775DD1 /* YRBTClientDevice.m in Sources */,
 				7D5285141C342AEB00775DD1 /* YRBTClientDevice+Private.m in Sources */,
+				7D52853A1C36A7FB00775DD1 /* ServerChatSession.m in Sources */,
 				7D52852F1C342AEB00775DD1 /* _YRBTConnectionOperationStack.m in Sources */,
+				7D52853D1C36AB1100775DD1 /* ChatSession.m in Sources */,
 				7D52851F1C342AEB00775DD1 /* _YRBTMessageBuffer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

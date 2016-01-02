@@ -6,10 +6,9 @@
 //  Copyright © 2015 solomidSF. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+@import UIKit;
 
 @interface HomeViewController : UIViewController
-
 
 @end
 

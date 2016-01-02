@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="nIJ-Qi-1il">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
@@ -16,12 +16,128 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="BT Chat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fNi-GB-Iax">
+                                <rect key="frame" x="129" y="72" width="62" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A1z-Wb-l7m">
+                                <rect key="frame" x="120" y="151" width="80" height="30"/>
+                                <state key="normal" title="Create chat"/>
+                                <connections>
+                                    <action selector="createChatClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="d8z-t8-pqa"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yKQ-ex-Mqa">
+                                <rect key="frame" x="104" y="113" width="113" height="30"/>
+                                <state key="normal" title="Search for chats"/>
+                                <connections>
+                                    <action selector="searchChatsClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ip8-1h-dIa"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter your nickname" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VpS-hM-aJp">
+                                <rect key="frame" x="20" y="198" width="280" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
+                    <navigationItem key="navigationItem" id="cjc-lw-INL"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <connections>
+                        <outlet property="_nicknameTextField" destination="VpS-hM-aJp" id="IuL-pG-7o6"/>
+                        <segue destination="Chw-xF-NL8" kind="show" id="Xt1-Yz-BMg"/>
+                        <segue destination="RxW-wv-52G" kind="show" id="WKT-l8-yGP"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="1165" y="293"/>
+        </scene>
+        <!--Server View Controller-->
+        <scene sceneID="dbX-WR-srY">
+            <objects>
+                <viewController id="RxW-wv-52G" customClass="ServerViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="zPu-9Y-SrO"/>
+                        <viewControllerLayoutGuide type="bottom" id="3sp-5b-Sx2"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="qS7-bw-mhA">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ETS-DD-S0D" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1596" y="583"/>
+        </scene>
+        <!--Client Chat View Controller-->
+        <scene sceneID="3q3-iW-MHv">
+            <objects>
+                <viewController id="Chw-xF-NL8" customClass="ClientChatViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="GTh-q8-VIi"/>
+                        <viewControllerLayoutGuide type="bottom" id="nmc-t0-Es3"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="YT5-wI-I7G">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="AHQ-QJ-UKG">
+                                <rect key="frame" x="0.0" y="91" width="320" height="476.5"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Searching..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m1J-fY-mV0">
+                                <rect key="frame" x="10" y="69" width="104.5" height="17.5"/>
+                                <fontDescription key="fontDescription" name="Copperplate" family="Copperplate" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="7Ph-kW-pEW">
+                                <rect key="frame" x="290" y="68" width="20" height="20"/>
+                            </activityIndicatorView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="m1J-fY-mV0" firstAttribute="top" secondItem="GTh-q8-VIi" secondAttribute="bottom" constant="5" id="5f8-Ws-ugc"/>
+                            <constraint firstItem="m1J-fY-mV0" firstAttribute="leading" secondItem="YT5-wI-I7G" secondAttribute="leading" constant="10" id="6KK-st-Dth"/>
+                            <constraint firstItem="7Ph-kW-pEW" firstAttribute="centerY" secondItem="m1J-fY-mV0" secondAttribute="centerY" id="A9q-eq-Ghl"/>
+                            <constraint firstAttribute="trailing" secondItem="7Ph-kW-pEW" secondAttribute="trailing" constant="10" id="Tqg-xf-d7r"/>
+                            <constraint firstItem="nmc-t0-Es3" firstAttribute="top" secondItem="AHQ-QJ-UKG" secondAttribute="bottom" id="dnS-73-a6E"/>
+                            <constraint firstAttribute="trailing" secondItem="AHQ-QJ-UKG" secondAttribute="trailing" id="he5-FK-UGq"/>
+                            <constraint firstItem="AHQ-QJ-UKG" firstAttribute="leading" secondItem="YT5-wI-I7G" secondAttribute="leading" id="iuX-i5-Fer"/>
+                            <constraint firstItem="AHQ-QJ-UKG" firstAttribute="top" secondItem="m1J-fY-mV0" secondAttribute="bottom" constant="5" id="zS4-su-Qu3"/>
+                        </constraints>
+                    </view>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9pd-4C-afT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1596" y="-41"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="25P-sH-gA8">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="nIJ-Qi-1il" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ks2-41-0LR">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="iXs-QZ-Lpl"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5ng-je-3at" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="725" y="293"/>
         </scene>
     </scenes>
 </document>
