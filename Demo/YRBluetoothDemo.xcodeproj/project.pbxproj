@@ -60,6 +60,8 @@
 		7D5285491C36F70A00775DD1 /* Chat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285481C36F70A00775DD1 /* Chat.m */; };
 		7D52854C1C36F7AF00775DD1 /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52854B1C36F7AF00775DD1 /* User.m */; };
 		7D52854F1C36F84800775DD1 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52854E1C36F84800775DD1 /* Message.m */; };
+		7D5285531C39977700775DD1 /* User+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285521C39977700775DD1 /* User+Private.m */; };
+		7D5285561C399C5700775DD1 /* UsersPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285551C399C5700775DD1 /* UsersPool.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -174,6 +176,10 @@
 		7D52854B1C36F7AF00775DD1 /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		7D52854D1C36F84800775DD1 /* Message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Message.h; sourceTree = "<group>"; };
 		7D52854E1C36F84800775DD1 /* Message.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Message.m; sourceTree = "<group>"; };
+		7D5285511C39977700775DD1 /* User+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "User+Private.h"; sourceTree = "<group>"; };
+		7D5285521C39977700775DD1 /* User+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+Private.m"; sourceTree = "<group>"; };
+		7D5285541C399C5700775DD1 /* UsersPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsersPool.h; sourceTree = "<group>"; };
+		7D5285551C399C5700775DD1 /* UsersPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsersPool.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -498,6 +504,7 @@
 		7D5285341C36A2C100775DD1 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				7D5285501C39976800775DD1 /* Internal */,
 				7D52853B1C36AB1100775DD1 /* ChatSession.h */,
 				7D52853C1C36AB1100775DD1 /* ChatSession.m */,
 				7D5285351C36A2E300775DD1 /* ClientChatSession.h */,
@@ -510,6 +517,8 @@
 				7D52854B1C36F7AF00775DD1 /* User.m */,
 				7D52854D1C36F84800775DD1 /* Message.h */,
 				7D52854E1C36F84800775DD1 /* Message.m */,
+				7D5285541C399C5700775DD1 /* UsersPool.h */,
+				7D5285551C399C5700775DD1 /* UsersPool.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -520,6 +529,15 @@
 				7D5285461C36F61A00775DD1 /* Config.h */,
 			);
 			path = Auxiliary;
+			sourceTree = "<group>";
+		};
+		7D5285501C39976800775DD1 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				7D5285511C39977700775DD1 /* User+Private.h */,
+				7D5285521C39977700775DD1 /* User+Private.m */,
+			);
+			path = Internal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -626,6 +644,8 @@
 				7D5285241C342AEB00775DD1 /* _YRBTContainerPriorityQueue.m in Sources */,
 				7D5285151C342AEB00775DD1 /* YRBTMessage+Private.m in Sources */,
 				7D5285311C342AEB00775DD1 /* _YRBTScanningService.m in Sources */,
+				7D5285561C399C5700775DD1 /* UsersPool.m in Sources */,
+				7D5285531C39977700775DD1 /* User+Private.m in Sources */,
 				7D52852B1C342AEB00775DD1 /* YRBTMessageOperation.m in Sources */,
 				7D52851C1C342AEB00775DD1 /* Constants.m in Sources */,
 				7D52854C1C36F7AF00775DD1 /* User.m in Sources */,

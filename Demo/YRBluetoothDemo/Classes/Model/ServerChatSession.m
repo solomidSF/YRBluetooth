@@ -8,16 +8,21 @@
 
 // Model
 #import "ServerChatSession.h"
+#import "UsersPool.h"
+#import "User+Private.h"
 
 // Components
 #import "YRBluetooth.h"
 
+// Auxiliary
 #import "Config.h"
 
 @implementation ServerChatSession {
     YRBTServer *_server;
     
     id _observers;
+    
+    UsersPool *_pool;
 }
 
 #pragma mark - Lifecycle
@@ -46,32 +51,41 @@
 
 #pragma mark - Observing
 
-- (void)addObserver:(id<ServerChatSessionObserver>)observer {
+- (void)addObserver:(id <ServerChatSessionObserver>)observer {
     
 }
 
-- (void)removeObserver:(id<ServerChatSessionObserver>)observer {
+- (void)removeObserver:(id <ServerChatSessionObserver>)observer {
     
 }
 
 #pragma mark - Private
 
 - (void)setupServer {
+    _pool = [UsersPool new];
+    
     __typeof(self) __weak weakSelf = self;
     
     _server.deviceConnectCallback = ^(YRBTRemoteDevice *device) {
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
         if (strongSelf) {
-            if (device.peerName.length > 0) {
-                
-            }
             
             device.nameChangeCallback = ^(YRBTRemoteDevice *device, NSString *newName) {
-                // Notify all subscribed devices
+                User *user = [strongSelf->_pool userForDevice:device];
+                user.hasName = YES;
+                
+                [strongSelf->_observers chatSession:strongSelf
+                                  userDidChangeName:user];
+                
+                // TODO: Notify all remote devices
             };
-            // Notify
-//            [_observers chatSession:strongSelf userDidConnect:<#(User *)#>];
+            
+            User *user = [strongSelf->_pool userForDevice:device];
+
+            [strongSelf->_observers chatSession:strongSelf userDidConnect:user];
+            
+            // TODO: Notify all remote devices.
         }
     };
 
@@ -79,9 +93,9 @@
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
         if (strongSelf) {
-            // Notify
+            [strongSelf->_observers chatSession:strongSelf userDidDisconnect:[strongSelf->_pool userForDevice:device]];
             
-//            [_observers chatSession:strongSelf userDidDisconnect:<#(User *)#>];
+            // TODO: Notify all remote devices.
         }
     };
 }

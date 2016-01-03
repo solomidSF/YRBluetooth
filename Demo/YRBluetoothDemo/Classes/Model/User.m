@@ -6,16 +6,41 @@
 //  Copyright © 2016 solomidSF. All rights reserved.
 //
 
+// Model
 #import "User.h"
+
+// Components
+#import "YRBluetooth.h"
+
+@interface User ()
+@property (nonatomic) BOOL hasName;
+@property (nonatomic) __kindof YRBTRemoteDevice *device;
+@end
 
 @implementation User
 
-- (instancetype)initWithRemoteDevice:(__kindof YRBTRemoteDevice *)device {
-    if (self = [super init]) {
-        
+#pragma mark - Dynamic Properties
+
+- (NSString *)identifier {
+    return [self.device.uuid UUIDString];
+}
+
+- (NSString *)name {
+    return self.hasName ? @"Fetching name" : self.device.peerName;
+}
+
+- (BOOL)isConnected {
+    return self.device.connectionState == kYRBTConnectionStateConnected;
+}
+
+#pragma mark - NSObject
+
+- (BOOL)isEqual:(id)object {
+    if ([object isKindOfClass:[self class]]) {
+        return [self.device isEqual:[(User *)object device]];
+    } else {
+        return NO;
     }
-    
-    return self;
 }
 
 @end

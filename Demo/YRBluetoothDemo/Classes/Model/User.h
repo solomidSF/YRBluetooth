@@ -8,13 +8,10 @@
 
 @import Foundation;
 
-// Components
-#import "YRBluetooth.h"
-
 @interface User : NSObject
 
-@property (nonatomic, readonly) YRBTRemoteDevice *device;
-
-- (instancetype)initWithRemoteDevice:(__kindof YRBTRemoteDevice *)device;
+@property (nonatomic, readonly) NSString *identifier;
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) BOOL isConnected;
 
 @end
