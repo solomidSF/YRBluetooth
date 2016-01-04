@@ -31,7 +31,7 @@
  *  Class stores several callbacks inside.
  *  This class is used for registering callbacks for specific operations.
  */
-@interface _YRBTRemoteRequestCallbacks : NSObject
+@interface _YRBTRemoteRequestCallbacks : NSObject // TODO: Rename it to be _YRBTRemoteOperationCallbacks
 
 @property (nonatomic, copy) YRBTWillReceiveRemoteRequestCallback willReceiveRequestCallback;
 @property (nonatomic, copy) YRBTReceivedRemoteRequestCallback receivedRequestCallback;

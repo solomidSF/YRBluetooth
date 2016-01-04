@@ -8,6 +8,13 @@
 
 @import Foundation;
 
+// Model
+#import "User.h"
+
 @interface Message : NSObject
+
+@property (nonatomic, readonly) uint64_t messageID;
+@property (nonatomic, readonly) User *sender;
+@property (nonatomic, readonly) NSString *messageText;
 
 @end

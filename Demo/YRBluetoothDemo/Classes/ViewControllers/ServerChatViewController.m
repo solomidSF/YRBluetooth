@@ -12,6 +12,14 @@
 // Model
 #import "ServerChatSession.h"
 
+@interface ServerChatViewController ()
+<
+ServerChatSessionObserver,
+UITableViewDelegate,
+UITableViewDataSource
+>
+@end
+
 @implementation ServerChatViewController {
     ServerChatSession *_serverSession;
 }
@@ -22,10 +30,22 @@
     [super viewDidLoad];
     
     _serverSession = [ServerChatSession sessionWithNickname:self.nickname];
+    
+    [_serverSession addObserver:self];
 }
 
 - (void)dealloc {
     [_serverSession endSession];
+}
+
+#pragma mark - <ServerChatSessionObserver>
+
+
+
+#pragma mark - <UITableViewDelegate/Datasource>
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 0;
 }
 
 @end

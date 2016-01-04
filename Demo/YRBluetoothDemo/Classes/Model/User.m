@@ -26,7 +26,7 @@
 }
 
 - (NSString *)name {
-    return self.hasName ? @"Fetching name" : self.device.peerName;
+    return self.device.peerName;
 }
 
 - (BOOL)isConnected {

@@ -76,7 +76,7 @@ typedef struct {
 
 typedef struct {
     message_id_t messageID;
-	uint16_t isResponse; // TODO: Too much bits available
+	uint16_t isResponse; // TODO: Too much bits available and not used in operation name chunk.
 	void *variadicData;
 } YRBTMessageChunkLayout; // 10 bytes overhead !!! consider lowering message id?
 

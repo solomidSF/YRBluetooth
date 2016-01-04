@@ -8,6 +8,13 @@
 
 @import Foundation;
 
+// Model
+#import "User.h"
+#import "Message.h"
+
 @interface Chat : NSObject
+
+@property (nonatomic, readonly) User *creator;
+@property (nonatomic, readonly) NSArray <Message *> *messages;
 
 @end

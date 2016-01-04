@@ -37,11 +37,12 @@ typedef enum {
 	kYRBTRemoteMessageRequestStatusCancelledByRemote
 } YRBTRemoteMessageRequestStatus;
 
+// TODO: Rename it to be YRBTRemoteMessageOperation
 @interface YRBTRemoteMessageRequest : NSObject
 
-@property (nonatomic, readonly) YRBTRemoteMessageRequestStatus status;
-
 @property (nonatomic, readonly) __kindof YRBTRemoteDevice *sender;
+
+@property (nonatomic, readonly) YRBTRemoteMessageRequestStatus status;
 
 @property (nonatomic, readonly) YRBTMessage *requestMessage;
 @property (nonatomic, readonly) NSString *operationName;

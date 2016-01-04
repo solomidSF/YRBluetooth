@@ -17,12 +17,15 @@
 // Auxiliary
 #import "Config.h"
 
+static NSString *const kMessageOperation = @"MSG";
+static NSString *const kMembersOperation = @"MEM";
+
 @implementation ServerChatSession {
     YRBTServer *_server;
     
     id _observers;
     
-    UsersPool *_pool;
+    UsersPool *_usersPool;
 }
 
 #pragma mark - Lifecycle
@@ -62,7 +65,7 @@
 #pragma mark - Private
 
 - (void)setupServer {
-    _pool = [UsersPool new];
+    _usersPool = [UsersPool new];
     
     __typeof(self) __weak weakSelf = self;
     
@@ -72,7 +75,7 @@
         if (strongSelf) {
             
             device.nameChangeCallback = ^(YRBTRemoteDevice *device, NSString *newName) {
-                User *user = [strongSelf->_pool userForDevice:device];
+                User *user = [strongSelf->_usersPool userForDevice:device];
                 user.hasName = YES;
                 
                 [strongSelf->_observers chatSession:strongSelf
@@ -81,7 +84,7 @@
                 // TODO: Notify all remote devices
             };
             
-            User *user = [strongSelf->_pool userForDevice:device];
+            User *user = [strongSelf->_usersPool userForDevice:device];
 
             [strongSelf->_observers chatSession:strongSelf userDidConnect:user];
             
@@ -93,11 +96,37 @@
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
         if (strongSelf) {
-            [strongSelf->_observers chatSession:strongSelf userDidDisconnect:[strongSelf->_pool userForDevice:device]];
+            [strongSelf->_observers chatSession:strongSelf userDidDisconnect:[strongSelf->_usersPool userForDevice:device]];
             
             // TODO: Notify all remote devices.
         }
     };
+ 
+    // TODO: Register callbacks for 'new message' request.
+    [_server registerWillReceiveRequestCallback:^(YRBTRemoteMessageRequest *request) {
+        
+    } didReceiveRequestCallback:^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
+                                                        YRBTMessage *requestMessage,
+                                                        BOOL wantsResponse) {
+        return nil;
+    } receivingProgressCallback:^(uint32_t currentBytes, uint32_t totalBytes) {
+        
+    } failedToReceiveCallback:^(YRBTRemoteMessageRequest *request, NSError *error) {
+        
+    } forOperation:kMessageOperation];
+    
+    // TODO: Register callbacks for 'members' request.
+    [_server registerWillReceiveRequestCallback:^(YRBTRemoteMessageRequest *request) {
+        
+    } didReceiveRequestCallback:^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
+                                                        YRBTMessage *requestMessage,
+                                                        BOOL wantsResponse) {
+        return nil;
+    } receivingProgressCallback:^(uint32_t currentBytes, uint32_t totalBytes) {
+        
+    } failedToReceiveCallback:^(YRBTRemoteMessageRequest *request, NSError *error) {
+        
+    } forOperation:kMembersOperation];
 }
 
 @end

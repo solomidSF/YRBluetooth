@@ -9,6 +9,8 @@
 // Controllers
 #import "HomeViewController.h"
 
+static NSString *const kSavedUsernameKey = @"Username";
+
 @implementation HomeViewController {
     __weak IBOutlet UITextField *_nicknameTextField;
 }
@@ -16,7 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // TODO: Load saved nickname.
+    _nicknameTextField.text = [[NSUserDefaults standardUserDefaults] objectForKey:kSavedUsernameKey];
 }
 
 - (IBAction)searchChatsClicked:(id)sender {
@@ -29,6 +31,9 @@
         return;
     }
 
+    [[NSUserDefaults standardUserDefaults] setObject:_nicknameTextField.text forKey:kSavedUsernameKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
 //    self performSegueWithIdentifier:<#(nonnull NSString *)#> sender:<#(nullable id)#>
 }
 
@@ -41,6 +46,11 @@
                           otherButtonTitles:nil] show];
         return;
     }
+    
+    [[NSUserDefaults standardUserDefaults] setObject:_nicknameTextField.text forKey:kSavedUsernameKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+//    self performSegueWithIdentifier:<#(nonnull NSString *)#> sender:<#(nullable id)#>
 }
 
 @end
