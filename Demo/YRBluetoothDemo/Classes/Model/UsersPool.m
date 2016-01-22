@@ -32,7 +32,7 @@
         return _users[[devices indexOfObject:device]];
     }
     
-    User *newUser = [[User alloc] initWithRemoteDevice:device];
+    User *newUser = [[User alloc] initWithClientDevice:device];
     
     [_users addObject:newUser];
     

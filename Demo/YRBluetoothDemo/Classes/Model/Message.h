@@ -11,10 +11,15 @@
 // Model
 #import "User.h"
 
+@class Chat;
+
 @interface Message : NSObject
 
-@property (nonatomic, readonly) uint64_t messageID;
+@property (nonatomic, readonly, weak) Chat *chat; // TODO:
 @property (nonatomic, readonly) User *sender;
+@property (nonatomic, readonly) NSTimeInterval timestamp;
 @property (nonatomic, readonly) NSString *messageText;
+
+- (instancetype)initWithChat:(Chat *)chat sender:(User *)sender timestamp:(NSTimeInterval)timestamp messageText:(NSString *)text;
 
 @end

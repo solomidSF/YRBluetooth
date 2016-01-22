@@ -38,7 +38,7 @@ typedef void (^YRBTDeviceDidDisconnectCallback) (YRBTClientDevice *device);
 @interface YRBTServer : YRBTPeer
 
 /** Devices that are currently connected to server. */
-@property (nonatomic, readonly) NSArray *connectedDevices;
+@property (nonatomic, readonly) NSArray <YRBTClientDevice *> *connectedDevices;
 
 /** Callback that is called when device connects to server. */
 @property (nonatomic, copy) YRBTDeviceDidConnectCallback deviceConnectCallback;

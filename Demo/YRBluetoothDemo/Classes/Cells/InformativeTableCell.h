@@ -6,8 +6,8 @@
 //  Copyright © 2016 solomidSF. All rights reserved.
 //
 
-@import UIKit;
+#import "BaseEventTableCell.h"
 
-@interface InformativeTableCell : UITableViewCell
+@interface InformativeTableCell : BaseEventTableCell
 
 @end

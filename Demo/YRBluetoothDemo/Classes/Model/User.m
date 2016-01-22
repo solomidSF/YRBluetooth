@@ -13,34 +13,29 @@
 #import "YRBluetooth.h"
 
 @interface User ()
-@property (nonatomic) BOOL hasName;
-@property (nonatomic) __kindof YRBTRemoteDevice *device;
+@property (nonatomic) YRBTClientDevice *device;
+@property (nonatomic) BOOL isSubscribed;
+@property (nonatomic) NSString *name;
+@property (nonatomic) NSMutableArray <NSDictionary *> *messageQueue;
+@property (nonatomic) NSString *identifier;
+@property (nonatomic) BOOL isConnected;
+@property (nonatomic) BOOL isChatOwner;
 @end
 
 @implementation User
-
-#pragma mark - Dynamic Properties
-
-- (NSString *)identifier {
-    return [self.device.uuid UUIDString];
-}
-
-- (NSString *)name {
-    return self.device.peerName;
-}
-
-- (BOOL)isConnected {
-    return self.device.connectionState == kYRBTConnectionStateConnected;
-}
 
 #pragma mark - NSObject
 
 - (BOOL)isEqual:(id)object {
     if ([object isKindOfClass:[self class]]) {
-        return [self.device isEqual:[(User *)object device]];
+        return [self.identifier isEqual:[(User *)object identifier]];
     } else {
         return NO;
     }
+}
+
+- (NSUInteger)hash {
+    return [self.identifier hash];
 }
 
 @end

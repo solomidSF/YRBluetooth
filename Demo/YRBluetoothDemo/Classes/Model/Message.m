@@ -10,4 +10,15 @@
 
 @implementation Message
 
+- (instancetype)initWithChat:(Chat *)chat sender:(User *)sender timestamp:(NSTimeInterval)timestamp messageText:(NSString *)text {
+    if (self = [super init]) {
+        _chat = chat;
+        _sender = sender;
+        _timestamp = timestamp;
+        _messageText = text;
+    }
+    
+    return self;
+}
+
 @end

@@ -112,7 +112,7 @@ CBPeripheralManagerDelegate
 
 #pragma mark - Dynamic properties
 
-- (NSArray *)connectedDevices {
+- (NSArray <YRBTClientDevice *> *)connectedDevices {
     NSMutableArray *connectedDevices = [NSMutableArray new];
 
     for (CBCentral *central in self.sendCharacteristic.subscribedCentrals) {
@@ -268,7 +268,8 @@ CBPeripheralManagerDelegate
     } else {
         operation.status = kYRBTMessageOperationStatusFailed;
         
-        operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNoReceivers]);
+        operation.failureCallback ? : operation.failureCallback(operation,
+                                                                [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNoReceivers]);
         
         return operation;
     }

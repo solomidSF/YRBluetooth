@@ -1,3 +1,5 @@
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/solomidSF/yrbluetooth/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
 # YRBluetooth
 YRBluetooth is simple and easy to use bluetooth framework for iOS devices.
 

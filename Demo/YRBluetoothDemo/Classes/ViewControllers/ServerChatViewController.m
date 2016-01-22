@@ -9,8 +9,17 @@
 // Controllers
 #import "ServerChatViewController.h"
 
-// Model
+// Sessions
 #import "ServerChatSession.h"
+
+// Events
+#import "EventObject.h"
+
+// Cells
+#import "BaseEventTableCell.h"
+#import "InformativeTableCell.h"
+#import "MessageTableCell.h"
+#import "MyMessageTableCell.h"
 
 @interface ServerChatViewController ()
 <
@@ -22,6 +31,9 @@ UITableViewDataSource
 
 @implementation ServerChatViewController {
     ServerChatSession *_serverSession;
+    __weak IBOutlet UITableView *_messagesTableView;
+    
+    NSMutableArray <EventObject *> *_datasource;
 }
 
 #pragma mark - Lifecycle
@@ -38,14 +50,33 @@ UITableViewDataSource
     [_serverSession endSession];
 }
 
-#pragma mark - <ServerChatSessionObserver>
-
-
-
 #pragma mark - <UITableViewDelegate/Datasource>
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 0;
+    return _datasource.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    EventObject *event = _datasource[indexPath.row];
+    
+    __kindof BaseEventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:event.reuseIdentifier];
+    cell.event = event;
+    
+    return cell;
+}
+
+#pragma mark - <ServerChatSessionObserver>
+
+- (void)chatSession:(ServerChatSession *)session userDidConnect:(User *)user timestamp:(NSTimeInterval)timestamp {
+    
+}
+
+- (void)chatSession:(ServerChatSession *)session userDidDisconnect:(User *)user timestamp:(NSTimeInterval)timestamp {
+    
+}
+
+- (void)chatSession:(ServerChatSession *)session didReceiveNewMessage:(Message *)message {
+    
 }
 
 @end

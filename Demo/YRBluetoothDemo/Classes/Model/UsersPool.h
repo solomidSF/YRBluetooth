@@ -14,6 +14,7 @@
 // Components
 #import "YRBluetooth.h"
 
+// TODO: Prob'ly not needed
 @interface UsersPool : NSObject
 
 - (User *)userForDevice:(__kindof YRBTRemoteDevice *)device;

@@ -14,7 +14,10 @@
 
 @interface Chat : NSObject
 
+@property (nonatomic, readonly) User *me;
 @property (nonatomic, readonly) User *creator;
+@property (nonatomic, readonly) NSArray <User *> *members;
 @property (nonatomic, readonly) NSArray <Message *> *messages;
+@property (nonatomic, readonly) BOOL isConnected;
 
 @end

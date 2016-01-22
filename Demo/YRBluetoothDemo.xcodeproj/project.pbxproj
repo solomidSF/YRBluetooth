@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D3EB3161C4D7DCE007825E5 /* GCDMulticastDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3EB3151C4D7DCE007825E5 /* GCDMulticastDelegate.m */; };
 		7D5284941C3429F200775DD1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284891C3429F200775DD1 /* AppDelegate.m */; };
 		7D5284961C3429F200775DD1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D52848D1C3429F200775DD1 /* Assets.xcassets */; };
 		7D5284971C3429F200775DD1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D52848F1C3429F200775DD1 /* LaunchScreen.storyboard */; };
@@ -52,9 +53,6 @@
 		7D5285301C342AEB00775DD1 /* _YRBTErrorService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285001C342AEB00775DD1 /* _YRBTErrorService.m */; };
 		7D5285311C342AEB00775DD1 /* _YRBTScanningService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285031C342AEB00775DD1 /* _YRBTScanningService.m */; };
 		7D5285321C342AEB00775DD1 /* _YRBTStreamingService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285061C342AEB00775DD1 /* _YRBTStreamingService.m */; };
-		7D5285371C36A2E300775DD1 /* ClientChatSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285361C36A2E300775DD1 /* ClientChatSession.m */; };
-		7D52853A1C36A7FB00775DD1 /* ServerChatSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285391C36A7FB00775DD1 /* ServerChatSession.m */; };
-		7D52853D1C36AB1100775DD1 /* ChatSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52853C1C36AB1100775DD1 /* ChatSession.m */; };
 		7D5285401C36ABF000775DD1 /* ClientChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52853F1C36ABF000775DD1 /* ClientChatViewController.m */; };
 		7D5285431C36ABFD00775DD1 /* ServerChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285421C36ABFD00775DD1 /* ServerChatViewController.m */; };
 		7D5285491C36F70A00775DD1 /* Chat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285481C36F70A00775DD1 /* Chat.m */; };
@@ -63,10 +61,26 @@
 		7D5285531C39977700775DD1 /* User+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285521C39977700775DD1 /* User+Private.m */; };
 		7D5285561C399C5700775DD1 /* UsersPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285551C399C5700775DD1 /* UsersPool.m */; };
 		7DAF80BB1C3AC9D300C62F86 /* InformativeTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DAF80BA1C3AC9D300C62F86 /* InformativeTableCell.m */; };
+		7DE31A821C51A9DF00047EE0 /* APIObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A741C51A9DF00047EE0 /* APIObject.m */; };
+		7DE31A831C51A9DF00047EE0 /* NewMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A761C51A9DF00047EE0 /* NewMessage.m */; };
+		7DE31A841C51A9DF00047EE0 /* SubscribeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A781C51A9DF00047EE0 /* SubscribeRequest.m */; };
+		7DE31A851C51A9DF00047EE0 /* SubscribeResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A7A1C51A9DF00047EE0 /* SubscribeResponse.m */; };
+		7DE31A861C51A9DF00047EE0 /* UserConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A7C1C51A9DF00047EE0 /* UserConnection.m */; };
+		7DE31A871C51A9DF00047EE0 /* ClientChatSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A7F1C51A9DF00047EE0 /* ClientChatSession.m */; };
+		7DE31A881C51A9DF00047EE0 /* ServerChatSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A811C51A9DF00047EE0 /* ServerChatSession.m */; };
+		7DE31A8D1C52DD5E00047EE0 /* MessageTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A8C1C52DD5E00047EE0 /* MessageTableCell.m */; };
+		7DE31A901C52DDA700047EE0 /* MyMessageTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A8F1C52DDA700047EE0 /* MyMessageTableCell.m */; };
+		7DE31A971C52E1D000047EE0 /* EventObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A961C52E1D000047EE0 /* EventObject.m */; };
+		7DE31A9A1C52E44C00047EE0 /* NewMessageEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A991C52E44C00047EE0 /* NewMessageEvent.m */; };
+		7DE31A9D1C52E81B00047EE0 /* ConnectionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A9C1C52E81B00047EE0 /* ConnectionEvent.m */; };
+		7DE31AA01C52EB4100047EE0 /* BaseEventTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A9F1C52EB4100047EE0 /* BaseEventTableCell.m */; };
+		7DEA54591C4D243100506713 /* Chat+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA54581C4D243100506713 /* Chat+Private.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		7D365FC21C33FC2900E29ECA /* YRBluetoothDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YRBluetoothDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D3EB3141C4D7DCE007825E5 /* GCDMulticastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDMulticastDelegate.h; sourceTree = "<group>"; };
+		7D3EB3151C4D7DCE007825E5 /* GCDMulticastDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDMulticastDelegate.m; sourceTree = "<group>"; };
 		7D5284881C3429F200775DD1 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7D5284891C3429F200775DD1 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		7D52848D1C3429F200775DD1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -160,12 +174,6 @@
 		7D5285061C342AEB00775DD1 /* _YRBTStreamingService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTStreamingService.m; sourceTree = "<group>"; };
 		7D52850A1C342AEB00775DD1 /* YRBluetooth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRBluetooth.h; sourceTree = "<group>"; };
 		7D52850B1C342AEB00775DD1 /* YRBluetoothTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRBluetoothTypes.h; sourceTree = "<group>"; };
-		7D5285351C36A2E300775DD1 /* ClientChatSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientChatSession.h; sourceTree = "<group>"; };
-		7D5285361C36A2E300775DD1 /* ClientChatSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientChatSession.m; sourceTree = "<group>"; };
-		7D5285381C36A7FB00775DD1 /* ServerChatSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerChatSession.h; sourceTree = "<group>"; };
-		7D5285391C36A7FB00775DD1 /* ServerChatSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerChatSession.m; sourceTree = "<group>"; };
-		7D52853B1C36AB1100775DD1 /* ChatSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatSession.h; sourceTree = "<group>"; };
-		7D52853C1C36AB1100775DD1 /* ChatSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatSession.m; sourceTree = "<group>"; };
 		7D52853E1C36ABF000775DD1 /* ClientChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientChatViewController.h; sourceTree = "<group>"; };
 		7D52853F1C36ABF000775DD1 /* ClientChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientChatViewController.m; sourceTree = "<group>"; };
 		7D5285411C36ABFD00775DD1 /* ServerChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerChatViewController.h; sourceTree = "<group>"; };
@@ -183,6 +191,34 @@
 		7D5285551C399C5700775DD1 /* UsersPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsersPool.m; sourceTree = "<group>"; };
 		7DAF80B91C3AC9D300C62F86 /* InformativeTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InformativeTableCell.h; sourceTree = "<group>"; };
 		7DAF80BA1C3AC9D300C62F86 /* InformativeTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InformativeTableCell.m; sourceTree = "<group>"; };
+		7DE31A731C51A9DF00047EE0 /* APIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIObject.h; sourceTree = "<group>"; };
+		7DE31A741C51A9DF00047EE0 /* APIObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = APIObject.m; sourceTree = "<group>"; };
+		7DE31A751C51A9DF00047EE0 /* NewMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewMessage.h; sourceTree = "<group>"; };
+		7DE31A761C51A9DF00047EE0 /* NewMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewMessage.m; sourceTree = "<group>"; };
+		7DE31A771C51A9DF00047EE0 /* SubscribeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscribeRequest.h; sourceTree = "<group>"; };
+		7DE31A781C51A9DF00047EE0 /* SubscribeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubscribeRequest.m; sourceTree = "<group>"; };
+		7DE31A791C51A9DF00047EE0 /* SubscribeResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscribeResponse.h; sourceTree = "<group>"; };
+		7DE31A7A1C51A9DF00047EE0 /* SubscribeResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubscribeResponse.m; sourceTree = "<group>"; };
+		7DE31A7B1C51A9DF00047EE0 /* UserConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserConnection.h; sourceTree = "<group>"; };
+		7DE31A7C1C51A9DF00047EE0 /* UserConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserConnection.m; sourceTree = "<group>"; };
+		7DE31A7E1C51A9DF00047EE0 /* ClientChatSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientChatSession.h; sourceTree = "<group>"; };
+		7DE31A7F1C51A9DF00047EE0 /* ClientChatSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientChatSession.m; sourceTree = "<group>"; };
+		7DE31A801C51A9DF00047EE0 /* ServerChatSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerChatSession.h; sourceTree = "<group>"; };
+		7DE31A811C51A9DF00047EE0 /* ServerChatSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerChatSession.m; sourceTree = "<group>"; };
+		7DE31A8B1C52DD5E00047EE0 /* MessageTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageTableCell.h; sourceTree = "<group>"; };
+		7DE31A8C1C52DD5E00047EE0 /* MessageTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageTableCell.m; sourceTree = "<group>"; };
+		7DE31A8E1C52DDA700047EE0 /* MyMessageTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyMessageTableCell.h; sourceTree = "<group>"; };
+		7DE31A8F1C52DDA700047EE0 /* MyMessageTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyMessageTableCell.m; sourceTree = "<group>"; };
+		7DE31A951C52E1D000047EE0 /* EventObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventObject.h; sourceTree = "<group>"; };
+		7DE31A961C52E1D000047EE0 /* EventObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventObject.m; sourceTree = "<group>"; };
+		7DE31A981C52E44C00047EE0 /* NewMessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewMessageEvent.h; sourceTree = "<group>"; };
+		7DE31A991C52E44C00047EE0 /* NewMessageEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewMessageEvent.m; sourceTree = "<group>"; };
+		7DE31A9B1C52E81B00047EE0 /* ConnectionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionEvent.h; sourceTree = "<group>"; };
+		7DE31A9C1C52E81B00047EE0 /* ConnectionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionEvent.m; sourceTree = "<group>"; };
+		7DE31A9E1C52EB4100047EE0 /* BaseEventTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseEventTableCell.h; sourceTree = "<group>"; };
+		7DE31A9F1C52EB4100047EE0 /* BaseEventTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseEventTableCell.m; sourceTree = "<group>"; };
+		7DEA54571C4D243100506713 /* Chat+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Chat+Private.h"; sourceTree = "<group>"; };
+		7DEA54581C4D243100506713 /* Chat+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Chat+Private.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +248,23 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		7D3EB3121C4D7DCE007825E5 /* 3rdParty */ = {
+			isa = PBXGroup;
+			children = (
+				7D3EB3131C4D7DCE007825E5 /* GCDMulticastDelegate */,
+			);
+			path = 3rdParty;
+			sourceTree = "<group>";
+		};
+		7D3EB3131C4D7DCE007825E5 /* GCDMulticastDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				7D3EB3141C4D7DCE007825E5 /* GCDMulticastDelegate.h */,
+				7D3EB3151C4D7DCE007825E5 /* GCDMulticastDelegate.m */,
+			);
+			path = GCDMulticastDelegate;
+			sourceTree = "<group>";
+		};
 		7D5284861C3429F200775DD1 /* YRBluetoothDemo */ = {
 			isa = PBXGroup;
 			children = (
@@ -227,6 +280,7 @@
 			children = (
 				7D5284881C3429F200775DD1 /* AppDelegate.h */,
 				7D5284891C3429F200775DD1 /* AppDelegate.m */,
+				7D3EB3121C4D7DCE007825E5 /* 3rdParty */,
 				7D5285451C36F60700775DD1 /* Auxiliary */,
 				7D52849B1C342A9600775DD1 /* Components */,
 				7D5285341C36A2C100775DD1 /* Model */,
@@ -508,17 +562,14 @@
 		7D5285341C36A2C100775DD1 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				7DE31A721C51A9DF00047EE0 /* API */,
+				7DE31A941C52E17900047EE0 /* Events */,
+				7DE31A7D1C51A9DF00047EE0 /* Sessions */,
 				7D5285501C39976800775DD1 /* Internal */,
-				7D52853B1C36AB1100775DD1 /* ChatSession.h */,
-				7D52853C1C36AB1100775DD1 /* ChatSession.m */,
-				7D5285351C36A2E300775DD1 /* ClientChatSession.h */,
-				7D5285361C36A2E300775DD1 /* ClientChatSession.m */,
-				7D5285381C36A7FB00775DD1 /* ServerChatSession.h */,
-				7D5285391C36A7FB00775DD1 /* ServerChatSession.m */,
-				7D5285471C36F70A00775DD1 /* Chat.h */,
-				7D5285481C36F70A00775DD1 /* Chat.m */,
 				7D52854A1C36F7AF00775DD1 /* User.h */,
 				7D52854B1C36F7AF00775DD1 /* User.m */,
+				7D5285471C36F70A00775DD1 /* Chat.h */,
+				7D5285481C36F70A00775DD1 /* Chat.m */,
 				7D52854D1C36F84800775DD1 /* Message.h */,
 				7D52854E1C36F84800775DD1 /* Message.m */,
 				7D5285541C399C5700775DD1 /* UsersPool.h */,
@@ -540,6 +591,8 @@
 			children = (
 				7D5285511C39977700775DD1 /* User+Private.h */,
 				7D5285521C39977700775DD1 /* User+Private.m */,
+				7DEA54571C4D243100506713 /* Chat+Private.h */,
+				7DEA54581C4D243100506713 /* Chat+Private.m */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -547,10 +600,57 @@
 		7DAF80B81C3AC9B200C62F86 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				7DE31A9E1C52EB4100047EE0 /* BaseEventTableCell.h */,
+				7DE31A9F1C52EB4100047EE0 /* BaseEventTableCell.m */,
 				7DAF80B91C3AC9D300C62F86 /* InformativeTableCell.h */,
 				7DAF80BA1C3AC9D300C62F86 /* InformativeTableCell.m */,
+				7DE31A8B1C52DD5E00047EE0 /* MessageTableCell.h */,
+				7DE31A8C1C52DD5E00047EE0 /* MessageTableCell.m */,
+				7DE31A8E1C52DDA700047EE0 /* MyMessageTableCell.h */,
+				7DE31A8F1C52DDA700047EE0 /* MyMessageTableCell.m */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		7DE31A721C51A9DF00047EE0 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				7DE31A731C51A9DF00047EE0 /* APIObject.h */,
+				7DE31A741C51A9DF00047EE0 /* APIObject.m */,
+				7DE31A771C51A9DF00047EE0 /* SubscribeRequest.h */,
+				7DE31A781C51A9DF00047EE0 /* SubscribeRequest.m */,
+				7DE31A791C51A9DF00047EE0 /* SubscribeResponse.h */,
+				7DE31A7A1C51A9DF00047EE0 /* SubscribeResponse.m */,
+				7DE31A7B1C51A9DF00047EE0 /* UserConnection.h */,
+				7DE31A7C1C51A9DF00047EE0 /* UserConnection.m */,
+				7DE31A751C51A9DF00047EE0 /* NewMessage.h */,
+				7DE31A761C51A9DF00047EE0 /* NewMessage.m */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		7DE31A7D1C51A9DF00047EE0 /* Sessions */ = {
+			isa = PBXGroup;
+			children = (
+				7DE31A7E1C51A9DF00047EE0 /* ClientChatSession.h */,
+				7DE31A7F1C51A9DF00047EE0 /* ClientChatSession.m */,
+				7DE31A801C51A9DF00047EE0 /* ServerChatSession.h */,
+				7DE31A811C51A9DF00047EE0 /* ServerChatSession.m */,
+			);
+			path = Sessions;
+			sourceTree = "<group>";
+		};
+		7DE31A941C52E17900047EE0 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				7DE31A951C52E1D000047EE0 /* EventObject.h */,
+				7DE31A961C52E1D000047EE0 /* EventObject.m */,
+				7DE31A9B1C52E81B00047EE0 /* ConnectionEvent.h */,
+				7DE31A9C1C52E81B00047EE0 /* ConnectionEvent.m */,
+				7DE31A981C52E44C00047EE0 /* NewMessageEvent.h */,
+				7DE31A991C52E44C00047EE0 /* NewMessageEvent.m */,
+			);
+			path = Events;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -625,12 +725,15 @@
 			files = (
 				7D52852E1C342AEB00775DD1 /* _YRBTConnectionOperation.m in Sources */,
 				7D5285491C36F70A00775DD1 /* Chat.m in Sources */,
+				7DE31A861C51A9DF00047EE0 /* UserConnection.m in Sources */,
 				7D5285171C342AEB00775DD1 /* YRBTPeer+Private.m in Sources */,
 				7D52850C1C342AEB00775DD1 /* CoreBluetooth+YRBTPrivate.m in Sources */,
+				7D3EB3161C4D7DCE007825E5 /* GCDMulticastDelegate.m in Sources */,
 				7D5285291C342AEB00775DD1 /* _YRBTOperationNameChunk.m in Sources */,
 				7D52851B1C342AEB00775DD1 /* _YRBTRegisteredCallbacks.m in Sources */,
+				7DE31A851C51A9DF00047EE0 /* SubscribeResponse.m in Sources */,
 				7D5285251C342AEB00775DD1 /* _YRBTChunk.m in Sources */,
-				7D5285371C36A2E300775DD1 /* ClientChatSession.m in Sources */,
+				7DE31A8D1C52DD5E00047EE0 /* MessageTableCell.m in Sources */,
 				7D52852D1C342AEB00775DD1 /* _YRBTConnectionService.m in Sources */,
 				7D5285271C342AEB00775DD1 /* _YRBTInternalChunk.m in Sources */,
 				7D5285211C342AEB00775DD1 /* YRBTMessage.m in Sources */,
@@ -638,12 +741,18 @@
 				7D5285401C36ABF000775DD1 /* ClientChatViewController.m in Sources */,
 				7D52849A1C3429F200775DD1 /* main.m in Sources */,
 				7D52850D1C342AEB00775DD1 /* _YRBTDeviceStorage.m in Sources */,
+				7DE31AA01C52EB4100047EE0 /* BaseEventTableCell.m in Sources */,
+				7DE31A831C51A9DF00047EE0 /* NewMessage.m in Sources */,
+				7DEA54591C4D243100506713 /* Chat+Private.m in Sources */,
 				7D5285201C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.m in Sources */,
 				7D52849F1C342A9D00775DD1 /* HomeViewController.m in Sources */,
 				7D5285121C342AEB00775DD1 /* YRBTPeer.m in Sources */,
 				7D5285111C342AEB00775DD1 /* YRBTClient.m in Sources */,
 				7D5285281C342AEB00775DD1 /* _YRBTMessageChunk.m in Sources */,
 				7D5285301C342AEB00775DD1 /* _YRBTErrorService.m in Sources */,
+				7DE31A841C51A9DF00047EE0 /* SubscribeRequest.m in Sources */,
+				7DE31A971C52E1D000047EE0 /* EventObject.m in Sources */,
+				7DE31A9A1C52E44C00047EE0 /* NewMessageEvent.m in Sources */,
 				7D52851D1C342AEB00775DD1 /* _YRBTChunkGenerator.m in Sources */,
 				7D5285191C342AEB00775DD1 /* YRBTRemoteMessageRequest+Private.m in Sources */,
 				7D5285231C342AEB00775DD1 /* _YRBTChunksContainer.m in Sources */,
@@ -654,7 +763,9 @@
 				7D5285181C342AEB00775DD1 /* YRBTRemoteDevice+Private.m in Sources */,
 				7D5285101C342AEB00775DD1 /* YRBTServerDevice.m in Sources */,
 				7D5285161C342AEB00775DD1 /* YRBTMessageOperation+Private.m in Sources */,
+				7DE31A9D1C52E81B00047EE0 /* ConnectionEvent.m in Sources */,
 				7D5285241C342AEB00775DD1 /* _YRBTContainerPriorityQueue.m in Sources */,
+				7DE31A871C51A9DF00047EE0 /* ClientChatSession.m in Sources */,
 				7D5285151C342AEB00775DD1 /* YRBTMessage+Private.m in Sources */,
 				7D5285311C342AEB00775DD1 /* _YRBTScanningService.m in Sources */,
 				7D5285561C399C5700775DD1 /* UsersPool.m in Sources */,
@@ -669,12 +780,13 @@
 				7D52850F1C342AEB00775DD1 /* YRBTRemoteDevice.m in Sources */,
 				7D5285221C342AEB00775DD1 /* _YRBTChunkProvider.m in Sources */,
 				7D52851E1C342AEB00775DD1 /* _YRBTChunkParser.m in Sources */,
+				7DE31A881C51A9DF00047EE0 /* ServerChatSession.m in Sources */,
 				7D52850E1C342AEB00775DD1 /* YRBTClientDevice.m in Sources */,
 				7D5285141C342AEB00775DD1 /* YRBTClientDevice+Private.m in Sources */,
-				7D52853A1C36A7FB00775DD1 /* ServerChatSession.m in Sources */,
+				7DE31A821C51A9DF00047EE0 /* APIObject.m in Sources */,
 				7D52852F1C342AEB00775DD1 /* _YRBTConnectionOperationStack.m in Sources */,
-				7D52853D1C36AB1100775DD1 /* ChatSession.m in Sources */,
 				7DAF80BB1C3AC9D300C62F86 /* InformativeTableCell.m in Sources */,
+				7DE31A901C52DDA700047EE0 /* MyMessageTableCell.m in Sources */,
 				7D52851F1C342AEB00775DD1 /* _YRBTMessageBuffer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
