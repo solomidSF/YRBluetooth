@@ -103,54 +103,54 @@
                                             <outlet property="_informativeLabel" destination="iv7-Xp-aD8" id="dJi-Ni-BTS"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageTableCell" rowHeight="37" id="QsZ-Gg-HZ3" customClass="MessageTableCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MessageTableCell" rowHeight="37" id="Wqx-KJ-MxF" customClass="MessageTableCell">
                                         <rect key="frame" x="0.0" y="119" width="320" height="37"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="QsZ-Gg-HZ3" id="I7k-Vw-nr7">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Wqx-KJ-MxF" id="ATw-hS-N6p">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="37"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="[Name]" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e5N-WW-ItB">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="[Name]" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NnM-fa-rDZ">
                                                     <rect key="frame" x="10" y="10" width="47" height="19.5"/>
                                                     <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="14"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="[Message]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8LA-zc-rNm">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="[Message]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hck-DX-ujw">
                                                     <rect key="frame" x="72" y="11" width="61" height="18"/>
                                                     <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="13"/>
-                                                    <color key="textColor" red="0.039215686274509803" green="0.039215686274509803" blue="0.039215686274509803" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" red="0.039215686270000001" green="0.039215686270000001" blue="0.039215686270000001" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="8LA-zc-rNm" secondAttribute="bottom" priority="750" constant="10" id="DIe-IX-IGY"/>
-                                                <constraint firstItem="8LA-zc-rNm" firstAttribute="leading" secondItem="e5N-WW-ItB" secondAttribute="trailing" constant="15" id="FiY-uK-Dkn"/>
-                                                <constraint firstItem="8LA-zc-rNm" firstAttribute="width" relation="lessThanOrEqual" secondItem="I7k-Vw-nr7" secondAttribute="width" multiplier="240:320" id="Odp-hT-SjV"/>
-                                                <constraint firstItem="e5N-WW-ItB" firstAttribute="leading" secondItem="I7k-Vw-nr7" secondAttribute="centerX" multiplier="10:160" id="aQS-E6-SPr"/>
-                                                <constraint firstItem="e5N-WW-ItB" firstAttribute="top" secondItem="I7k-Vw-nr7" secondAttribute="top" constant="10" id="dtn-bs-eqV"/>
-                                                <constraint firstItem="8LA-zc-rNm" firstAttribute="firstBaseline" secondItem="e5N-WW-ItB" secondAttribute="baseline" id="gZ6-zw-Ee8"/>
+                                                <constraint firstItem="hck-DX-ujw" firstAttribute="leading" secondItem="NnM-fa-rDZ" secondAttribute="trailing" constant="15" id="5tR-hX-Kgo"/>
+                                                <constraint firstItem="hck-DX-ujw" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="ATw-hS-N6p" secondAttribute="trailing" constant="-10" id="Bdf-hn-hT2"/>
+                                                <constraint firstItem="NnM-fa-rDZ" firstAttribute="leading" secondItem="ATw-hS-N6p" secondAttribute="centerX" multiplier="10:160" id="Ps7-fw-Gsi"/>
+                                                <constraint firstItem="hck-DX-ujw" firstAttribute="firstBaseline" secondItem="NnM-fa-rDZ" secondAttribute="baseline" id="SUm-fp-VDS"/>
+                                                <constraint firstItem="NnM-fa-rDZ" firstAttribute="top" secondItem="ATw-hS-N6p" secondAttribute="top" constant="10" id="hSs-5R-95T"/>
+                                                <constraint firstAttribute="bottom" secondItem="hck-DX-ujw" secondAttribute="bottom" priority="750" constant="10" id="nLr-Sv-uOq"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="_messageLabel" destination="8LA-zc-rNm" id="WbQ-rN-3Kk"/>
-                                            <outlet property="_nameLabel" destination="e5N-WW-ItB" id="rX3-pf-iVw"/>
+                                            <outlet property="_messageLabel" destination="hck-DX-ujw" id="Hkm-4F-fHx"/>
+                                            <outlet property="_nameLabel" destination="NnM-fa-rDZ" id="ETo-bm-qPc"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyMessageTableCell" rowHeight="37" id="tQt-Tw-IxI" customClass="MyMessageTableCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyMessageTableCell" rowHeight="37" id="hJm-RJ-tA6" customClass="MyMessageTableCell">
                                         <rect key="frame" x="0.0" y="156" width="320" height="37"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tQt-Tw-IxI" id="DId-CA-UNb">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="hJm-RJ-tA6" id="dNx-vX-2W9">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="37"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="[Name]" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FlA-tI-OvK">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="[Name]" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pK5-dz-sVk">
                                                     <rect key="frame" x="263" y="10" width="47" height="19.5"/>
                                                     <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="14"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="[Message]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Tf-Za-K3c">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalCompressionResistancePriority="751" text="[Message]" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xUb-40-MVn">
                                                     <rect key="frame" x="187" y="11" width="61" height="18"/>
                                                     <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="13"/>
                                                     <color key="textColor" red="0.039215686270000001" green="0.039215686270000001" blue="0.039215686270000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -158,17 +158,17 @@
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="6Tf-Za-K3c" firstAttribute="trailing" secondItem="FlA-tI-OvK" secondAttribute="leading" constant="-15" id="1fs-bf-5sY"/>
-                                                <constraint firstItem="FlA-tI-OvK" firstAttribute="trailing" secondItem="DId-CA-UNb" secondAttribute="centerX" multiplier="310:160" id="3PF-Mu-QmP"/>
-                                                <constraint firstItem="6Tf-Za-K3c" firstAttribute="width" relation="lessThanOrEqual" secondItem="DId-CA-UNb" secondAttribute="width" multiplier="240:320" id="6VG-xv-iOX"/>
-                                                <constraint firstAttribute="bottom" secondItem="6Tf-Za-K3c" secondAttribute="bottom" priority="750" constant="10" id="JVl-eA-Moy"/>
-                                                <constraint firstItem="6Tf-Za-K3c" firstAttribute="firstBaseline" secondItem="FlA-tI-OvK" secondAttribute="baseline" id="QfP-O2-llo"/>
-                                                <constraint firstItem="FlA-tI-OvK" firstAttribute="top" secondItem="DId-CA-UNb" secondAttribute="top" constant="10" id="tVZ-Gw-nyv"/>
+                                                <constraint firstAttribute="bottom" secondItem="xUb-40-MVn" secondAttribute="bottom" priority="750" constant="10" id="0Vu-aM-mJH"/>
+                                                <constraint firstItem="xUb-40-MVn" firstAttribute="trailing" secondItem="pK5-dz-sVk" secondAttribute="leading" constant="-15" id="76u-Tk-9oV"/>
+                                                <constraint firstItem="xUb-40-MVn" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="dNx-vX-2W9" secondAttribute="leading" constant="10" id="RvA-ae-EAV"/>
+                                                <constraint firstItem="xUb-40-MVn" firstAttribute="firstBaseline" secondItem="pK5-dz-sVk" secondAttribute="baseline" id="Z5I-4D-va6"/>
+                                                <constraint firstItem="pK5-dz-sVk" firstAttribute="trailing" secondItem="dNx-vX-2W9" secondAttribute="centerX" multiplier="310:160" id="ZBa-TR-wYM"/>
+                                                <constraint firstItem="pK5-dz-sVk" firstAttribute="top" secondItem="dNx-vX-2W9" secondAttribute="top" constant="10" id="x4k-PS-nIi"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="_messageLabel" destination="6Tf-Za-K3c" id="jAo-2g-XUF"/>
-                                            <outlet property="_nameLabel" destination="FlA-tI-OvK" id="7Ml-Yu-x5d"/>
+                                            <outlet property="_messageLabel" destination="xUb-40-MVn" id="w6j-kp-Qph"/>
+                                            <outlet property="_nameLabel" destination="pK5-dz-sVk" id="Cqt-Gb-fNc"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
