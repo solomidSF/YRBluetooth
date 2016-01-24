@@ -19,6 +19,6 @@
 @property (nonatomic, readonly, weak) Chat *chat;
 @property (nonatomic, readonly) Message *message;
 
-- (instancetype)initWithChat:(Chat *)chat message:(Message *)message timestamp:(NSTimeInterval)timestamp;
+- (instancetype)initWithChat:(__kindof Chat *)chat message:(Message *)message timestamp:(NSTimeInterval)timestamp;
 
 @end

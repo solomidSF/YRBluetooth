@@ -298,7 +298,7 @@ TimeoutDelegate
         [_centralManager cancelPeripheralConnection:peripheral];
     }
 
-    for (CBPeripheral *peripheral in _connectedDevices) {
+    for (CBPeripheral *peripheral in [_connectedDevices valueForKey:@"peripheral"]) {
         [_centralManager cancelPeripheralConnection:peripheral];
     }
 

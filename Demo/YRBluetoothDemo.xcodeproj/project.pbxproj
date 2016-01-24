@@ -60,6 +60,7 @@
 		7D52854F1C36F84800775DD1 /* Message.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D52854E1C36F84800775DD1 /* Message.m */; };
 		7D5285531C39977700775DD1 /* User+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285521C39977700775DD1 /* User+Private.m */; };
 		7D5285561C399C5700775DD1 /* UsersPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5285551C399C5700775DD1 /* UsersPool.m */; };
+		7D7A9B711C5546F3000A0833 /* ding.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 7D7A9B701C5546F3000A0833 /* ding.mp3 */; };
 		7DAF80BB1C3AC9D300C62F86 /* InformativeTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DAF80BA1C3AC9D300C62F86 /* InformativeTableCell.m */; };
 		7DE31A821C51A9DF00047EE0 /* APIObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A741C51A9DF00047EE0 /* APIObject.m */; };
 		7DE31A831C51A9DF00047EE0 /* NewMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A761C51A9DF00047EE0 /* NewMessage.m */; };
@@ -74,6 +75,10 @@
 		7DE31A9A1C52E44C00047EE0 /* NewMessageEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A991C52E44C00047EE0 /* NewMessageEvent.m */; };
 		7DE31A9D1C52E81B00047EE0 /* ConnectionEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A9C1C52E81B00047EE0 /* ConnectionEvent.m */; };
 		7DE31AA01C52EB4100047EE0 /* BaseEventTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31A9F1C52EB4100047EE0 /* BaseEventTableCell.m */; };
+		7DE31AA31C52F55700047EE0 /* SearchChatsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31AA21C52F55700047EE0 /* SearchChatsViewController.m */; };
+		7DE31AA61C52F85C00047EE0 /* ChatTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31AA51C52F85C00047EE0 /* ChatTableCell.m */; };
+		7DE31AA91C55088F00047EE0 /* ServerChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31AA81C55088F00047EE0 /* ServerChat.m */; };
+		7DE31AAC1C550A0800047EE0 /* ClientChat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31AAB1C550A0800047EE0 /* ClientChat.m */; };
 		7DEA54591C4D243100506713 /* Chat+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DEA54581C4D243100506713 /* Chat+Private.m */; };
 /* End PBXBuildFile section */
 
@@ -189,6 +194,7 @@
 		7D5285521C39977700775DD1 /* User+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "User+Private.m"; sourceTree = "<group>"; };
 		7D5285541C399C5700775DD1 /* UsersPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsersPool.h; sourceTree = "<group>"; };
 		7D5285551C399C5700775DD1 /* UsersPool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsersPool.m; sourceTree = "<group>"; };
+		7D7A9B701C5546F3000A0833 /* ding.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ding.mp3; sourceTree = "<group>"; };
 		7DAF80B91C3AC9D300C62F86 /* InformativeTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InformativeTableCell.h; sourceTree = "<group>"; };
 		7DAF80BA1C3AC9D300C62F86 /* InformativeTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InformativeTableCell.m; sourceTree = "<group>"; };
 		7DE31A731C51A9DF00047EE0 /* APIObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIObject.h; sourceTree = "<group>"; };
@@ -217,6 +223,14 @@
 		7DE31A9C1C52E81B00047EE0 /* ConnectionEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionEvent.m; sourceTree = "<group>"; };
 		7DE31A9E1C52EB4100047EE0 /* BaseEventTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseEventTableCell.h; sourceTree = "<group>"; };
 		7DE31A9F1C52EB4100047EE0 /* BaseEventTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseEventTableCell.m; sourceTree = "<group>"; };
+		7DE31AA11C52F55700047EE0 /* SearchChatsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchChatsViewController.h; sourceTree = "<group>"; };
+		7DE31AA21C52F55700047EE0 /* SearchChatsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchChatsViewController.m; sourceTree = "<group>"; };
+		7DE31AA41C52F85C00047EE0 /* ChatTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatTableCell.h; sourceTree = "<group>"; };
+		7DE31AA51C52F85C00047EE0 /* ChatTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatTableCell.m; sourceTree = "<group>"; };
+		7DE31AA71C55088F00047EE0 /* ServerChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerChat.h; sourceTree = "<group>"; };
+		7DE31AA81C55088F00047EE0 /* ServerChat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerChat.m; sourceTree = "<group>"; };
+		7DE31AAA1C550A0800047EE0 /* ClientChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientChat.h; sourceTree = "<group>"; };
+		7DE31AAB1C550A0800047EE0 /* ClientChat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientChat.m; sourceTree = "<group>"; };
 		7DEA54571C4D243100506713 /* Chat+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Chat+Private.h"; sourceTree = "<group>"; };
 		7DEA54581C4D243100506713 /* Chat+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Chat+Private.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -294,6 +308,7 @@
 			isa = PBXGroup;
 			children = (
 				7D52848D1C3429F200775DD1 /* Assets.xcassets */,
+				7D7A9B6F1C5546F3000A0833 /* Sounds */,
 				7D52848E1C3429F200775DD1 /* Storyboards */,
 			);
 			path = Resources;
@@ -330,6 +345,8 @@
 			children = (
 				7D52849D1C342A9D00775DD1 /* HomeViewController.h */,
 				7D52849E1C342A9D00775DD1 /* HomeViewController.m */,
+				7DE31AA11C52F55700047EE0 /* SearchChatsViewController.h */,
+				7DE31AA21C52F55700047EE0 /* SearchChatsViewController.m */,
 				7D52853E1C36ABF000775DD1 /* ClientChatViewController.h */,
 				7D52853F1C36ABF000775DD1 /* ClientChatViewController.m */,
 				7D5285411C36ABFD00775DD1 /* ServerChatViewController.h */,
@@ -466,12 +483,12 @@
 			children = (
 				7D5284E11C342AEB00775DD1 /* _YRBTChunk.h */,
 				7D5284E21C342AEB00775DD1 /* _YRBTChunk.m */,
+				7D5284E71C342AEB00775DD1 /* _YRBTMessageChunk.h */,
+				7D5284E81C342AEB00775DD1 /* _YRBTMessageChunk.m */,
 				7D5284E31C342AEB00775DD1 /* _YRBTHeaderChunk.h */,
 				7D5284E41C342AEB00775DD1 /* _YRBTHeaderChunk.m */,
 				7D5284E51C342AEB00775DD1 /* _YRBTInternalChunk.h */,
 				7D5284E61C342AEB00775DD1 /* _YRBTInternalChunk.m */,
-				7D5284E71C342AEB00775DD1 /* _YRBTMessageChunk.h */,
-				7D5284E81C342AEB00775DD1 /* _YRBTMessageChunk.m */,
 				7D5284E91C342AEB00775DD1 /* _YRBTOperationNameChunk.h */,
 				7D5284EA1C342AEB00775DD1 /* _YRBTOperationNameChunk.m */,
 				7D5284EB1C342AEB00775DD1 /* _YRBTRegularMessageChunk.h */,
@@ -570,6 +587,10 @@
 				7D52854B1C36F7AF00775DD1 /* User.m */,
 				7D5285471C36F70A00775DD1 /* Chat.h */,
 				7D5285481C36F70A00775DD1 /* Chat.m */,
+				7DE31AAA1C550A0800047EE0 /* ClientChat.h */,
+				7DE31AAB1C550A0800047EE0 /* ClientChat.m */,
+				7DE31AA71C55088F00047EE0 /* ServerChat.h */,
+				7DE31AA81C55088F00047EE0 /* ServerChat.m */,
 				7D52854D1C36F84800775DD1 /* Message.h */,
 				7D52854E1C36F84800775DD1 /* Message.m */,
 				7D5285541C399C5700775DD1 /* UsersPool.h */,
@@ -597,9 +618,19 @@
 			path = Internal;
 			sourceTree = "<group>";
 		};
+		7D7A9B6F1C5546F3000A0833 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				7D7A9B701C5546F3000A0833 /* ding.mp3 */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		7DAF80B81C3AC9B200C62F86 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				7DE31AA41C52F85C00047EE0 /* ChatTableCell.h */,
+				7DE31AA51C52F85C00047EE0 /* ChatTableCell.m */,
 				7DE31A9E1C52EB4100047EE0 /* BaseEventTableCell.h */,
 				7DE31A9F1C52EB4100047EE0 /* BaseEventTableCell.m */,
 				7DAF80B91C3AC9D300C62F86 /* InformativeTableCell.h */,
@@ -684,6 +715,12 @@
 				TargetAttributes = {
 					7D365FC11C33FC2900E29ECA = {
 						CreatedOnToolsVersion = 7.2;
+						DevelopmentTeam = VTM47V39G2;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -710,6 +747,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D7A9B711C5546F3000A0833 /* ding.mp3 in Resources */,
 				7D5284981C3429F200775DD1 /* Main.storyboard in Resources */,
 				7D5284961C3429F200775DD1 /* Assets.xcassets in Resources */,
 				7D5284971C3429F200775DD1 /* LaunchScreen.storyboard in Resources */,
@@ -733,9 +771,11 @@
 				7D52851B1C342AEB00775DD1 /* _YRBTRegisteredCallbacks.m in Sources */,
 				7DE31A851C51A9DF00047EE0 /* SubscribeResponse.m in Sources */,
 				7D5285251C342AEB00775DD1 /* _YRBTChunk.m in Sources */,
+				7DE31AA61C52F85C00047EE0 /* ChatTableCell.m in Sources */,
 				7DE31A8D1C52DD5E00047EE0 /* MessageTableCell.m in Sources */,
 				7D52852D1C342AEB00775DD1 /* _YRBTConnectionService.m in Sources */,
 				7D5285271C342AEB00775DD1 /* _YRBTInternalChunk.m in Sources */,
+				7DE31AA91C55088F00047EE0 /* ServerChat.m in Sources */,
 				7D5285211C342AEB00775DD1 /* YRBTMessage.m in Sources */,
 				7D52852A1C342AEB00775DD1 /* _YRBTRegularMessageChunk.m in Sources */,
 				7D5285401C36ABF000775DD1 /* ClientChatViewController.m in Sources */,
@@ -743,6 +783,7 @@
 				7D52850D1C342AEB00775DD1 /* _YRBTDeviceStorage.m in Sources */,
 				7DE31AA01C52EB4100047EE0 /* BaseEventTableCell.m in Sources */,
 				7DE31A831C51A9DF00047EE0 /* NewMessage.m in Sources */,
+				7DE31AA31C52F55700047EE0 /* SearchChatsViewController.m in Sources */,
 				7DEA54591C4D243100506713 /* Chat+Private.m in Sources */,
 				7D5285201C342AEB00775DD1 /* _YRBTRemoteRequestCallbacks.m in Sources */,
 				7D52849F1C342A9D00775DD1 /* HomeViewController.m in Sources */,
@@ -766,6 +807,7 @@
 				7DE31A9D1C52E81B00047EE0 /* ConnectionEvent.m in Sources */,
 				7D5285241C342AEB00775DD1 /* _YRBTContainerPriorityQueue.m in Sources */,
 				7DE31A871C51A9DF00047EE0 /* ClientChatSession.m in Sources */,
+				7DE31AAC1C550A0800047EE0 /* ClientChat.m in Sources */,
 				7D5285151C342AEB00775DD1 /* YRBTMessage+Private.m in Sources */,
 				7D5285311C342AEB00775DD1 /* _YRBTScanningService.m in Sources */,
 				7D5285561C399C5700775DD1 /* UsersPool.m in Sources */,
@@ -879,11 +921,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/YRBluetoothDemo/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = solomidSF.YRBluetoothDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -892,11 +937,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Brand Assets";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "$(SRCROOT)/YRBluetoothDemo/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = solomidSF.YRBluetoothDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

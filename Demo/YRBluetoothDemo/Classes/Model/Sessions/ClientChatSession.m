@@ -35,7 +35,7 @@ static NSString *const kUserEventOperation = @"UET";
 @implementation ClientChatSession {
     YRBTClient *_client;
     
-    NSMutableArray <Chat *> *_savedChats;
+    NSMutableArray <ClientChat *> *_savedChats;
     
     GCDMulticastDelegate <ClientChatSessionObserver> *_observers;
 }
@@ -51,6 +51,8 @@ static NSString *const kUserEventOperation = @"UET";
         _nickname = nickname;
         
         _client = [[YRBTClient alloc] initWithAppID:kChatAppID peerName:self.nickname];
+        
+        _observers = (GCDMulticastDelegate <ClientChatSessionObserver> *)[GCDMulticastDelegate new];
         
         [self setupClient];
     }
@@ -80,37 +82,58 @@ static NSString *const kUserEventOperation = @"UET";
 
 #pragma mark - Connecting
 
-- (void)connectToChat:(Chat *)chat
+- (void)connectToChat:(ClientChat *)chat
           withSuccess:(ChatConnectionSuccessCallback)success
               failure:(ChatConnectionFailureCallback)failure {
+    
+    if (!chat.device.connectionStateCallback) {
+        __typeof(self) __weak weakSelf = self;
+        __typeof(ClientChat *) __weak weakChat = chat;
+        
+        chat.device.connectionStateCallback = ^(YRBTServerDevice *device, YRBTConnectionState newState) {
+            __typeof(weakSelf) __strong strongSelf = weakSelf;
+            __typeof(ClientChat *) __strong strongChat = weakChat;
+            
+            if (strongSelf && strongChat) {
+                [strongSelf->_observers chatSession:strongSelf chatStateDidUpdate:strongChat];
+            }
+        };
+    }
+    
     [_client connectToDevice:chat.device withSuccess:^(YRBTServerDevice *device) {
         SubscribeRequest *request = [[SubscribeRequest alloc] initWithName:_client.peerName];
         
-        [_client sendMessage:request.rawMessage toServer:device operationName:kSubscribeOperation successSend:^(YRBTMessageOperation *operation) {
-            NSLog(@"Did send subscribe request! %@", operation);
-        } response:^(YRBTMessageOperation *operation, YRBTMessage *receivedMessage) {
-            NSLog(@"Received subscibe request response: %@. Operation: %@", receivedMessage, operation);
-            SubscribeResponse *response = [[SubscribeResponse alloc] initWithMessage:receivedMessage];
-            
-            chat.me = response.subscribedUser;
-            chat.creator = response.creator;
-            chat.mutableMembers = [response.otherUsers mutableCopy];
-            
-            // In case of reconnection clear all existing messages.
-            [chat.mutableMessages removeAllObjects];
-            
-            !success ? : success(chat, response.subscribedUser);
-            
-            [_observers chatSession:self didConnectToChat:chat];
-        } sendingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
-            NSLog(@"SUB REQ Progress: %d/%d", currentBytes, totalBytes);
-        } receivingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
-            NSLog(@"SUB RESP Progress: %d/%d", currentBytes, totalBytes);
-        } failure:^(YRBTMessageOperation *operation, NSError *error) {
-            !failure ? : failure(error);
-
-            [_observers chatSession:self didFailToConnectToChat:chat withError:error];
-        }];
+        [_client sendMessage:request.rawMessage
+                    toServer:device
+               operationName:kSubscribeOperation
+                 successSend:^(YRBTMessageOperation *operation) {
+                     NSLog(@"Did send subscribe request! %@", operation);
+                 } response:^(YRBTMessageOperation *operation, YRBTMessage *receivedMessage) {
+                     NSLog(@"Received subscibe request response: %@. Operation: %@", [receivedMessage dictionaryValue], operation);
+                     SubscribeResponse *response = [[SubscribeResponse alloc] initWithMessage:receivedMessage];
+                     
+                     chat.me = response.subscribedUser;
+                     chat.creator = response.creator;
+                     chat.mutableMembers = response.otherUsers ? [response.otherUsers mutableCopy] : [NSMutableArray new];
+                     
+                     // In case of reconnection clear all existing messages.
+                     [chat.mutableMessages removeAllObjects];
+                     
+                     !success ? : success(chat, response.subscribedUser);
+                     
+                     [_observers chatSession:self didConnectToChat:chat];
+                 } sendingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
+                     NSLog(@"SUB REQ Progress: %d/%d", currentBytes, totalBytes);
+                 } receivingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
+                     NSLog(@"SUB RESP Progress: %d/%d", currentBytes, totalBytes);
+                 } failure:^(YRBTMessageOperation *operation, NSError *error) {
+                     [self disconnectFromChat:chat];
+                     
+                     !failure ? : failure(error);
+                     
+                     [_observers chatSession:self didFailToConnectToChat:chat withError:error];
+                 }];
+        
     } failure:^(YRBTRemoteDevice *device, NSError *error) {
         !failure ? : failure(error);
         
@@ -118,15 +141,15 @@ static NSString *const kUserEventOperation = @"UET";
     }];
 }
 
-- (void)disconnectFromChat:(Chat *)chat {
+- (void)disconnectFromChat:(ClientChat *)chat {
     [_client disconnectFromDevice:chat.device];
 }
 
 #pragma mark - Sending
 
 - (YRBTMessageOperation *)sendText:(NSString *)text
-                            inChat:(Chat *)chat
-                       withSuccess:(YRBTResponseCallback)success
+                            inChat:(ClientChat *)chat
+                       withSuccess:(ChatSuccessSendCallback)success
                            failure:(YRBTOperationFailureCallback)failure {
     // TODO: Don't return message operation
     YRBTMessage *message = [YRBTMessage messageWithString:text];
@@ -136,27 +159,39 @@ static NSString *const kUserEventOperation = @"UET";
                   operationName:kMessageOperation
                     successSend:^(YRBTMessageOperation *operation) {
                         NSLog(@"Did send!");
-                    } response:success
-                sendingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
-                    NSLog(@"MSG Progress: %d/%d", currentBytes, totalBytes);
-                } receivingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
-                    NSLog(@"RCV Progress: %d/%d", currentBytes, totalBytes);
-                } failure:failure];
+                    } response:^(YRBTMessageOperation *operation, YRBTMessage *receivedMessage) {
+                        NewMessage *event = [[NewMessage alloc] initWithMessage:receivedMessage];
+                        User *sender = chat.me;
+                        
+                        Message *newMessage = [[Message alloc] initWithChat:chat
+                                                                     sender:sender
+                                                                  timestamp:event.timestamp
+                                                                messageText:event.messageText];
+                        
+                        [_observers chatSession:self didSendMessage:newMessage inChat:chat];
+                        
+                        !success ? : success(newMessage);
+                    } sendingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
+                        NSLog(@"MSG Progress: %d/%d", currentBytes, totalBytes);
+                    } receivingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
+                        NSLog(@"RCV Progress: %d/%d", currentBytes, totalBytes);
+                    } failure:failure];
 }
 
 #pragma mark - Observing
 
-- (void)addObserver:(id<ClientChatSessionObserver>)observer {
+- (void)addObserver:(id <ClientChatSessionObserver>)observer {
     [_observers addDelegate:observer delegateQueue:dispatch_get_main_queue()];
 }
 
-- (void)removeObserver:(id<ClientChatSessionObserver>)observer {
+- (void)removeObserver:(id <ClientChatSessionObserver>)observer {
     [_observers removeDelegate:observer delegateQueue:dispatch_get_main_queue()];
 }
 
 #pragma mark - Private
 
 - (void)setupClient {
+    __typeof(self) __weak weakSelf = self;
     _savedChats = [NSMutableArray new];
     
     // Register callbacks for user event operation
@@ -165,11 +200,17 @@ static NSString *const kUserEventOperation = @"UET";
     } didReceiveRequestCallback:^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
                                                         YRBTMessage *requestMessage,
                                                         BOOL wantsResponse) {
+        __typeof(weakSelf) __strong strongSelf = weakSelf;
+        
+        if (!strongSelf) {
+            return nil;
+        }
+        
         UserConnection *connection = [[UserConnection alloc] initWithMessage:requestMessage];
         
-        Chat *chat = [self chatForRemoteDevice:request.sender];
+        ClientChat *chat = [strongSelf chatForRemoteDevice:request.sender];
         
-        User *user = [self userWithIdentifier:connection.userIdentifier fromChat:chat];
+        User *user = [strongSelf userWithIdentifier:connection.userIdentifier fromChat:chat];
         user.name = connection.userName;
         user.isConnected = connection.connected;
         
@@ -184,10 +225,10 @@ static NSString *const kUserEventOperation = @"UET";
 
         switch (connection.eventType) {
             case kUserConnectionTypeConnected:
-                [_observers chatSession:self userDidConnect:user toChat:chat timestamp:connection.timestamp];
+                [strongSelf->_observers chatSession:strongSelf userDidConnect:user toChat:chat timestamp:connection.timestamp];
                 break;
             case kUserConnectionTypeDisconnected:
-                [_observers chatSession:self userDidDisconnect:user fromChat:chat timestamp:connection.timestamp];
+                [strongSelf->_observers chatSession:strongSelf userDidDisconnect:user fromChat:chat timestamp:connection.timestamp];
                 break;
             default:
                 break;
@@ -206,16 +247,27 @@ static NSString *const kUserEventOperation = @"UET";
     } didReceiveRequestCallback:^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
                                                         YRBTMessage *requestMessage,
                                                         BOOL wantsResponse) {
-        NSLog(@"Successfuly responded to request! %@", request);
+        __typeof(weakSelf) __strong strongSelf = weakSelf;
+        
+        if (!strongSelf) {
+            return nil;
+        }
+        
         NewMessage *event = [[NewMessage alloc] initWithMessage:requestMessage];
-        Chat *chat = [self chatForRemoteDevice:request.sender];
-        User *sender = [self userWithIdentifier:event.senderIdentifier fromChat:[self chatForRemoteDevice:request.sender]];
+        ClientChat *chat = [strongSelf chatForRemoteDevice:request.sender];
+        
+        User *sender = nil;
+        if (event.isMessageByChatCreator) {
+            sender = [strongSelf chatForRemoteDevice:request.sender].creator;
+        } else {
+            sender = [strongSelf userWithIdentifier:event.senderIdentifier fromChat:[strongSelf chatForRemoteDevice:request.sender]];
+        }
         
         Message *newMessage = [[Message alloc] initWithChat:chat sender:sender timestamp:event.timestamp messageText:event.messageText];
         
         [chat.mutableMessages addObject:newMessage];
         
-        [_observers chatSession:self didReceiveMessage:newMessage inChat:chat];
+        [strongSelf->_observers chatSession:strongSelf didReceiveMessage:newMessage inChat:chat];
         
         return nil;
     } receivingProgressCallback:^(uint32_t currentBytes, uint32_t totalBytes) {
@@ -225,21 +277,21 @@ static NSString *const kUserEventOperation = @"UET";
     } forOperation:kMessageOperation];
 }
 
-- (Chat *)chatForRemoteDevice:(YRBTServerDevice *)device {
-    for (Chat *chat in _savedChats) {
+- (ClientChat *)chatForRemoteDevice:(YRBTServerDevice *)device {
+    for (ClientChat *chat in _savedChats) {
         if ([chat.device isEqual:device]) {
             return chat;
         }
     }
 
-    Chat *chat = [Chat chatForDevice:device];
+    ClientChat *chat = [ClientChat chatForDevice:device];
     
     [_savedChats addObject:chat];
     
     return chat;
 }
 
-- (User *)userWithIdentifier:(NSString *)identifier fromChat:(Chat *)chat {
+- (User *)userWithIdentifier:(NSString *)identifier fromChat:(ClientChat *)chat {
     for (User *candidate in chat.members) {
         if ([candidate.identifier isEqualToString:identifier]) {
             return candidate;

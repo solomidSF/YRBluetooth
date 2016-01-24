@@ -13,13 +13,13 @@
 #pragma mark - Init
 
 - (instancetype)initWithMessage:(YRBTMessage *)message {
-    if (self = [self init]) {
+    if (self = [super initWithMessage:message]) {
         NSDictionary *meta = [message dictionaryValue];
         
-        _senderIdentifier = meta[@"identifier"];
-        _isMessageByChatCreator = [meta[@"isCreatorMessage"] boolValue];
-        _timestamp = [meta[@"timestamp"] doubleValue];
-        _messageText = meta[@"text"];
+        _senderIdentifier = meta[@"id"];
+        _isMessageByChatCreator = [meta[@"isc"] boolValue];
+        _timestamp = [meta[@"tsp"] doubleValue];
+        _messageText = meta[@"m"];
     }
     
     return self;
@@ -29,10 +29,10 @@
                       isMessageByCreator:(BOOL)isMessageByCreator
                                timestamp:(NSTimeInterval)timestamp
                              messageText:(NSString *)messageText {
-    NSDictionary *meta = @{@"identifier" : senderIdentfier,
-                           @"isCreatorMessage" : @(isMessageByCreator),
-                           @"timestamp" : @(timestamp),
-                           @"text" : messageText};
+    NSDictionary *meta = @{@"id" : senderIdentfier,
+                           @"isc" : @(isMessageByCreator),
+                           @"tsp" : @(timestamp),
+                           @"m" : messageText};
     
     YRBTMessage *message = [YRBTMessage messageWithDictionary:meta];
 

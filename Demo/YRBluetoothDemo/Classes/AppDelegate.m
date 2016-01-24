@@ -17,6 +17,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    UIUserNotificationType allNotificationTypes = UIUserNotificationTypeSound |
+                                                  UIUserNotificationTypeAlert |
+                                                  UIUserNotificationTypeBadge;
+    
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:allNotificationTypes categories:nil];
+    
+    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+
     return YES;
 }
 

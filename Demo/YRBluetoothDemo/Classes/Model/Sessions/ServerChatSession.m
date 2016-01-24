@@ -6,17 +6,21 @@
 //  Copyright © 2016 solomidSF. All rights reserved.
 //
 
+@import UIKit;
+
 // Model
 #import "ServerChatSession.h"
 #import "UsersPool.h"
-#import "User+Private.h"
-#import "Chat+Private.h"
 
 // API
 #import "SubscribeRequest.h"
 #import "SubscribeResponse.h"
 #import "UserConnection.h"
 #import "NewMessage.h"
+
+// Categories
+#import "User+Private.h"
+#import "Chat+Private.h"
 
 // Components
 #import "YRBluetooth.h"
@@ -50,6 +54,8 @@ static NSString *const kUserEventOperation = @"UET";
     if (self = [super init]) {
         _server = [[YRBTServer alloc] initWithAppID:kChatAppID peerName:nickname];
         _observers = (GCDMulticastDelegate <ServerChatSessionObserver> *)[GCDMulticastDelegate new];
+        _chat = [ServerChat chatWithCreatorInfo:[self currentUserInfo]];
+        
         [self setupServer];
     }
     
@@ -65,6 +71,14 @@ static NSString *const kUserEventOperation = @"UET";
 }
 
 #pragma mark - Public
+
+- (void)startAdvertising {
+    [_server startBroadcasting];
+}
+
+- (void)stopAdvertising {
+    [_server stopBroadcasting];
+}
 
 - (void)sendMessage:(NSString *)message {
     NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
@@ -129,30 +143,37 @@ static NSString *const kUserEventOperation = @"UET";
             return nil;
         }
         
-        // Parse request
-        SubscribeRequest *subscribeRequest = [[SubscribeRequest alloc] initWithMessage:requestMessage];
-        
-        NSArray *usersToNotify = [strongSelf subscribedUsers];
+        SubscribeRequest *subscribeRequest = [[SubscribeRequest alloc] initWithName:[requestMessage stringValue]];
         User *subscribedUser = [strongSelf->_usersPool userForDevice:request.sender];
         
-        subscribedUser.name = subscribeRequest.subscriberName;
-        subscribedUser.isSubscribed = YES;
+        NSMutableArray *usersToNotify = [[strongSelf subscribedUsers] mutableCopy];
+        [usersToNotify removeObject:subscribedUser];
         
-        // Notify users about connection event
-        NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
-        [strongSelf->_observers chatSession:strongSelf userDidConnect:subscribedUser timestamp:timestamp];
-        
-        UserConnection *connection = [[UserConnection alloc] initWithEventType:kUserConnectionTypeConnected
-                                                                          user:subscribedUser
-                                                                     timestamp:timestamp];
-        
-        [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:usersToNotify];
+        if (!subscribedUser.isSubscribed) {
+            subscribedUser.name = subscribeRequest.subscriberName;
+            subscribedUser.isSubscribed = YES;
+            
+            // Notify users about connection event
+            NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
+            [strongSelf->_observers chatSession:strongSelf userDidConnect:subscribedUser timestamp:timestamp];
+            
+            UserConnection *connection = [[UserConnection alloc] initWithEventType:kUserConnectionTypeConnected
+                                                                              user:subscribedUser
+                                                                         timestamp:timestamp];
+            
+            [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[usersToNotify copy]];
+
+            [strongSelf notifyIfInBackgroundForSubscribedUser:subscribedUser];
+        }
         
         User *currentUserInfo = [strongSelf currentUserInfo];
-        NSArray *chatMembers = [usersToNotify arrayByAddingObject:currentUserInfo];
+        [usersToNotify addObject:currentUserInfo];
+        
+        NSArray *chatMembers = [usersToNotify copy];
+        
         SubscribeResponse *response = [[SubscribeResponse alloc] initWithSubscribedUserInfo:subscribedUser
                                                                                  otherUsers:chatMembers];
-        
+
         return [YRBTMessageOperation responseOperationForRemoteRequest:request
                                                               response:response.rawMessage
                                                                    MTU:128
@@ -192,6 +213,8 @@ static NSString *const kUserEventOperation = @"UET";
         
         [strongSelf->_observers chatSession:strongSelf didReceiveNewMessage:message];
         
+        [strongSelf notifyIfInBackgroundForNewMessage:message];
+        
         NewMessage *event = [[NewMessage alloc] initWithSenderIdentifier:sender.identifier
                                                       isMessageByCreator:NO
                                                                timestamp:message.timestamp
@@ -217,6 +240,27 @@ static NSString *const kUserEventOperation = @"UET";
     } failedToReceiveCallback:^(YRBTRemoteMessageRequest *request, NSError *error) {
         NSLog(@"Failed to rcv 'MSG' request from client: %@, error: %@", request, error);
     } forOperation:kMessageOperation];
+}
+
+- (void)notifyIfInBackgroundForSubscribedUser:(User *)user {
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"%@ connected!", user.name];
+        notification.soundName = @"ding.mp3";
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
+}
+
+- (void)notifyIfInBackgroundForNewMessage:(Message *)message {
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"New message from %@:\n%@", message.sender.name, message.messageText];
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
 }
 
 - (NSArray <User *> *)subscribedUsers {
@@ -258,7 +302,7 @@ static NSString *const kUserEventOperation = @"UET";
     if (usersThatShouldReceiveImmediately.count > 0) {
         [_server broadcastMessage:message
                     operationName:operationName
-                        toClients:[usersThatShouldReceiveImmediately valueForKey:@"clientDevice"]
+                        toClients:[usersThatShouldReceiveImmediately valueForKey:@"device"]
                       withSuccess:^(YRBTMessageOperation *op) {
                           NSLog(@"Finished op: %@", op);
                           [self removeMessageMeta:messageMeta fromQueueForUsers:usersThatShouldReceiveImmediately];

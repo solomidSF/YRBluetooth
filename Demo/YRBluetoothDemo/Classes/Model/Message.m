@@ -10,7 +10,8 @@
 
 @implementation Message
 
-- (instancetype)initWithChat:(Chat *)chat sender:(User *)sender timestamp:(NSTimeInterval)timestamp messageText:(NSString *)text {
+- (instancetype)initWithChat:(__kindof Chat *)chat sender:(User *)sender
+                   timestamp:(NSTimeInterval)timestamp messageText:(NSString *)text {
     if (self = [super init]) {
         _chat = chat;
         _sender = sender;

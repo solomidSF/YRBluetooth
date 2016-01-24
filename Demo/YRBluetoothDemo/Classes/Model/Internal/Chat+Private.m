@@ -10,21 +10,33 @@
 
 @implementation Chat (Private)
 
+@dynamic me;
 @dynamic mutableMembers;
 @dynamic mutableMessages;
 
 @end
 
-@implementation Chat (ClientPerspective)
+@implementation ClientChat (Private)
 
-@dynamic device;
-@dynamic me;
 @dynamic creator;
+@dynamic device;
 
 + (instancetype)chatForDevice:(YRBTServerDevice *)device {
-    Chat *chat = [self new];
+    ClientChat *chat = [self new];
     
     chat.device = device;
+    
+    return chat;
+}
+
+@end
+
+@implementation ServerChat (Private)
+
++ (instancetype)chatWithCreatorInfo:(User *)user {
+    ServerChat *chat = [self new];
+    
+    chat.me = user;
     
     return chat;
 }

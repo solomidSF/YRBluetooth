@@ -17,13 +17,19 @@
 #pragma mark - Init
 
 - (instancetype)initWithMessage:(YRBTMessage *)message {
-    if (self = [super init]) {
-        _subscribedUser = [[User alloc] initWithPackedUserInfo:[message dictionaryValue][@"user"]];
+    if (self = [super initWithMessage:message]) {
+        _subscribedUser = [[User alloc] initWithPackedUserInfo:[message dictionaryValue][@"u"]];
         
         NSMutableArray *otherUsers = [NSMutableArray new];
         
-        for (NSDictionary *packedInfo in [message dictionaryValue][@"other_members"]) {
-            [otherUsers addObject:[[User alloc] initWithPackedUserInfo:packedInfo]];
+        for (NSDictionary *packedInfo in [message dictionaryValue][@"om"]) {
+            User *user = [[User alloc] initWithPackedUserInfo:packedInfo];
+            
+            if (!user.isChatOwner) {
+                [otherUsers addObject:user];
+            } else {
+                _creator = user;
+            }
         }
         
         _otherUsers = [otherUsers copy];
@@ -39,8 +45,8 @@
         [otherUsers addObject:[user packedUserInfo]];
     }
     
-    YRBTMessage *message = [YRBTMessage messageWithDictionary:@{@"user" : [userInfo packedUserInfo],
-                                                                @"other_members" : [otherUsers copy]}];
+    YRBTMessage *message = [YRBTMessage messageWithDictionary:@{@"u" : [userInfo packedUserInfo],
+                                                                @"om" : [otherUsers copy]}];
     
     return [self initWithMessage:message];
 }

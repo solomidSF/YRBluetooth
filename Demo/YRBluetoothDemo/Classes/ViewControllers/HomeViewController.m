@@ -8,8 +8,13 @@
 
 // Controllers
 #import "HomeViewController.h"
+#import "SearchChatsViewController.h"
+#import "ServerChatViewController.h"
 
 static NSString *const kSavedUsernameKey = @"Username";
+
+static NSString *const kClientViewControllerSegueIdentifier = @"ClientSegue";
+static NSString *const kServerViewControllerSegueIdentifier = @"ServerSegue";
 
 @implementation HomeViewController {
     __weak IBOutlet UITextField *_nicknameTextField;
@@ -34,7 +39,7 @@ static NSString *const kSavedUsernameKey = @"Username";
     [[NSUserDefaults standardUserDefaults] setObject:_nicknameTextField.text forKey:kSavedUsernameKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-//    self performSegueWithIdentifier:<#(nonnull NSString *)#> sender:<#(nullable id)#>
+    [self performSegueWithIdentifier:kClientViewControllerSegueIdentifier sender:self];
 }
 
 - (IBAction)createChatClicked:(id)sender {
@@ -50,7 +55,21 @@ static NSString *const kSavedUsernameKey = @"Username";
     [[NSUserDefaults standardUserDefaults] setObject:_nicknameTextField.text forKey:kSavedUsernameKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-//    self performSegueWithIdentifier:<#(nonnull NSString *)#> sender:<#(nullable id)#>
+    [self performSegueWithIdentifier:kServerViewControllerSegueIdentifier sender:self];
+}
+
+#pragma mark - Navigation
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kServerViewControllerSegueIdentifier]) {
+        ServerChatViewController *controller = segue.destinationViewController;
+        
+        controller.nickname = _nicknameTextField.text;
+    } else if ([segue.identifier isEqualToString:kClientViewControllerSegueIdentifier]) {
+        SearchChatsViewController *controller = segue.destinationViewController;
+        
+        controller.nickname = _nicknameTextField.text;
+    }
 }
 
 @end

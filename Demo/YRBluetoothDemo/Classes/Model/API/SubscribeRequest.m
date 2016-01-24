@@ -13,7 +13,11 @@
 - (instancetype)initWithName:(NSString *)name {
     YRBTMessage *message = [YRBTMessage messageWithString:name];
     
-    return [super initWithMessage:message];
+    if (self = [super initWithMessage:message]) {
+        _subscriberName = name;
+    }
+    
+    return self;
 }
 
 @end

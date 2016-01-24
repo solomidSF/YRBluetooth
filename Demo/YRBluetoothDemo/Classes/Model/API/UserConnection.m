@@ -21,7 +21,7 @@
      
         _userIdentifier = [message dictionaryValue][@"user"][kUserInfoIdentifierKey];
         _userName = [message dictionaryValue][@"user"][kUserInfoNameKey];
-        _connected = [message dictionaryValue][@"user"][kUserInfoIsOnlineKey];
+        _connected = [[message dictionaryValue][@"user"][kUserInfoIsOnlineKey] boolValue];
     }
     
     return self;

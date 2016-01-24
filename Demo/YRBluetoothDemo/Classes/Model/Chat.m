@@ -13,11 +13,11 @@
 #import "YRBluetooth.h"
 
 @interface Chat ()
+@property (nonatomic) NSString *name;
+@property (nonatomic) User *me;
 @property (nonatomic, readonly) NSMutableArray <Message *> *mutableMessages;
 @property (nonatomic) NSMutableArray <User *> *mutableMembers;
-@property (nonatomic) YRBTServerDevice *device;
-@property (nonatomic) User *me;
-@property (nonatomic) User *creator;
+
 @end
 
 @implementation Chat {
@@ -32,6 +32,14 @@
     }
     
     return _mutableMessages;
+}
+
+- (NSArray <Message *> *)messages {
+    return [self.mutableMessages copy];
+}
+
+- (NSArray <User *> *)members {
+    return [self.mutableMembers copy];
 }
 
 @end

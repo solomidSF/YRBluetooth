@@ -75,7 +75,7 @@ typedef void (^YRBTChunkProviderSubchunkCallback) (NSData *subchunk);
     // 2. Create operation name chunks or ignore this step if this is response message.
 	if (!isResponse) {
 		[self createSubchunksFromData:[operationName dataUsingEncoding:NSUTF8StringEncoding]
-						 maxChunkSize:MTU
+						 maxChunkSize:MTU - kYRBTMessageChunkLayoutSize
 							 callback:^(NSData *subchunk) {
 								 _YRBTOperationNameChunk *operationNameChunk = nil;
 								 
@@ -87,7 +87,7 @@ typedef void (^YRBTChunkProviderSubchunkCallback) (NSData *subchunk);
 	
     // 3. Create regular message chunks.
     [self createSubchunksFromData:message.messageData
-                     maxChunkSize:MTU
+                     maxChunkSize:MTU - kYRBTMessageChunkLayoutSize
                          callback:^(NSData *subchunk) {
                              _YRBTRegularMessageChunk *chunk = nil;
                              

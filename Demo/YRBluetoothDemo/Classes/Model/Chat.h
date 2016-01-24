@@ -12,12 +12,18 @@
 #import "User.h"
 #import "Message.h"
 
+typedef enum {
+    kChatStateDisconnected,
+    kChatStateConnecting,
+    kChatStateConnected
+} ChatState;
+
 @interface Chat : NSObject
 
+@property (nonatomic, readonly) NSString *name;
 @property (nonatomic, readonly) User *me;
-@property (nonatomic, readonly) User *creator;
+@property (nonatomic, readonly) ChatState state;
 @property (nonatomic, readonly) NSArray <User *> *members;
 @property (nonatomic, readonly) NSArray <Message *> *messages;
-@property (nonatomic, readonly) BOOL isConnected;
 
 @end

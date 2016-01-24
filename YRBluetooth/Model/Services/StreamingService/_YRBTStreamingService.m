@@ -122,6 +122,14 @@ _YRBTChunkParserDelegate
             !operation.failureCallback ? : operation.failureCallback(operation,
                                                                      [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelled]);
             
+            if (_pendingOperation == operation) {
+                // If current message to be written was this one - resume chunk generation and perform cleanup.
+                [_provider resume];
+                
+                _pendingChunk = nil;
+                _pendingOperation = nil;
+            }
+            
             YRBTMessageOperation *cancelOperation = [YRBTMessageOperation cancelOperationForOperation:operation];
             
             [self scheduleOperation:cancelOperation];
@@ -266,6 +274,14 @@ _YRBTChunkParserDelegate
     operation.status = kYRBTMessageOperationStatusFailed;
 
     !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendTimeout]);
+    
+    if (_pendingOperation == operation) {
+        // If current message to be written was this one - resume chunk generation and perform cleanup.
+        [_provider resume];
+        
+        _pendingChunk = nil;
+        _pendingOperation = nil;
+    }
 }
 
 - (void)handleTimeoutForRemoteRequest:(NSTimer *)timeoutTimer {
@@ -274,8 +290,9 @@ _YRBTChunkParserDelegate
 	[self invalidateRemoteRequest:request];
 	
 	request.status = kYRBTRemoteMessageRequestStatusFailed;
-
 	!request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceiveTimeout]);
+    
+    [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteRequest:request]];
 }
 
 #pragma mark - Private
@@ -314,6 +331,7 @@ _YRBTChunkParserDelegate
  *  Invalidates operation SILENTLY, without calling any callbacks.
  */
 - (void)invalidateRemoteRequest:(YRBTRemoteMessageRequest *)request {
+    NSLog(@"Invalidating request: %@", request);
 	[request.timeoutTimer invalidate];
 	request.timeoutTimer = nil;
 	
@@ -391,6 +409,7 @@ _YRBTChunkParserDelegate
                                      }
                                  } else {
                                      [self invalidateOperation:operation];
+                                     [_provider invalidateChunkGenerationForOperation:operation];
                                      
                                      operation.status = kYRBTMessageOperationStatusFailed;
                                      
@@ -528,6 +547,12 @@ _YRBTChunkParserDelegate
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseOperationNameChunk:(_YRBTOperationNameChunk *)chunk
          fromSender:(CBPeer *)sender {
 	YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk];
+    
+    if (!remoteRequest) {
+        // It may fail already.
+        return;
+    }
+    
     NSLog(@"[_YRBTStreamingService]: Did parse operation name chunk: %@ for request: %@", chunk, remoteRequest);
     
     BOOL didAppend = [remoteRequest.buffer appendChunk:chunk];
@@ -561,6 +586,11 @@ _YRBTChunkParserDelegate
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseRequestRegularMessageChunk:(_YRBTRegularMessageChunk *)chunk
          fromSender:(CBPeer *)sender {
     YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk];
+    if (!remoteRequest) {
+        // It may fail already.
+        return;
+    }
+    
     NSLog(@"[_YRBTStreamingService]: Did parse regular chunk: %@ for request: %@", chunk, remoteRequest);
 
     BOOL didAppend = [remoteRequest.buffer appendChunk:chunk];

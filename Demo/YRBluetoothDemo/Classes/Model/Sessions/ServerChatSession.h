@@ -9,7 +9,7 @@
 @import Foundation;
 
 // Model
-#import "Chat.h"
+#import "ServerChat.h"
 #import "User.h"
 #import "Message.h"
 
@@ -18,7 +18,7 @@
 @interface ServerChatSession : NSObject
 
 @property (nonatomic, readonly) NSArray <User *> *participants;
-@property (nonatomic, readonly) Chat *chat;
+@property (nonatomic, readonly) ServerChat *chat;
 
 #pragma mark - Session Management
 
@@ -28,6 +28,8 @@
 
 #pragma mark - Public
 
+- (void)startAdvertising;
+- (void)stopAdvertising;
 - (void)sendMessage:(NSString *)message;
 
 #pragma mark - Observing

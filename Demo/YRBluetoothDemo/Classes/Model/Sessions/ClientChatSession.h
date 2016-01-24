@@ -9,22 +9,24 @@
 @import Foundation;
 
 // Model
-#import "Chat.h"
+#import "ClientChat.h"
 
 // Components
 #import "YRBluetooth.h"
 
-typedef void (^ChatScanningCallback) (NSArray <Chat *> *chats);
+typedef void (^ChatScanningCallback) (NSArray <ClientChat *> *chats);
 typedef void (^ChatScanningFailureCallback) (NSError *error);
 
-typedef void (^ChatConnectionSuccessCallback) (Chat *chat, User *userInfo);
+typedef void (^ChatSuccessSendCallback) (Message *message);
+
+typedef void (^ChatConnectionSuccessCallback) (ClientChat *chat, User *userInfo);
 typedef void (^ChatConnectionFailureCallback) (NSError *error);
 
 @protocol ClientChatSessionObserver;
 
 @interface ClientChatSession : NSObject
 
-@property (nonatomic, readonly) NSArray <Chat *> *activeChats;
+@property (nonatomic, readonly) NSArray <ClientChat *> *activeChats;
 @property (nonatomic, readonly) NSString *nickname;
 
 #pragma mark - Session Management
@@ -40,17 +42,17 @@ typedef void (^ChatConnectionFailureCallback) (NSError *error);
 
 #pragma mark - Chats
 
-- (void)connectToChat:(Chat *)chat
+- (void)connectToChat:(ClientChat *)chat
           withSuccess:(ChatConnectionSuccessCallback)success
               failure:(ChatConnectionFailureCallback)failure;
 
-- (void)disconnectFromChat:(Chat *)chat;
+- (void)disconnectFromChat:(ClientChat *)chat;
 
 #pragma mark - Sending
 
 - (YRBTMessageOperation *)sendText:(NSString *)text
-                            inChat:(Chat *)chat
-                       withSuccess:(YRBTResponseCallback)success
+                            inChat:(ClientChat *)chat
+                       withSuccess:(ChatSuccessSendCallback)success
                            failure:(YRBTOperationFailureCallback)failure;
 #pragma mark - Observing
 
@@ -60,18 +62,19 @@ typedef void (^ChatConnectionFailureCallback) (NSError *error);
 @end
 
 @protocol ClientChatSessionObserver <NSObject>
-
-- (void)chatSession:(ClientChatSession *)session reportsNearbyChats:(NSArray <Chat *> *)chats;
+@optional
+- (void)chatSession:(ClientChatSession *)session reportsNearbyChats:(NSArray <ClientChat *> *)chats;
 - (void)chatSession:(ClientChatSession *)session failedToScanForNearbyChatsWithError:(NSError *)error;
 
-- (void)chatSession:(ClientChatSession *)session didConnectToChat:(Chat *)chat;
-- (void)chatSession:(ClientChatSession *)session didFailToConnectToChat:(Chat *)chat withError:(NSError *)error;
+- (void)chatSession:(ClientChatSession *)session chatStateDidUpdate:(ClientChat *)chat;
+- (void)chatSession:(ClientChatSession *)session didConnectToChat:(ClientChat *)chat;
+- (void)chatSession:(ClientChatSession *)session didFailToConnectToChat:(ClientChat *)chat withError:(NSError *)error;
 
-- (void)chatSession:(ClientChatSession *)session userDidConnect:(User *)user toChat:(Chat *)chat timestamp:(NSTimeInterval)timestamp;
-- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(User *)user fromChat:(Chat *)chat timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ClientChatSession *)session userDidConnect:(User *)user toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(User *)user fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
 
-- (void)chatSession:(ClientChatSession *)session didSendMessage:(Message *)message inChat:(Chat *)chat;
-- (void)chatSession:(ClientChatSession *)session didReceiveMessage:(Message *)message inChat:(Chat *)chat;
-- (void)chatSession:(ClientChatSession *)session failedToSendMessage:(Message *)message inChat:(Chat *)chat withError:(NSError *)error;
+- (void)chatSession:(ClientChatSession *)session didSendMessage:(Message *)message inChat:(ClientChat *)chat;
+- (void)chatSession:(ClientChatSession *)session didReceiveMessage:(Message *)message inChat:(ClientChat *)chat;
+- (void)chatSession:(ClientChatSession *)session failedToSendMessage:(Message *)message inChat:(ClientChat *)chat withError:(NSError *)error;
 
 @end

@@ -25,6 +25,6 @@ typedef enum {
 @property (nonatomic, readonly) User *user;
 @property (nonatomic, readonly) EventType type;
 
-- (instancetype)initWithChat:(Chat *)chat user:(User *)user eventType:(EventType)type timestamp:(NSTimeInterval)timestamp;
+- (instancetype)initWithChat:(__kindof Chat *)chat user:(User *)user eventType:(EventType)type timestamp:(NSTimeInterval)timestamp;
 
 @end

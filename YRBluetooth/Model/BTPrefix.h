@@ -8,6 +8,8 @@
 
 #import <CoreBluetooth/CoreBluetooth.h>
 
+#define BTDebug
+
 #ifdef BTDebug
 
 #define BTDebugMsg(s, ...) { \

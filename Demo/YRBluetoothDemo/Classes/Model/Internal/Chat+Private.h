@@ -8,23 +8,31 @@
 
 // Model
 #import "Chat.h"
+#import "ClientChat.h"
+#import "ServerChat.h"
 
 // Components
 #import "YRBluetooth.h"
 
 @interface Chat (Private)
 
+@property (nonatomic) User *me;
 @property (nonatomic, readonly) NSMutableArray <Message *> *mutableMessages;
 @property (nonatomic) NSMutableArray <User *> *mutableMembers;
 
 @end
 
-@interface Chat (ClientPerspective)
+@interface ClientChat (Private)
 
-@property (nonatomic) YRBTServerDevice *device;
-@property (nonatomic) User *me;
 @property (nonatomic) User *creator;
+@property (nonatomic) YRBTServerDevice *device;
 
 + (instancetype)chatForDevice:(YRBTServerDevice *)device;
+
+@end
+
+@interface ServerChat (Private)
+
++ (instancetype)chatWithCreatorInfo:(User *)user;
 
 @end
