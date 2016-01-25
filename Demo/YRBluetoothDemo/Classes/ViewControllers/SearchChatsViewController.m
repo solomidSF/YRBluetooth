@@ -47,8 +47,17 @@ UITableViewDataSource
     // TODO: Temp solution.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [_clientSession startScanningForChatsWithSuccess:^(NSArray <ClientChat *> *chats) {
-            if (![_discoveredChats containsObject:[chats firstObject]]) {
-                [_discoveredChats addObject:[chats firstObject]];
+            BOOL hasNewChats = NO;
+
+            for (ClientChat *chat in chats) {
+                if (![_discoveredChats containsObject:chat]) {
+                    hasNewChats = YES;
+                    
+                    [_discoveredChats addObject:chat];
+                }
+            }
+            
+            if (hasNewChats) {
                 [_chatsTableView reloadData];
             }
         } failure:^(NSError *error) {

@@ -162,8 +162,6 @@ static NSString *const kUserEventOperation = @"UET";
                                                                          timestamp:timestamp];
             
             [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[usersToNotify copy]];
-
-            [strongSelf notifyIfInBackgroundForSubscribedUser:subscribedUser];
         }
         
         User *currentUserInfo = [strongSelf currentUserInfo];
@@ -213,8 +211,6 @@ static NSString *const kUserEventOperation = @"UET";
         
         [strongSelf->_observers chatSession:strongSelf didReceiveNewMessage:message];
         
-        [strongSelf notifyIfInBackgroundForNewMessage:message];
-        
         NewMessage *event = [[NewMessage alloc] initWithSenderIdentifier:sender.identifier
                                                       isMessageByCreator:NO
                                                                timestamp:message.timestamp
@@ -240,27 +236,6 @@ static NSString *const kUserEventOperation = @"UET";
     } failedToReceiveCallback:^(YRBTRemoteMessageRequest *request, NSError *error) {
         NSLog(@"Failed to rcv 'MSG' request from client: %@, error: %@", request, error);
     } forOperation:kMessageOperation];
-}
-
-- (void)notifyIfInBackgroundForSubscribedUser:(User *)user {
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UILocalNotification *notification = [UILocalNotification new];
-        
-        notification.alertBody = [NSString stringWithFormat:@"%@ connected!", user.name];
-        notification.soundName = @"ding.mp3";
-        
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-    }
-}
-
-- (void)notifyIfInBackgroundForNewMessage:(Message *)message {
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UILocalNotification *notification = [UILocalNotification new];
-        
-        notification.alertBody = [NSString stringWithFormat:@"New message from %@:\n%@", message.sender.name, message.messageText];
-        
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-    }
 }
 
 - (NSArray <User *> *)subscribedUsers {

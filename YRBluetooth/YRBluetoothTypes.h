@@ -128,7 +128,7 @@ typedef void (^YRBTRemoteRequestFailureCallback) (YRBTRemoteMessageRequest *requ
 
 // === Scanning/Connection related === //
 typedef void (^YRBTFoundDevicesCallback) (NSArray *foundDevices);
-typedef void (^YRBTContiniousScanCallback) (YRBTServerDevice *device);
+typedef void (^YRBTContiniousScanCallback) (NSArray <YRBTServerDevice *> *devices);
 typedef void (^YRBTSuccessfulConnectionCallback) (YRBTServerDevice *device);
 typedef void (^YRBTFailureWithDeviceCallback) (YRBTRemoteDevice *device,
                                                NSError *error);

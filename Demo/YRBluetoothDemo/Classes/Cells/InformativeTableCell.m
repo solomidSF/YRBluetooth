@@ -17,13 +17,11 @@
 }
 
 - (void)setEvent:(__kindof EventObject *)event {
-    if (self.event != event) {
-        [super setEvent:event];
-        
-        ConnectionEvent *connectionEvent = event;
-        
-        _informativeLabel.text = [NSString stringWithFormat:@"%@ did %@", connectionEvent.user.name, connectionEvent.type == kEventTypeConnected ? @"connect" : @"disconnect"];
-    }
+    [super setEvent:event];
+    
+    ConnectionEvent *connectionEvent = event;
+    
+    _informativeLabel.text = [NSString stringWithFormat:@"%@ did %@", connectionEvent.user.name, connectionEvent.type == kEventTypeConnected ? @"connect" : @"disconnect"];
 }
 
 @end

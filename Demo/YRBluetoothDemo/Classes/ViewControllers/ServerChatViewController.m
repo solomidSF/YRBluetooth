@@ -140,6 +140,15 @@ UITableViewDataSource
     [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
                               atScrollPosition:UITableViewScrollPositionBottom
                                       animated:NO];
+    
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"%@ connected!", user.name];
+        notification.soundName = @"ding.mp3";
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
 }
 
 - (void)chatSession:(ServerChatSession *)session userDidDisconnect:(User *)user timestamp:(NSTimeInterval)timestamp {
@@ -177,6 +186,15 @@ UITableViewDataSource
     [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
                               atScrollPosition:UITableViewScrollPositionBottom
                                       animated:NO];
+    
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"New message from %@:\n%@", message.sender.name, message.messageText];
+        notification.soundName = UILocalNotificationDefaultSoundName;
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
 }
 
 @end

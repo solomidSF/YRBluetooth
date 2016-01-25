@@ -34,6 +34,11 @@
 #import "Constants.h"
 #import "BTPrefix.h"
 
+// Runtime
+#import <objc/runtime.h>
+
+static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
+
 @implementation _YRBTScanningService {
     CBCentralManager *_centralManager;
     _YRBTDeviceStorage *_storage;
@@ -53,7 +58,7 @@
     YRBTContiniousScanCallback _continiousScanCallback;
     YRBTFailureCallback _continiousFailureCallback;
     
-    NSMutableArray *_repeatedlyFoundDevices;
+    NSMutableArray <YRBTServerDevice *> *_repeatedlyFoundDevices;
     // ========
 }
 
@@ -98,14 +103,14 @@
         BTDebugMsg(@"[_YRBTScanningService]: Will start scanning for devices continiously.");
         
         [self invalidate];
-        _scanningState = kScanningStateScanningContiniously;
+        _scanningState = kScanningStateScanningContinuously;
         
         _continiousScanCallback = callback;
         _continiousFailureCallback = failure;
         _repeatedlyFoundDevices = [NSMutableArray array];
         
         [_centralManager scanForPeripheralsWithServices:@[_appUUID]
-                                                options:nil];
+                                                options:@{CBCentralManagerScanOptionAllowDuplicatesKey : @YES}];
     } else {
         BTDebugMsg(@"[_YRBTScanningService]: Can't start scanning, BT state is not powered on. %d", (int32_t)_centralManager.state);
         !failure ? : failure([_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]);
@@ -182,12 +187,15 @@
             }
             
             break;
-        case kScanningStateScanningContiniously: {
+        case kScanningStateScanningContinuously: {
             if (![[_repeatedlyFoundDevices valueForKey:@"peripheral"] containsObject:peripheral]) {
                 [_repeatedlyFoundDevices addObject:device];
-                
-                !_continiousScanCallback ? : _continiousScanCallback(device);
             }
+
+            [self restartDiscoveryTimeoutForDevice:device];
+            
+            !_continiousScanCallback ? : _continiousScanCallback([_repeatedlyFoundDevices copy]);
+
             break;
         }
     }
@@ -207,6 +215,11 @@
     // Continious scanning
     _continiousScanCallback = NULL;
     _continiousFailureCallback = NULL;
+    
+    for (YRBTServerDevice *device in _repeatedlyFoundDevices) {
+        [self invalidateDiscoveryTimeoutForDevice:device];
+    }
+    
     _repeatedlyFoundDevices = nil;
     
     _scanningState = kScanningStatePending;
@@ -248,6 +261,43 @@
     !_foundDevicesCallback ? : _foundDevicesCallback(_foundDevices);
     
     [self invalidate];
+}
+
+#pragma mark - Discovery Timeout
+
+- (void)restartDiscoveryTimeoutForDevice:(YRBTServerDevice *)device {
+    [self invalidateDiscoveryTimeoutForDevice:device];
+    
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:5.0f
+                                                      target:self
+                                                    selector:@selector(handleDiscoveryTimeout:)
+                                                    userInfo:device
+                                                     repeats:NO];
+    
+    objc_setAssociatedObject(device, kDiscoveryTimerDummyKey, timer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)invalidateDiscoveryTimeoutForDevice:(YRBTServerDevice *)device {
+    NSTimer *timer = objc_getAssociatedObject(device, kDiscoveryTimerDummyKey);
+    
+    [timer invalidate];
+    
+    objc_setAssociatedObject(device, kDiscoveryTimerDummyKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (void)handleDiscoveryTimeout:(NSTimer *)timer {
+    YRBTServerDevice *device = timer.userInfo;
+    [self invalidateDiscoveryTimeoutForDevice:device];
+    
+    BTDebugMsg(@"[_YRBTScanningService]: Discovery timeout for %@", device);
+    
+    [_repeatedlyFoundDevices removeObject:device];
+    
+    NSAssert(self.scanningState == kScanningStateScanningContinuously,
+             @"[_YRBTScanningService]: Received discovery timeout for device: %@, but scanning state is incorrect!",
+             device);
+    
+    !_continiousScanCallback ? : _continiousScanCallback([_repeatedlyFoundDevices copy]);
 }
 
 @end

@@ -36,7 +36,7 @@
 typedef enum {
     kScanningStatePending,
     kScanningStateScanning,
-    kScanningStateScanningContiniously
+    kScanningStateScanningContinuously
 } ScanningState;
 
 /**

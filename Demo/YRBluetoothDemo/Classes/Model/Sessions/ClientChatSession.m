@@ -71,8 +71,14 @@ static NSString *const kUserEventOperation = @"UET";
 #pragma mark - Scanning
 
 - (void)startScanningForChatsWithSuccess:(ChatScanningCallback)scanningCallback failure:(ChatScanningFailureCallback)failure {
-    [_client scanForDevicesWithCallback:^(YRBTServerDevice *device) {
-        !scanningCallback ? : scanningCallback(@[[self chatForRemoteDevice:device]]);
+    [_client scanForDevicesWithCallback:^(NSArray <YRBTServerDevice *> *devices) {
+        NSMutableArray <Chat *> *chats = [NSMutableArray new];
+        
+        for (YRBTServerDevice *device in devices) {
+            [chats addObject:[self chatForRemoteDevice:device]];
+        }
+        
+        !scanningCallback ? : scanningCallback([chats copy]);
     } failureCallback:failure];
 }
 
