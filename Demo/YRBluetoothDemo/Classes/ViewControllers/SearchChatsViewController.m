@@ -28,7 +28,7 @@ UITableViewDataSource
 @implementation SearchChatsViewController {
     ClientChatSession *_clientSession;
     
-    NSMutableArray <ClientChat *> *_discoveredChats;
+    NSArray <ClientChat *> *_discoveredChats;
     __weak IBOutlet UITableView *_chatsTableView;
 }
 
@@ -47,18 +47,21 @@ UITableViewDataSource
     // TODO: Temp solution.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [_clientSession startScanningForChatsWithSuccess:^(NSArray <ClientChat *> *chats) {
-            BOOL hasNewChats = NO;
+            BOOL shouldUpdateSearchResults = _discoveredChats.count != chats.count;
 
-            for (ClientChat *chat in chats) {
-                if (![_discoveredChats containsObject:chat]) {
-                    hasNewChats = YES;
-                    
-                    [_discoveredChats addObject:chat];
+            if (!shouldUpdateSearchResults) {
+                // Additional check for ABA
+                for (ClientChat *chat in chats) {
+                    if (![_discoveredChats containsObject:chat]) {
+                        shouldUpdateSearchResults = YES;
+                    }
                 }
             }
             
-            if (hasNewChats) {
-                [_chatsTableView reloadData];
+            if (shouldUpdateSearchResults) {
+                _discoveredChats = chats;
+                
+                [_chatsTableView reloadData];   
             }
         } failure:^(NSError *error) {
             [[[UIAlertView alloc] initWithTitle:@"Error"

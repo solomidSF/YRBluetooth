@@ -163,13 +163,16 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
                peripheral.name, peripheral, advertData, RSSI);
     
     NSString *peripheralName = advertData[CBAdvertisementDataLocalNameKey];
-    if (!peripheralName) {
-        // Don't do anything if peripheral doesn't have local name.
+    YRBTServerDevice *device = [_storage deviceForPeer:peripheral];
+    
+    if (peripheralName.length > 0) {
+        device.peerName = peripheralName;
+    }
+
+    // If current discovery packet didn't contain peripheral name, but device was discovered earlier with it - process further.
+    if (device.peerName.length == 0) {
         return;
     }
-    
-    YRBTServerDevice *device = [_storage deviceForPeer:peripheral];
-    device.peerName = peripheralName;
     
     switch (_scanningState) {
         case kScanningStatePending:

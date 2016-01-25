@@ -44,8 +44,7 @@
  *  Finds devices asynchronously. If currently search is running - it will be restarted.
  *  Method invokes callback upon reaching timeout or just by getting max allowed device count.
  *  Specify NSIntegerMax to find all devices around for some amount of time.
- *  Caller is responsible to retain founded devices, otherwise they will be deallocated.
- *  Success callback contains array of founded devices, each instance represented by a YRBTServerDevice.
+ *  Success callback contains array of found devices, each instance represented by a YRBTServerDevice.
  *  You can't send messages to them, unless you explicitly connect to them using connectToDevice: method.
  */
 - (void)retrieveAvailableServerDevicesWithTimeout:(NSTimeInterval)timeoutValue
@@ -54,7 +53,6 @@
                                   failureCallback:(YRBTFailureCallback)errorCallback;
 /**
  *  Scan's for devices and return them to provided callback.
- *  Method invoke your callback repeatedly upon finding device.
  *  When you finished call stopScanningForDevices method.
  *  Invoking this method while already scanning will restart scan at all.
  */
