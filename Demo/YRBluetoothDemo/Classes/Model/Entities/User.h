@@ -12,7 +12,6 @@
 
 @property (nonatomic, readonly) NSString *identifier;
 @property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) BOOL isConnected;
 @property (nonatomic, readonly) BOOL isChatOwner;
 
 @end

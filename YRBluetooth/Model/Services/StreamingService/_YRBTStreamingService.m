@@ -213,7 +213,7 @@ _YRBTChunkParserDelegate
             [self invalidateRemoteRequest:request];
             
             request.status = kYRBTRemoteMessageRequestStatusFailed;
-            request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected]);
+            !request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected]);
         }
     }
 }

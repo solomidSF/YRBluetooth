@@ -22,9 +22,10 @@ typedef enum {
 @interface ConnectionEvent : EventObject
 
 @property (nonatomic, readonly, weak) Chat *chat;
-@property (nonatomic, readonly) User *user;
+@property (nonatomic, readonly) __kindof User *user;
 @property (nonatomic, readonly) EventType type;
 
-- (instancetype)initWithChat:(__kindof Chat *)chat user:(User *)user eventType:(EventType)type timestamp:(NSTimeInterval)timestamp;
+- (instancetype)initWithChat:(__kindof Chat *)chat user:(__kindof User *)user
+                   eventType:(EventType)type timestamp:(NSTimeInterval)timestamp;
 
 @end

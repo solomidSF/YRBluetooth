@@ -83,6 +83,12 @@ ClientChatSessionObserver
 
 #pragma mark - <ClientChatSessionObserver>
 
+- (void)chatSession:(ClientChatSession *)session reportsNearbyChats:(NSArray<ClientChat *> *)chats {
+    if ([chats containsObject:self.chat]) {
+        [self updateUI];
+    }
+}
+
 - (void)chatSession:(ClientChatSession *)session chatStateDidUpdate:(Chat *)chat {
     if ([chat isEqual:_chat]) {
         [self updateUI];

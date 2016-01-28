@@ -21,9 +21,9 @@ typedef enum {
 @interface Chat : NSObject
 
 @property (nonatomic, readonly) NSString *name;
-@property (nonatomic, readonly) User *me;
+@property (nonatomic, readonly) __kindof User *me;
 @property (nonatomic, readonly) ChatState state;
-@property (nonatomic, readonly) NSArray <User *> *members;
+@property (nonatomic, readonly) NSArray <__kindof User *> *members;
 @property (nonatomic, readonly) NSArray <Message *> *messages;
 
 @end

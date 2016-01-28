@@ -54,6 +54,7 @@ UITableViewDataSource
                 for (ClientChat *chat in chats) {
                     if (![_discoveredChats containsObject:chat]) {
                         shouldUpdateSearchResults = YES;
+                        break;
                     }
                 }
             }

@@ -16,11 +16,11 @@
 @interface Message : NSObject
 
 @property (nonatomic, readonly, weak) __kindof Chat *chat;
-@property (nonatomic, readonly) User *sender;
+@property (nonatomic, readonly) __kindof User *sender;
 @property (nonatomic, readonly) NSTimeInterval timestamp;
 @property (nonatomic, readonly) NSString *messageText;
 
-- (instancetype)initWithChat:(__kindof Chat *)chat sender:(User *)sender
+- (instancetype)initWithChat:(__kindof Chat *)chat sender:(__kindof User *)sender
                    timestamp:(NSTimeInterval)timestamp messageText:(NSString *)text;
 
 @end

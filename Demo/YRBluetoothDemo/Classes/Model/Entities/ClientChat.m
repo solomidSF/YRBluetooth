@@ -16,8 +16,8 @@
 #import "YRBluetooth.h"
 
 @interface ClientChat ()
-@property (nonatomic) User *creator;
-@property (nonatomic) YRBTServerDevice *device;
+@property (nonatomic, readwrite) User *creator;
+@property (nonatomic, readwrite) YRBTServerDevice *device;
 @end
 
 @implementation ClientChat
@@ -39,6 +39,20 @@
         case kYRBTConnectionStateConnected:
             return kChatStateConnected;
     };
+}
+
+#pragma mark - <NSObject>
+
+- (BOOL)isEqual:(id)object {
+    if ([object isKindOfClass:[self class]]) {
+        return [self.device isEqual:[object device]];
+    } else {
+        return NO;
+    }
+}
+
+- (NSUInteger)hash {
+    return self.device.hash;
 }
 
 @end

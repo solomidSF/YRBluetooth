@@ -8,6 +8,11 @@
 
 #import "User.h"
 
+/**
+ *  User from client's perspective.
+ */
 @interface ClientUser : User
+
+@property (nonatomic, readonly) BOOL isConnected;
 
 @end

@@ -8,6 +8,8 @@
 
 // Model
 #import "User.h"
+#import "ClientUser.h"
+#import "ServerUser.h"
 
 // Components
 #import "YRBluetooth.h"
@@ -20,26 +22,30 @@ extern NSString *const kUserInfoIsCreatorKey;
 extern NSString *const kMessageQueueMessageKey;
 extern NSString *const kMessageQueueOperationNameKey;
 
-@interface User (ServerPerspective)
+@interface User (Private)
 
-@property (nonatomic) YRBTClientDevice *device;
-@property (nonatomic) BOOL isSubscribed;
+@property (nonatomic) NSString *identifier;
 @property (nonatomic) NSString *name;
+@property (nonatomic) BOOL isChatOwner;
 
-@property (nonatomic, readonly) NSMutableArray <NSDictionary *> *messageQueue;
-
-- (instancetype)initWithClientDevice:(YRBTClientDevice *)device;
-- (NSDictionary *)packedUserInfo;
+- (instancetype)initWithIdentifier:(NSString *)identifier name:(NSString *)name isChatOwner:(BOOL)isChatOwner;
 
 @end
 
-@interface User (ClientPerspective)
+@interface ClientUser (Private)
 
-@property (nonatomic) NSString *identifier;
 @property (nonatomic) BOOL isConnected;
-@property (nonatomic) BOOL isChatOwner;
 
 - (instancetype)initWithPackedUserInfo:(NSDictionary *)packedInfo;
-- (instancetype)initWithIdentifier:(NSString *)identifier name:(NSString *)name isChatOwner:(BOOL)isChatOwner connected:(BOOL)connected;
+@end
+
+@interface ServerUser (Private)
+
+@property (nonatomic) YRBTClientDevice *device;
+@property (nonatomic) BOOL isSubscribed;
+@property (nonatomic, readonly) NSMutableArray <NSDictionary *> *messageQueue;
+
+- (instancetype)initWithDevice:(YRBTClientDevice *)device;
+- (NSDictionary *)packedUserInfo;
 
 @end

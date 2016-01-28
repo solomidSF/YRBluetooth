@@ -8,16 +8,16 @@
 
 @import Foundation;
 
-// Model
+// Entities
 #import "ServerChat.h"
-#import "User.h"
+#import "ServerUser.h"
 #import "Message.h"
 
 @protocol ServerChatSessionObserver;
 
 @interface ServerChatSession : NSObject
 
-@property (nonatomic, readonly) NSArray <User *> *participants;
+@property (nonatomic, readonly) NSArray <ServerUser *> *participants;
 @property (nonatomic, readonly) ServerChat *chat;
 
 #pragma mark - Session Management
@@ -42,8 +42,8 @@
 @protocol ServerChatSessionObserver <NSObject>
 @optional
 
-- (void)chatSession:(ServerChatSession *)session userDidConnect:(User *)user timestamp:(NSTimeInterval)timestamp;
-- (void)chatSession:(ServerChatSession *)session userDidDisconnect:(User *)user timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ServerChatSession *)session userDidConnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ServerChatSession *)session userDidDisconnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp;
 - (void)chatSession:(ServerChatSession *)session didReceiveNewMessage:(Message *)message;
 
 @end

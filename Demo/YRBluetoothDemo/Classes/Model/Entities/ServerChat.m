@@ -20,4 +20,14 @@
     return kChatStateConnected;
 }
 
+#pragma mark - <NSObject>
+
+- (BOOL)isEqual:(id)object {
+    if ([object isKindOfClass:[self class]]) {
+        return [self.me isEqual:[object me]];
+    } else {
+        return NO;
+    }
+}
+
 @end

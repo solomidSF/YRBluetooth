@@ -354,6 +354,9 @@
                                         <rect key="frame" x="10" y="3" width="100" height="33"/>
                                         <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="15"/>
                                         <state key="normal" title="[#] Participants"/>
+                                        <connections>
+                                            <action selector="participantsClicked:" destination="Qhd-xY-yCP" eventType="touchUpInside" id="QeA-p8-vES"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -529,20 +532,80 @@
             </objects>
             <point key="canvasLocation" x="2022" y="-41"/>
         </scene>
-        <!--View Controller-->
+        <!--Chat Members-->
         <scene sceneID="mPF-cX-J62">
             <objects>
-                <viewController id="ua6-Kr-Lmd" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="ua6-Kr-Lmd" customClass="ChatMembersController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="xYv-jf-eQI"/>
                         <viewControllerLayoutGuide type="bottom" id="KIr-oM-dkt"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ekc-V7-aQa">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="49" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CKa-Ff-hQY">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <view key="tableFooterView" contentMode="scaleToFill" id="gJh-jn-qF4">
+                                    <rect key="frame" x="0.0" y="68" width="320" height="0.0"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </view>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChatMemberCell" rowHeight="40" id="lCG-iH-XRT" customClass="ChatMemberCell">
+                                        <rect key="frame" x="0.0" y="28" width="320" height="40"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lCG-iH-XRT" id="uc5-wm-aja">
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="39.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="[Name]" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Srz-H0-1Zo">
+                                                    <rect key="frame" x="10" y="10.5" width="47" height="19.5"/>
+                                                    <fontDescription key="fontDescription" name="AvenirNext-Regular" family="Avenir Next" pointSize="14"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" image="offline" translatesAutoresizingMaskIntoConstraints="NO" id="ife-4a-1HX">
+                                                    <rect key="frame" x="65" y="13" width="15" height="14"/>
+                                                </imageView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Srz-H0-1Zo" firstAttribute="leading" secondItem="uc5-wm-aja" secondAttribute="centerX" multiplier="10:160" id="C7t-LF-x5c"/>
+                                                <constraint firstItem="ife-4a-1HX" firstAttribute="centerY" secondItem="Srz-H0-1Zo" secondAttribute="centerY" id="MXA-Eq-d4Z"/>
+                                                <constraint firstItem="Srz-H0-1Zo" firstAttribute="centerY" secondItem="uc5-wm-aja" secondAttribute="centerY" id="bjR-M7-kAQ"/>
+                                                <constraint firstItem="ife-4a-1HX" firstAttribute="trailing" relation="lessThanOrEqual" secondItem="uc5-wm-aja" secondAttribute="trailing" constant="-8" id="eKa-tb-w6s"/>
+                                                <constraint firstItem="ife-4a-1HX" firstAttribute="leading" secondItem="Srz-H0-1Zo" secondAttribute="trailing" constant="8" id="n25-vz-XNe"/>
+                                                <constraint firstAttribute="bottom" secondItem="Srz-H0-1Zo" secondAttribute="bottom" priority="749" constant="10" id="pRL-ZU-eHQ"/>
+                                                <constraint firstItem="Srz-H0-1Zo" firstAttribute="top" secondItem="uc5-wm-aja" secondAttribute="top" constant="10" id="wgx-RT-f9m"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="_memberNameLabel" destination="Srz-H0-1Zo" id="FDL-jc-UYe"/>
+                                            <outlet property="_memberOnlineStatusImageView" destination="ife-4a-1HX" id="dwo-an-JpL"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="ua6-Kr-Lmd" id="E04-Th-kOT"/>
+                                    <outlet property="delegate" destination="ua6-Kr-Lmd" id="g1U-QD-xIx"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="CKa-Ff-hQY" firstAttribute="leading" secondItem="ekc-V7-aQa" secondAttribute="leading" id="42Y-En-E9m"/>
+                            <constraint firstItem="CKa-Ff-hQY" firstAttribute="top" secondItem="xYv-jf-eQI" secondAttribute="bottom" id="7tA-HJ-V7R"/>
+                            <constraint firstAttribute="trailing" secondItem="CKa-Ff-hQY" secondAttribute="trailing" id="Kms-0k-7Dp"/>
+                            <constraint firstItem="KIr-oM-dkt" firstAttribute="top" secondItem="CKa-Ff-hQY" secondAttribute="bottom" id="SAg-12-Aef"/>
+                        </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" title="Chat Members" id="UIn-ke-SXH"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+                    <connections>
+                        <outlet property="_membersTableView" destination="CKa-Ff-hQY" id="6tq-iP-jjl"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7fe-hD-DXU" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -8,6 +8,11 @@
 
 #import "User.h"
 
+/**
+ *  User from server's perspective.
+ */
 @interface ServerUser : User
+
+@property (nonatomic, readonly) BOOL isSubscribed;
 
 @end

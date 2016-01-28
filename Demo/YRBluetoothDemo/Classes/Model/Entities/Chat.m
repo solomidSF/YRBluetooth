@@ -13,10 +13,10 @@
 #import "YRBluetooth.h"
 
 @interface Chat ()
-@property (nonatomic) NSString *name;
-@property (nonatomic) User *me;
+@property (nonatomic, readwrite) NSString *name;
+@property (nonatomic, readwrite) User *me;
 @property (nonatomic, readonly) NSMutableArray <Message *> *mutableMessages;
-@property (nonatomic) NSMutableArray <User *> *mutableMembers;
+@property (nonatomic, readwrite) NSMutableArray <User *> *mutableMembers;
 
 @end
 

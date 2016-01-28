@@ -10,7 +10,6 @@
 
 // Model
 #import "ServerChatSession.h"
-#import "UsersPool.h"
 
 // API
 #import "SubscribeRequest.h"
@@ -37,11 +36,11 @@ static NSString *const kUserEventOperation = @"UET";
 
 @implementation ServerChatSession {
     YRBTServer *_server;
-    User *_currentUserInfo;
+    ServerUser *_currentUserInfo;
+    
+    NSMutableArray <ServerUser *> *_users;
     
     GCDMulticastDelegate <ServerChatSessionObserver> *_observers;
-    
-    UsersPool *_usersPool;
 }
 
 #pragma mark - Lifecycle
@@ -55,7 +54,8 @@ static NSString *const kUserEventOperation = @"UET";
         _server = [[YRBTServer alloc] initWithAppID:kChatAppID peerName:nickname];
         _observers = (GCDMulticastDelegate <ServerChatSessionObserver> *)[GCDMulticastDelegate new];
         _chat = [ServerChat chatWithCreatorInfo:[self currentUserInfo]];
-        
+        _users = [NSMutableArray new];
+
         [self setupServer];
     }
     
@@ -68,6 +68,12 @@ static NSString *const kUserEventOperation = @"UET";
 
 - (void)endSession {
     [_server invalidate];
+}
+
+#pragma mark - Dynamic Properties
+
+- (NSArray <ServerUser *> *)participants {
+    return [self subscribedUsers];
 }
 
 #pragma mark - Public
@@ -107,27 +113,27 @@ static NSString *const kUserEventOperation = @"UET";
 #pragma mark - Private
 
 - (void)setupServer {
-    _usersPool = [UsersPool new];
-    
     __typeof(self) __weak weakSelf = self;
     
     _server.deviceDisconnectCallback = ^(YRBTRemoteDevice *device) {
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
         if (strongSelf) {
-            User *disconnectedUser = [strongSelf->_usersPool userForDevice:device];
+            ServerUser *disconnectedUser = [strongSelf userForDevice:device];
 
-            disconnectedUser.isSubscribed = NO;
-            [disconnectedUser.messageQueue removeAllObjects];
-            
-            NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
-            [strongSelf->_observers chatSession:strongSelf userDidDisconnect:disconnectedUser timestamp:timestamp];
-            
-            UserConnection *connection = [[UserConnection alloc] initWithEventType:kUserConnectionTypeDisconnected
-                                                                              user:disconnectedUser
-                                                                         timestamp:timestamp];
-            
-            [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[strongSelf subscribedUsers]];
+            if (disconnectedUser.isSubscribed) {
+                disconnectedUser.isSubscribed = NO;
+                [disconnectedUser.messageQueue removeAllObjects];
+                
+                NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
+                [strongSelf->_observers chatSession:strongSelf userDidDisconnect:disconnectedUser timestamp:timestamp];
+                
+                UserConnection *connection = [[UserConnection alloc] initWithEventType:kUserConnectionTypeDisconnected
+                                                                                  user:disconnectedUser
+                                                                             timestamp:timestamp];
+                
+                [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[strongSelf subscribedUsers]];                
+            }
         }
     };
     
@@ -144,7 +150,7 @@ static NSString *const kUserEventOperation = @"UET";
         }
         
         SubscribeRequest *subscribeRequest = [[SubscribeRequest alloc] initWithName:[requestMessage stringValue]];
-        User *subscribedUser = [strongSelf->_usersPool userForDevice:request.sender];
+        ServerUser *subscribedUser = [strongSelf userForDevice:request.sender];
         
         NSMutableArray *usersToNotify = [[strongSelf subscribedUsers] mutableCopy];
         [usersToNotify removeObject:subscribedUser];
@@ -164,10 +170,7 @@ static NSString *const kUserEventOperation = @"UET";
             [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[usersToNotify copy]];
         }
         
-        User *currentUserInfo = [strongSelf currentUserInfo];
-        [usersToNotify addObject:currentUserInfo];
-        
-        NSArray *chatMembers = [usersToNotify copy];
+        NSArray *chatMembers = [usersToNotify arrayByAddingObject:[strongSelf currentUserInfo]];
         
         SubscribeResponse *response = [[SubscribeResponse alloc] initWithSubscribedUserInfo:subscribedUser
                                                                                  otherUsers:chatMembers];
@@ -199,7 +202,7 @@ static NSString *const kUserEventOperation = @"UET";
             return nil;
         }
         
-        User *sender = [strongSelf->_usersPool userForDevice:request.sender];
+        ServerUser *sender = [strongSelf userForDevice:request.sender];
         NSString *messageText = [requestMessage stringValue];
         
         Message *message = [[Message alloc] initWithChat:strongSelf.chat
@@ -238,35 +241,50 @@ static NSString *const kUserEventOperation = @"UET";
     } forOperation:kMessageOperation];
 }
 
-- (NSArray <User *> *)subscribedUsers {
+- (NSArray <ServerUser *> *)subscribedUsers {
     NSMutableArray *users = [NSMutableArray new];
     
     for (YRBTClientDevice *device in _server.connectedDevices) {
-        User *user = [_usersPool userForDevice:device];
+        ServerUser *user = [self userForDevice:device];
         
         if (user.isSubscribed) {
-            [users addObject:[_usersPool userForDevice:device]];
+            [users addObject:user];
         }
     }
     
     return [users copy];
 }
 
-- (User *)currentUserInfo {
+- (ServerUser *)userForDevice:(__kindof YRBTRemoteDevice *)device {
+    for (ServerUser *user in _users) {
+        if ([user.device isEqual:device]) {
+            return user;
+        }
+    }
+    
+    ServerUser *resultingUser = [[ServerUser alloc] initWithDevice:device];
+    
+    [_users addObject:resultingUser];
+    
+    return resultingUser;
+}
+
+- (ServerUser *)currentUserInfo {
     if (!_currentUserInfo) {
-        _currentUserInfo = [[User alloc] initWithIdentifier:@"0" name:_server.peerName isChatOwner:YES connected:YES];
+        _currentUserInfo = [[ServerUser alloc] initWithIdentifier:@"0" name:_server.peerName isChatOwner:YES];
+        _currentUserInfo.isSubscribed = YES;
     }
     
     return _currentUserInfo;
 }
 
 // TODO: Should be a part of framework
-- (void)scheduleMessage:(YRBTMessage *)message forOperation:(NSString *)operationName forUsers:(NSArray <User *> *)users {
+- (void)scheduleMessage:(YRBTMessage *)message forOperation:(NSString *)operationName forUsers:(NSArray <ServerUser *> *)users {
     NSMutableArray *usersThatShouldReceiveImmediately = [NSMutableArray new];
     NSDictionary *messageMeta = @{kMessageQueueMessageKey : message,
                                   kMessageQueueOperationNameKey : operationName};
     
-    for (User *user in users) {
+    for (ServerUser *user in users) {
         if (user.messageQueue.count == 0) {
             [usersThatShouldReceiveImmediately addObject:user];
         }
@@ -292,14 +310,14 @@ static NSString *const kUserEventOperation = @"UET";
     }
 }
 
-- (void)removeMessageMeta:(NSDictionary *)messageMeta fromQueueForUsers:(NSArray <User *> *)users {
-    for (User *user in users) {
+- (void)removeMessageMeta:(NSDictionary *)messageMeta fromQueueForUsers:(NSArray <ServerUser *> *)users {
+    for (ServerUser *user in users) {
         [user.messageQueue removeObject:messageMeta];
     }
 }
 
-- (void)processPendingMessagesForUsers:(NSArray <User *> *)users {
-    for (User *user in users) {
+- (void)processPendingMessagesForUsers:(NSArray <ServerUser *> *)users {
+    for (ServerUser *user in users) {
         if (user.messageQueue.count > 0) {
             YRBTMessage *message = [user.messageQueue firstObject][kMessageQueueMessageKey];
             NSString *operationName = [user.messageQueue firstObject][kMessageQueueOperationNameKey];

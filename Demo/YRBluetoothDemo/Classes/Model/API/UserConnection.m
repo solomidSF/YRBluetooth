@@ -9,7 +9,7 @@
 // Model
 #import "UserConnection.h"
 
-// Private
+// Internal
 #import "User+Private.h"
 
 @implementation UserConnection
@@ -27,7 +27,7 @@
     return self;
 }
 
-- (instancetype)initWithEventType:(UserConnectionType)eventType user:(User *)user timestamp:(NSTimeInterval)timestamp {
+- (instancetype)initWithEventType:(UserConnectionType)eventType user:(ServerUser *)user timestamp:(NSTimeInterval)timestamp {
     NSDictionary *meta = @{
                            @"eventType" : @(eventType),
                            @"timestamp" : @(timestamp),

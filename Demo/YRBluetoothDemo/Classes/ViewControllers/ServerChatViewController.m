@@ -17,6 +17,9 @@
 #import "ConnectionEvent.h"
 #import "NewMessageEvent.h"
 
+// Entities
+#import "ServerUser.h"
+
 // Cells
 #import "BaseEventTableCell.h"
 #import "InformativeTableCell.h"
@@ -123,7 +126,7 @@ UITableViewDataSource
 
 #pragma mark - <ServerChatSessionObserver>
 
-- (void)chatSession:(ServerChatSession *)session userDidConnect:(User *)user timestamp:(NSTimeInterval)timestamp {
+- (void)chatSession:(ServerChatSession *)session userDidConnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp {
     ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:_serverSession.chat
                                                               user:user
                                                          eventType:kEventTypeConnected
@@ -151,7 +154,7 @@ UITableViewDataSource
     }
 }
 
-- (void)chatSession:(ServerChatSession *)session userDidDisconnect:(User *)user timestamp:(NSTimeInterval)timestamp {
+- (void)chatSession:(ServerChatSession *)session userDidDisconnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp {
     ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:_serverSession.chat
                                                               user:user
                                                          eventType:kEventTypeDisconnected

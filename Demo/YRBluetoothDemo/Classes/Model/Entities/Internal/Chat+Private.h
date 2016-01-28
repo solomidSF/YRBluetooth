@@ -6,17 +6,19 @@
 //  Copyright © 2016 solomidSF. All rights reserved.
 //
 
-// Model
+// Entities
 #import "Chat.h"
 #import "ClientChat.h"
 #import "ServerChat.h"
+#import "ClientUser.h"
+#import "ServerUser.h"
 
 // Components
 #import "YRBluetooth.h"
 
 @interface Chat (Private)
 
-@property (nonatomic) User *me;
+@property (nonatomic) __kindof User *me;
 @property (nonatomic, readonly) NSMutableArray <Message *> *mutableMessages;
 @property (nonatomic) NSMutableArray <User *> *mutableMembers;
 
@@ -24,7 +26,7 @@
 
 @interface ClientChat (Private)
 
-@property (nonatomic) User *creator;
+@property (nonatomic) ClientUser *creator;
 @property (nonatomic) YRBTServerDevice *device;
 
 + (instancetype)chatForDevice:(YRBTServerDevice *)device;
@@ -33,6 +35,6 @@
 
 @interface ServerChat (Private)
 
-+ (instancetype)chatWithCreatorInfo:(User *)user;
++ (instancetype)chatWithCreatorInfo:(ServerUser *)user;
 
 @end

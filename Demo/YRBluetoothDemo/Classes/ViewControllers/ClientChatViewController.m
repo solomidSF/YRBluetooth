@@ -8,6 +8,7 @@
 
 // Controllers
 #import "ClientChatViewController.h"
+#import "ChatMembersController.h"
 
 // Events
 #import "EventObject.h"
@@ -17,11 +18,13 @@
 // Cells
 #import "BaseEventTableCell.h"
 
+static NSString *const kChatMembersSegueIdentifier = @"ChatMembersSegue";
+
 @interface ClientChatViewController ()
 <
+ClientChatSessionObserver,
 UITableViewDelegate,
-UITableViewDataSource,
-ClientChatSessionObserver
+UITableViewDataSource
 >
 @end
 
@@ -93,6 +96,14 @@ ClientChatSessionObserver
 
 #pragma mark - Callbacks
 
+- (IBAction)tryToConnectCallback:(id)sender {
+    [self tryToConnect];
+}
+
+- (IBAction)participantsClicked:(id)sender {
+    [self performSegueWithIdentifier:kChatMembersSegueIdentifier sender:self];
+}
+
 - (IBAction)sendClicked:(id)sender {
     [_session sendText:_messageTextField.text
                 inChat:self.pickedChat
@@ -123,8 +134,15 @@ ClientChatSessionObserver
     _messageTextField.text = nil;
 }
 
-- (IBAction)tryToConnectCallback:(id)sender {
-    [self tryToConnect];
+#pragma mark - Navigation
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kChatMembersSegueIdentifier]) {
+        ChatMembersController *membersController = segue.destinationViewController;
+        
+        membersController.session = self.session;
+        membersController.chat = self.pickedChat;
+    }
 }
 
 #pragma mark - Private
@@ -133,7 +151,7 @@ ClientChatSessionObserver
     self.navigationItem.rightBarButtonItem = nil;
     
     if (self.pickedChat.state == kChatStateDisconnected) {
-        [_session connectToChat:self.pickedChat withSuccess:^(ClientChat *chat, User *userInfo) {
+        [_session connectToChat:self.pickedChat withSuccess:^(ClientChat *chat, ClientUser *userInfo) {
             
         } failure:^(NSError *error) {
             self.navigationItem.rightBarButtonItem = _retryConnectionButton;
@@ -159,23 +177,9 @@ ClientChatSessionObserver
     _connectionStateLabel.text = readableState;
     _connectionStateImageView.image = [UIImage imageNamed:connectionImage];
     
+    _participantsCountButton.enabled = self.pickedChat.state == kChatStateConnected;
     [_participantsCountButton setTitle:[NSString stringWithFormat:@"%d Participants", (int32_t)self.pickedChat.members.count + 2]
                               forState:UIControlStateNormal];
-}
-
-#pragma mark - <UITableViewDelegate&Datasource>
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return _datasource.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    EventObject *event = _datasource[indexPath.row];
-    
-    __kindof BaseEventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:event.reuseIdentifier];
-    cell.event = event;
-    
-    return cell;
 }
 
 #pragma mark - <ClientChatSessionObserver>
@@ -186,7 +190,7 @@ ClientChatSessionObserver
     }
 }
 
-- (void)chatSession:(ClientChatSession *)session userDidConnect:(User *)user
+- (void)chatSession:(ClientChatSession *)session userDidConnect:(ClientUser *)user
              toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
     ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:self.pickedChat
                                                               user:user
@@ -206,9 +210,18 @@ ClientChatSessionObserver
     [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
                               atScrollPosition:UITableViewScrollPositionBottom
                                       animated:NO];
+    
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"User %@ connected to %@'s chat.", user.name, chat.name];
+        notification.soundName = @"ding.mp3";
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
 }
 
-- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(User *)user
+- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(ClientUser *)user
            fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
     ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:self.pickedChat
                                                               user:user
@@ -246,6 +259,30 @@ ClientChatSessionObserver
     [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
                               atScrollPosition:UITableViewScrollPositionBottom
                                       animated:NO];
+    
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"New message from %@ in %@'s chat:\n%@", message.sender.name, chat.name, message.messageText];
+        notification.soundName = UILocalNotificationDefaultSoundName;
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
+}
+
+#pragma mark - <UITableViewDelegate&Datasource>
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return _datasource.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    EventObject *event = _datasource[indexPath.row];
+    
+    __kindof BaseEventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:event.reuseIdentifier];
+    cell.event = event;
+    
+    return cell;
 }
 
 @end

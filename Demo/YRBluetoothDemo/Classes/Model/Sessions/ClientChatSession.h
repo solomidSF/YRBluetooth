@@ -8,8 +8,9 @@
 
 @import Foundation;
 
-// Model
+// Entities
 #import "ClientChat.h"
+#import "ClientUser.h"
 
 // Components
 #import "YRBluetooth.h"
@@ -19,7 +20,7 @@ typedef void (^ChatScanningFailureCallback) (NSError *error);
 
 typedef void (^ChatSuccessSendCallback) (Message *message);
 
-typedef void (^ChatConnectionSuccessCallback) (ClientChat *chat, User *userInfo);
+typedef void (^ChatConnectionSuccessCallback) (ClientChat *chat, ClientUser *userInfo);
 typedef void (^ChatConnectionFailureCallback) (NSError *error);
 
 @protocol ClientChatSessionObserver;
@@ -70,8 +71,10 @@ typedef void (^ChatConnectionFailureCallback) (NSError *error);
 - (void)chatSession:(ClientChatSession *)session didConnectToChat:(ClientChat *)chat;
 - (void)chatSession:(ClientChatSession *)session didFailToConnectToChat:(ClientChat *)chat withError:(NSError *)error;
 
-- (void)chatSession:(ClientChatSession *)session userDidConnect:(User *)user toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
-- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(User *)user fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ClientChatSession *)session userDidConnect:(ClientUser *)user
+             toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(ClientUser *)user
+           fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
 
 - (void)chatSession:(ClientChatSession *)session didSendMessage:(Message *)message inChat:(ClientChat *)chat;
 - (void)chatSession:(ClientChatSession *)session didReceiveMessage:(Message *)message inChat:(ClientChat *)chat;

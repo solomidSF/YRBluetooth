@@ -18,12 +18,12 @@
 
 - (instancetype)initWithMessage:(YRBTMessage *)message {
     if (self = [super initWithMessage:message]) {
-        _subscribedUser = [[User alloc] initWithPackedUserInfo:[message dictionaryValue][@"u"]];
+        _subscribedUser = [[ClientUser alloc] initWithPackedUserInfo:[message dictionaryValue][@"u"]];
         
         NSMutableArray *otherUsers = [NSMutableArray new];
         
         for (NSDictionary *packedInfo in [message dictionaryValue][@"om"]) {
-            User *user = [[User alloc] initWithPackedUserInfo:packedInfo];
+            ClientUser *user = [[ClientUser alloc] initWithPackedUserInfo:packedInfo];
             
             if (!user.isChatOwner) {
                 [otherUsers addObject:user];
@@ -38,10 +38,10 @@
     return self;
 }
 
-- (instancetype)initWithSubscribedUserInfo:(User *)userInfo otherUsers:(NSArray <User *> *)users {
+- (instancetype)initWithSubscribedUserInfo:(ServerUser *)userInfo otherUsers:(NSArray <ServerUser *> *)users {
     NSMutableArray *otherUsers = [NSMutableArray new];
     
-    for (User *user in users) {
+    for (ServerUser *user in users) {
         [otherUsers addObject:[user packedUserInfo]];
     }
     

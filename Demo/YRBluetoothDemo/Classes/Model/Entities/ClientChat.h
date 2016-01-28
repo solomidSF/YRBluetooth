@@ -13,6 +13,6 @@
  */
 @interface ClientChat : Chat
 
-@property (nonatomic, readonly) User *creator;
+@property (nonatomic, readonly) __kindof User *creator;
 
 @end

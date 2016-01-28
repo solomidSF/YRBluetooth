@@ -8,14 +8,17 @@
 
 // Model
 #import "APIObject.h"
+
+// Entities
 #import "User.h"
+#import "ServerUser.h"
 
 @interface SubscribeResponse : APIObject
 
-@property (nonatomic) User *subscribedUser;
-@property (nonatomic) User *creator;
-@property (nonatomic) NSArray <User *> *otherUsers;
+@property (nonatomic) __kindof User *subscribedUser;
+@property (nonatomic) __kindof User *creator;
+@property (nonatomic) NSArray <__kindof User *> *otherUsers;
 
-- (instancetype)initWithSubscribedUserInfo:(User *)userInfo otherUsers:(NSArray <User *> *)users;
+- (instancetype)initWithSubscribedUserInfo:(ServerUser *)userInfo otherUsers:(NSArray <ServerUser *> *)users;
 
 @end

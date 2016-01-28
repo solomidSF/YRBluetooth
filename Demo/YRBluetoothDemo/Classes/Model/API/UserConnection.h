@@ -24,6 +24,6 @@ typedef enum {
 @property (nonatomic, readonly) BOOL connected;
 @property (nonatomic, readonly) NSString *userName;
 
-- (instancetype)initWithEventType:(UserConnectionType)eventType user:(User *)user timestamp:(NSTimeInterval)timestamp;
+- (instancetype)initWithEventType:(UserConnectionType)eventType user:(__kindof User *)user timestamp:(NSTimeInterval)timestamp;
 
 @end

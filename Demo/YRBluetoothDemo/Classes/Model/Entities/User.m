@@ -9,17 +9,10 @@
 // Model
 #import "User.h"
 
-// Components
-#import "YRBluetooth.h"
-
 @interface User ()
-@property (nonatomic) YRBTClientDevice *device;
-@property (nonatomic) BOOL isSubscribed;
-@property (nonatomic) NSString *name;
-@property (nonatomic) NSMutableArray <NSDictionary *> *messageQueue;
-@property (nonatomic) NSString *identifier;
-@property (nonatomic) BOOL isConnected;
-@property (nonatomic) BOOL isChatOwner;
+@property (nonatomic, readwrite) NSString *identifier;
+@property (nonatomic, readwrite) NSString *name;
+@property (nonatomic, readwrite) BOOL isChatOwner;
 @end
 
 @implementation User

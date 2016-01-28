@@ -8,6 +8,10 @@
 
 #import "ClientUser.h"
 
+@interface ClientUser ()
+@property (nonatomic, readwrite) BOOL isConnected;
+@end
+
 @implementation ClientUser
 
 @end
