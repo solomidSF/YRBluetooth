@@ -14,6 +14,7 @@
 // API
 #import "NewMessage.h"
 #import "UserConnection.h"
+#import "UsernameChanged.h"
 
 // Components
 #import "YRBluetooth.h"
@@ -31,6 +32,7 @@
 static NSString *const kSubscribeOperation = @"SBS";
 static NSString *const kMessageOperation = @"MSG";
 static NSString *const kUserEventOperation = @"UET";
+static NSString *const kUserNameChangedOperation = @"UNC";
 
 @implementation ClientChatSession {
     YRBTClient *_client;
@@ -179,28 +181,28 @@ static NSString *const kUserEventOperation = @"UET";
     // TODO: Don't return message operation
     YRBTMessage *message = [YRBTMessage messageWithString:text];
     
+    YRBTResponseCallback response = ^(YRBTMessageOperation *operation, YRBTMessage *receivedMessage) {
+        NewMessage *event = [[NewMessage alloc] initWithMessage:receivedMessage];
+        ClientUser *sender = chat.me;
+        
+        Message *newMessage = [[Message alloc] initWithChat:chat
+                                                     sender:sender
+                                                  timestamp:event.timestamp
+                                                messageText:event.messageText];
+        
+        [_observers chatSession:self didSendMessage:newMessage inChat:chat];
+        
+        !success ? : success(newMessage);
+    };
+    
     return [_client sendMessage:message
                        toServer:chat.device
                   operationName:kMessageOperation
-                    successSend:^(YRBTMessageOperation *operation) {
-                        NSLog(@"Did send!");
-                    } response:^(YRBTMessageOperation *operation, YRBTMessage *receivedMessage) {
-                        NewMessage *event = [[NewMessage alloc] initWithMessage:receivedMessage];
-                        ClientUser *sender = chat.me;
-                        
-                        Message *newMessage = [[Message alloc] initWithChat:chat
-                                                                     sender:sender
-                                                                  timestamp:event.timestamp
-                                                                messageText:event.messageText];
-                        
-                        [_observers chatSession:self didSendMessage:newMessage inChat:chat];
-                        
-                        !success ? : success(newMessage);
-                    } sendingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
-                        NSLog(@"MSG Progress: %d/%d", currentBytes, totalBytes);
-                    } receivingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
-                        NSLog(@"RCV Progress: %d/%d", currentBytes, totalBytes);
-                    } failure:failure];
+                    successSend:NULL
+                       response:response
+                sendingProgress:NULL
+              receivingProgress:NULL
+                        failure:failure];
 }
 
 #pragma mark - Observing
@@ -301,6 +303,30 @@ static NSString *const kUserEventOperation = @"UET";
     } failedToReceiveCallback:^(YRBTRemoteMessageRequest *request, NSError *error) {
         NSLog(@"Failed to respond %@. ERR: %@", request, error);
     } forOperation:kMessageOperation];
+    
+    YRBTReceivedRemoteRequestCallback requestCallback = ^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
+                                                                                YRBTMessage *requestMessage,
+                                                                                BOOL wantsResponse) {
+        __typeof(weakSelf) __strong strongSelf = weakSelf;
+        
+        if (strongSelf) {
+            UsernameChanged *usernameChanged = [[UsernameChanged alloc] initWithMessage:requestMessage];
+
+            ClientChat *chat = [strongSelf chatForRemoteDevice:request.sender];
+            ClientUser *user = [strongSelf userWithIdentifier:usernameChanged.userID
+                                                     fromChat:chat];
+            
+            [strongSelf->_observers chatSession:strongSelf userDidUpdateName:user inChat:chat];
+        }
+        
+        return nil;
+    };
+    
+    [_client registerWillReceiveRequestCallback:NULL
+                      didReceiveRequestCallback:requestCallback
+                      receivingProgressCallback:NULL
+                        failedToReceiveCallback:NULL
+                                   forOperation:kUserNameChangedOperation];
 }
 
 - (ClientChat *)chatForRemoteDevice:(YRBTServerDevice *)device {

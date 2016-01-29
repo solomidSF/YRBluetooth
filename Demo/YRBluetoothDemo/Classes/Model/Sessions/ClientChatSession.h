@@ -33,6 +33,7 @@ typedef void (^ChatConnectionFailureCallback) (NSError *error);
 #pragma mark - Session Management
 
 + (instancetype)sessionWithNickname:(NSString *)nickname;
+
 - (void)endSession;
 
 #pragma mark - Scanning
@@ -75,6 +76,7 @@ typedef void (^ChatConnectionFailureCallback) (NSError *error);
              toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
 - (void)chatSession:(ClientChatSession *)session userDidDisconnect:(ClientUser *)user
            fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ClientChatSession *)session userDidUpdateName:(ClientUser *)user inChat:(ClientChat *)chat;
 
 - (void)chatSession:(ClientChatSession *)session didSendMessage:(Message *)message inChat:(ClientChat *)chat;
 - (void)chatSession:(ClientChatSession *)session didReceiveMessage:(Message *)message inChat:(ClientChat *)chat;

@@ -83,6 +83,7 @@
 		7DE31AA61C52F85C00047EE0 /* ChatTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DE31AA51C52F85C00047EE0 /* ChatTableCell.m */; };
 		7DF567411C59850F00CD016B /* ChatMembersController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DF567401C59850F00CD016B /* ChatMembersController.m */; };
 		7DF567441C59881800CD016B /* ChatMemberCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DF567431C59881800CD016B /* ChatMemberCell.m */; };
+		7DF5674E1C5A82C100CD016B /* UsernameChanged.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DF5674D1C5A82C100CD016B /* UsernameChanged.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -242,6 +243,8 @@
 		7DF567401C59850F00CD016B /* ChatMembersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMembersController.m; sourceTree = "<group>"; };
 		7DF567421C59881800CD016B /* ChatMemberCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMemberCell.h; sourceTree = "<group>"; };
 		7DF567431C59881800CD016B /* ChatMemberCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMemberCell.m; sourceTree = "<group>"; };
+		7DF5674C1C5A82C100CD016B /* UsernameChanged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsernameChanged.h; sourceTree = "<group>"; };
+		7DF5674D1C5A82C100CD016B /* UsernameChanged.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UsernameChanged.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -679,6 +682,8 @@
 				7DE31A7C1C51A9DF00047EE0 /* UserConnection.m */,
 				7DE31A751C51A9DF00047EE0 /* NewMessage.h */,
 				7DE31A761C51A9DF00047EE0 /* NewMessage.m */,
+				7DF5674C1C5A82C100CD016B /* UsernameChanged.h */,
+				7DF5674D1C5A82C100CD016B /* UsernameChanged.m */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -847,6 +852,7 @@
 				7D5285221C342AEB00775DD1 /* _YRBTChunkProvider.m in Sources */,
 				7D52851E1C342AEB00775DD1 /* _YRBTChunkParser.m in Sources */,
 				7DBE5A631C5826C60068469C /* Message.m in Sources */,
+				7DF5674E1C5A82C100CD016B /* UsernameChanged.m in Sources */,
 				7DE31A881C51A9DF00047EE0 /* ServerChatSession.m in Sources */,
 				7D52850E1C342AEB00775DD1 /* YRBTClientDevice.m in Sources */,
 				7D5285141C342AEB00775DD1 /* YRBTClientDevice+Private.m in Sources */,

@@ -119,6 +119,8 @@ UITableViewDataSource
     EventObject *event = _datasource[indexPath.row];
     
     __kindof BaseEventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:event.reuseIdentifier];
+    
+    cell.serverSession = _serverSession;
     cell.event = event;
     
     return cell;

@@ -40,6 +40,7 @@ UITableViewDataSource
     __weak IBOutlet UILabel *_connectionStateLabel;
     __weak IBOutlet UIImageView *_connectionStateImageView;
     __weak IBOutlet UIButton *_participantsCountButton;
+    __weak IBOutlet UIView *_noMessagesView;
 }
 
 #pragma mark - Lifecycle
@@ -50,7 +51,8 @@ UITableViewDataSource
     self.navigationItem.title = self.pickedChat.name;
     
     _datasource = [NSMutableArray new];
-    
+    _noMessagesView.hidden = _datasource.count > 0;
+
     _messagesTableView.rowHeight = UITableViewAutomaticDimension;
     _messagesTableView.estimatedRowHeight = 50.0f;
     
@@ -67,15 +69,13 @@ UITableViewDataSource
     _keyboardObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIKeyboardWillChangeFrameNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
-        if (strongSelf)
-        {
+        if (strongSelf) {
             CGRect keyboardRect = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
             NSTimeInterval duration = [note.userInfo[UIKeyboardAnimationDurationUserInfoKey] floatValue];
 
             CGFloat localY = [[UIApplication sharedApplication].keyWindow convertPoint:keyboardRect.origin toView:strongSelf.view].y;
             
-            [UIView animateWithDuration:duration animations:^()
-             {
+            [UIView animateWithDuration:duration animations:^() {
                  strongSelf->_messageBottomConstraint.constant = MIN(0, localY - CGRectGetHeight(strongSelf.view.bounds));
                  
                  [strongSelf.view layoutIfNeeded];
@@ -108,6 +108,8 @@ UITableViewDataSource
     [_session sendText:_messageTextField.text
                 inChat:self.pickedChat
            withSuccess:^(Message *message) {
+               _noMessagesView.hidden = YES;
+               
                NewMessageEvent *event = [[NewMessageEvent alloc] initWithChat:self.pickedChat
                                                                       message:message
                                                                     timestamp:message.timestamp];
@@ -177,7 +179,7 @@ UITableViewDataSource
     _connectionStateLabel.text = readableState;
     _connectionStateImageView.image = [UIImage imageNamed:connectionImage];
     
-    _participantsCountButton.enabled = self.pickedChat.state == kChatStateConnected;
+    _participantsCountButton.enabled = (self.pickedChat.state == kChatStateConnected);
     [_participantsCountButton setTitle:[NSString stringWithFormat:@"%d Participants", (int32_t)self.pickedChat.members.count + 2]
                               forState:UIControlStateNormal];
 }
@@ -192,6 +194,8 @@ UITableViewDataSource
 
 - (void)chatSession:(ClientChatSession *)session userDidConnect:(ClientUser *)user
              toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
+    _noMessagesView.hidden = YES;
+
     ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:self.pickedChat
                                                               user:user
                                                          eventType:kEventTypeConnected
@@ -223,6 +227,8 @@ UITableViewDataSource
 
 - (void)chatSession:(ClientChatSession *)session userDidDisconnect:(ClientUser *)user
            fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
+    _noMessagesView.hidden = YES;
+    
     ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:self.pickedChat
                                                               user:user
                                                          eventType:kEventTypeDisconnected
@@ -244,6 +250,8 @@ UITableViewDataSource
 }
 
 - (void)chatSession:(ClientChatSession *)session didReceiveMessage:(Message *)message inChat:(ClientChat *)chat {
+    _noMessagesView.hidden = YES;
+
     NewMessageEvent *event = [[NewMessageEvent alloc] initWithChat:self.pickedChat
                                                            message:message
                                                          timestamp:message.timestamp];
@@ -280,6 +288,8 @@ UITableViewDataSource
     EventObject *event = _datasource[indexPath.row];
     
     __kindof BaseEventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:event.reuseIdentifier];
+    
+    cell.clientSession = _session;
     cell.event = event;
     
     return cell;

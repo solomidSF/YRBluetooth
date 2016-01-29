@@ -6,8 +6,10 @@
 //  Copyright © 2016 solomidSF. All rights reserved.
 //
 
-// Model
+// API
 #import "APIObject.h"
+
+// Model
 #import "User.h"
 
 typedef enum {

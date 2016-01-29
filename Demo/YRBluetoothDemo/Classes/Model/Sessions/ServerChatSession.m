@@ -16,6 +16,7 @@
 #import "SubscribeResponse.h"
 #import "UserConnection.h"
 #import "NewMessage.h"
+#import "UsernameChanged.h"
 
 // Categories
 #import "User+Private.h"
@@ -33,6 +34,7 @@
 static NSString *const kSubscribeOperation = @"SBS";
 static NSString *const kMessageOperation = @"MSG";
 static NSString *const kUserEventOperation = @"UET";
+static NSString *const kUserNameChangedOperation = @"UNC";
 
 @implementation ServerChatSession {
     YRBTServer *_server;
@@ -168,6 +170,19 @@ static NSString *const kUserEventOperation = @"UET";
                                                                          timestamp:timestamp];
             
             [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[usersToNotify copy]];
+        } else {
+            if (![subscribedUser.name isEqualToString:subscribeRequest.subscriberName]) {
+                // User changed his name.
+                subscribedUser.name = subscribeRequest.subscriberName;
+                
+                [strongSelf->_observers chatSession:strongSelf userDidUpdateName:subscribedUser];
+                
+                UsernameChanged *usernameChanged = [[UsernameChanged alloc] initWithUser:subscribedUser];
+                
+                [strongSelf scheduleMessage:usernameChanged.rawMessage
+                               forOperation:kUserNameChangedOperation
+                                   forUsers:[usersToNotify copy]];
+            }
         }
         
         NSArray *chatMembers = [usersToNotify arrayByAddingObject:[strongSelf currentUserInfo]];

@@ -44,6 +44,7 @@
 
 - (void)chatSession:(ServerChatSession *)session userDidConnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp;
 - (void)chatSession:(ServerChatSession *)session userDidDisconnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ServerChatSession *)session userDidUpdateName:(ServerUser *)user;
 - (void)chatSession:(ServerChatSession *)session didReceiveNewMessage:(Message *)message;
 
 @end
