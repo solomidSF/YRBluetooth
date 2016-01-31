@@ -17,12 +17,17 @@
 #import "ConnectionEvent.h"
 #import "NewMessageEvent.h"
 
+// Component
+#import "YRBluetooth.h"
+
 @protocol ServerChatSessionObserver;
 
 @interface ServerChatSession : NSObject
 
 @property (nonatomic, readonly) NSArray <ServerUser *> *participants;
 @property (nonatomic, readonly) ServerChat *chat;
+@property (nonatomic, readonly) YRBTBluetoothState bluetoothState;
+@property (nonatomic, readonly) BOOL isAdvertising;
 
 #pragma mark - Session Management
 
@@ -46,6 +51,8 @@
 @protocol ServerChatSessionObserver <NSObject>
 @optional
 
+- (void)chatSession:(ServerChatSession *)session bluetoothStateDidChange:(YRBTBluetoothState)newState;
+- (void)chatSession:(ServerChatSession *)session advertisingStateChanged:(BOOL)isAdvertising;
 - (void)chatSession:(ServerChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event;
 - (void)chatSession:(ServerChatSession *)session userDidDisconnectWithEvent:(ConnectionEvent *)event;
 - (void)chatSession:(ServerChatSession *)session userDidUpdateName:(ServerUser *)user;

@@ -91,6 +91,10 @@ UITableViewDataSource
 
 #pragma mark - <ServerChatSessionObserver>
 
+- (void)chatSession:(ServerChatSession *)session bluetoothStateDidChange:(YRBTBluetoothState)newState {
+    [self refreshDatasourceAndReload];
+}
+
 - (void)chatSession:(ServerChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event {
     if (![_users containsObject:event.user]) {
         [self refreshDatasourceAndReload];

@@ -29,12 +29,12 @@
 #import "_YRBTConnectionOperationStack.h"
 #import "_YRBTErrorService.h"
 
-// Model
+// Private Categories
+#import "CoreBluetooth+YRBTPrivate.h"
 #import "YRBTServerDevice+Private.h"
 
-// TODO:
+// Imports
 #import "BTPrefix.h"
-#import "Constants.h"
 
 @interface _YRBTConnectionService ()
 <
@@ -169,7 +169,7 @@ TimeoutDelegate
     
     [_connectedDevices addObject:device];
     
-    [device.peripheral discoverServices:@[internalServiceUUID()]];
+    [device.peripheral discoverServices:@[[CBUUID yrbt_internalServiceUUID]]];
     
     BTDebugMsg(@"[_YRBTConnectionService]: Did connect to server: %@. Current connection operations for it: %d.",
                device,
@@ -205,7 +205,7 @@ TimeoutDelegate
 - (void)handlePeripheral:(CBPeripheral *)peripheral didInvalidateServices:(NSArray *)services {
     BTDebugMsg(@"[_YRBTConnectionService]: Device %@ invalidated %@ services.", [_storage deviceForPeer:peripheral], services);
 
-    if ([[services valueForKey:@"UUID"] containsObject:internalServiceUUID()]) {
+    if ([[services valueForKey:@"UUID"] containsObject:[CBUUID yrbt_internalServiceUUID]]) {
         [self notifyFailureForPeripheralAndDisconnect:peripheral
                                             withError:[_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected]];
     }
@@ -222,10 +222,10 @@ TimeoutDelegate
         // We only have 1 service that has several characteristics to communicate with device.
         for (CBService *service in peripheral.services) {
             // Ignore any service that may exist (though this should never happen).
-            if ([service.UUID isEqual:internalServiceUUID()]) {
-                [peripheral discoverCharacteristics:@[sendToServerCharacteristicUUID(),
-                                                      receiveFromServerCharacteristicUUID(),
-                                                      internalCommandsCharacteristicUUID()]
+            if ([service.UUID isEqual:[CBUUID yrbt_internalServiceUUID]]) {
+                NSArray <CBUUID *> *characteristics = @[[CBUUID yrbt_sendCharacteristicUUID], [CBUUID yrbt_receiveCharacteristicUUID]];
+                
+                [peripheral discoverCharacteristics:characteristics
                                          forService:service];
                 break;
             }
@@ -244,7 +244,7 @@ TimeoutDelegate
     BTDebugMsg(@"[_YRBTConnectionService]: Did discover %d characteristics callback. Error: %@.",
                (int32_t)service.characteristics.count, error);
     
-    if ([service.UUID isEqual:internalServiceUUID()] && !error) {
+    if ([service.UUID isEqual:[CBUUID yrbt_internalServiceUUID]] && !error) {
         NSAssert(service.characteristics.count >= 2, @"Internal service should have more than 2 characteristics to send data to server and to receive data from it.");
         YRBTServerDevice *device = [_storage deviceForPeer:peripheral];
         NSAssert(device.receiveCharacteristic, @"Receive characteristic must be present in order to establish communication channel!");
@@ -254,7 +254,7 @@ TimeoutDelegate
     if (!error) {
         // Connection has been made. Now we will subscribe for channel in which we will receive data from server.
         for (CBCharacteristic *characteristic in service.characteristics) {
-            if ([characteristic.UUID isEqual:receiveFromServerCharacteristicUUID()] &&
+            if ([characteristic.UUID isEqual:[CBUUID yrbt_sendCharacteristicUUID]] &&
                 characteristic.properties & CBCharacteristicPropertyIndicate) {
                 [peripheral setNotifyValue:YES
                          forCharacteristic:characteristic];
@@ -270,7 +270,7 @@ TimeoutDelegate
 
 - (void)handlePeripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
                                                                                         cbError:(NSError *)error {
-    if ([characteristic.UUID isEqual:receiveFromServerCharacteristicUUID()]) {
+    if ([characteristic.UUID isEqual:[CBUUID yrbt_sendCharacteristicUUID]]) {
         YRBTServerDevice *device = [_storage deviceForPeer:peripheral];
         
         [device notifyConnectionStateUpdateDueToReceiveCharacteristicNotificationStateChange];

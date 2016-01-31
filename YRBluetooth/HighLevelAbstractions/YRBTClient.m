@@ -29,10 +29,10 @@
 // Services
 #import "_YRBTServices.h"
 
+// === TODO: Refactor ===
 #import "_YRBTMessaging.h"
 #import "YRBTMessageOperation+Private.h"
 
-// === TODO: Refactor ===
 #import "YRBTServerDevice+Private.h"
 
 // Internal model
@@ -43,9 +43,8 @@
 // InternalCategories
 #import "YRBTPeer+Private.h"
 
-// Prefix Refactor
+// Imports
 #import "BTPrefix.h"
-#import "Constants.h"
 // ======================
 
 @interface YRBTClient ()
@@ -58,7 +57,7 @@ CBPeripheralDelegate
 @end
 
 @implementation YRBTClient {
-    // Concrete managers
+    // Common
     CBCentralManager *_nativeCentralManager;
     
     // Storage
@@ -107,6 +106,27 @@ CBPeripheralDelegate
 }
 
 #pragma mark - Dynamic Properties
+
+- (YRBTBluetoothState)bluetoothState {
+    CBCentralManagerState realState = _nativeCentralManager.state;
+    
+    switch (realState) {
+        case CBCentralManagerStateUnknown:
+            return kYRBTBluetoothStateUnknown;
+        case CBCentralManagerStateResetting:
+            return kYRBTBluetoothStateResetting;
+        case CBCentralManagerStatePoweredOff:
+            return kYRBTBluetoothStatePoweredOff;
+        case CBCentralManagerStatePoweredOn:
+            return kYRBTBluetoothStatePoweredOn;
+        case CBCentralManagerStateUnauthorized:
+            return kYRBTBluetoothStateUnauthorized;
+        case CBCentralManagerStateUnsupported:
+            return kYRBTBluetoothStateUnsupported;
+        default:
+            return kYRBTBluetoothStateUnknown;
+    }
+}
 
 - (NSArray *)connectedDevices {
     return _connectionService.connectedDevices;
@@ -352,6 +372,8 @@ CBPeripheralDelegate
 // TODO: In next versions use multicast delegate.
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
     BTDebugMsg(@"[YRBTClient]: Central manager state changed: %d", (int32_t)central.state);
+    
+    !self.bluetoothStateChanged ? : self.bluetoothStateChanged(self.bluetoothState);
     
     if (central.state != CBCentralManagerStatePoweredOn) {
         [self invalidateWithError:[_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]];

@@ -70,6 +70,22 @@ static NSString *const kUserNameChangedOperation = @"UNC";
     [_client invalidate];
 }
 
+#pragma mark - Dynamic Properties
+
+- (NSArray <ClientChat *> *)activeChats {
+    NSMutableArray *chats = [NSMutableArray new];
+    
+    for (YRBTServerDevice *device in _client.connectedDevices) {
+        Chat *chat = [self chatForRemoteDevice:device];
+        
+        if (chat.state == kChatStateConnected) {
+            [chats addObject:chat];
+        }
+    }
+    
+    return [chats copy];
+}
+
 #pragma mark - Scanning
 
 - (void)startScanningForChatsWithSuccess:(ChatScanningCallback)scanningCallback failure:(ChatScanningFailureCallback)failure {

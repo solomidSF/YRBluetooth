@@ -78,6 +78,14 @@ static NSString *const kUserNameChangedOperation = @"UNC";
     return [self subscribedUsers];
 }
 
+- (YRBTBluetoothState)bluetoothState {
+    return _server.bluetoothState;
+}
+
+- (BOOL)isAdvertising {
+    return _server.isBroadcasting;
+}
+
 #pragma mark - Public
 
 - (void)startAdvertising {
@@ -119,6 +127,29 @@ static NSString *const kUserNameChangedOperation = @"UNC";
 
 - (void)setupServer {
     __typeof(self) __weak weakSelf = self;
+    
+    _server.bluetoothStateChanged = ^(YRBTBluetoothState newState) {
+        __typeof(weakSelf) __strong strongSelf = weakSelf;
+        
+        if (strongSelf) {
+            if (newState == kYRBTBluetoothStatePoweredOn) {
+                [strongSelf currentUserInfo].isSubscribed = YES;
+            } else {
+                [strongSelf currentUserInfo].isSubscribed = NO;
+                [strongSelf.chat.members setValue:@NO forKey:@"isSubscribed"];
+            }
+            
+            [strongSelf->_observers chatSession:strongSelf bluetoothStateDidChange:newState];
+        }
+    };
+    
+    _server.broadcastingStateChanged = ^(BOOL isBroadcasting) {
+        __typeof(weakSelf) __strong strongSelf = weakSelf;
+        
+        if (strongSelf) {
+            [strongSelf->_observers chatSession:strongSelf advertisingStateChanged:isBroadcasting];
+        }
+    };
     
     _server.deviceDisconnectCallback = ^(YRBTRemoteDevice *device) {
         __typeof(weakSelf) __strong strongSelf = weakSelf;
@@ -302,7 +333,7 @@ static NSString *const kUserNameChangedOperation = @"UNC";
 - (ServerUser *)currentUserInfo {
     if (!_currentUserInfo) {
         _currentUserInfo = [[ServerUser alloc] initWithIdentifier:@"0" name:_server.peerName isChatOwner:YES];
-        _currentUserInfo.isSubscribed = YES;
+        _currentUserInfo.isSubscribed = (_server.bluetoothState == kYRBTBluetoothStatePoweredOn);
     }
     
     return _currentUserInfo;

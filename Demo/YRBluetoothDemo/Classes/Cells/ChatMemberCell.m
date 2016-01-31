@@ -51,11 +51,9 @@ ServerChatSessionObserver
 }
 
 - (void)setMember:(ClientUser *)member {
-    if (_member != member) {
-        _member = member;
-        
-        [self updateUI];
-    }
+    _member = member;
+    
+    [self updateUI];
 }
 
 - (void)updateUI {

@@ -27,6 +27,35 @@
 
 #import "YRBluetoothTypes.h"
 
+typedef enum {
+    /**
+     *  State unknown, update imminent.
+     */
+    kYRBTBluetoothStateUnknown,
+    /**
+     *  The connection with the system service was momentarily lost, update imminent.
+     */
+    kYRBTBluetoothStateResetting,
+    /**
+     *  The platform doesn't support the Bluetooth Low Energy Central/Client role.
+     */
+    kYRBTBluetoothStateUnsupported,
+    /**
+     *  The application is not authorized to use the Bluetooth Low Energy Central/Client role.
+     */
+    kYRBTBluetoothStateUnauthorized,
+    /**
+     *  Bluetooth is currently powered off.
+     */
+    kYRBTBluetoothStatePoweredOff,
+    /**
+     *  Bluetooth is currently powered on and available to use.
+     */
+    kYRBTBluetoothStatePoweredOn
+} YRBTBluetoothState;
+
+typedef void (^YRBTBluetoothStateChanged) (YRBTBluetoothState newState);
+
 /**
  *  Abstract class for client/server.
  */
@@ -55,6 +84,15 @@
  *  If you're sending too much messages consider lowering MTU, so each packet will be processed faster.
  */
 @property (nonatomic) uint16_t MTU; // TODO: Maybe encapsulate it?
+
+/**
+ *  Current bluetooth peer state.
+ */
+@property (nonatomic, readonly) YRBTBluetoothState bluetoothState;
+/**
+ *  Callback that will be called when bluetooth state changes.
+ */
+@property (nonatomic, copy) YRBTBluetoothStateChanged bluetoothStateChanged;
 
 #pragma mark - Init
 

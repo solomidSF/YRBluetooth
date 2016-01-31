@@ -30,27 +30,42 @@
 
 typedef void (^YRBTDeviceDidConnectCallback) (YRBTClientDevice *device);
 typedef void (^YRBTDeviceDidDisconnectCallback) (YRBTClientDevice *device);
+typedef void (^YRBTBroadcastingStateChanged) (BOOL isBroadcasting);
 
 /**
  *  Peer that accepts connection from another clients.
- *  It can receive requests and provide response for them.
  */
 @interface YRBTServer : YRBTPeer
 
-/** Devices that are currently connected to server. */
+/**
+ *  Devices that are currently connected to server.
+ */
 @property (nonatomic, readonly) NSArray <YRBTClientDevice *> *connectedDevices;
 
-/** Callback that is called when device connects to server. */
+/**
+ *  Callback that is called when device connects to server.
+ */
 @property (nonatomic, copy) YRBTDeviceDidConnectCallback deviceConnectCallback;
-/** Callback that is called when device disconnects from server. */
+
+/**
+ *  Callback that will be called when device disconnectst from server.
+ */
 @property (nonatomic, copy) YRBTDeviceDidDisconnectCallback deviceDisconnectCallback;
+/**
+ *  Tells if server is discoverable by others.
+ */
+@property (nonatomic, readonly) BOOL isBroadcasting;
+/**
+ *  Tells when server broadcasting state changed.
+ */
+@property (nonatomic, copy) YRBTBroadcastingStateChanged broadcastingStateChanged;
 
 #pragma mark - Sending
 
 /**
  *  Schedules message sending for specific client device.
  *  @param msg  Message to be sent. It shouldn't be empty.
- *  @param operationName    Operation name associated with given message.
+ *  @param operationName Operation name associated with given message.
  *  @return Return value description
  *  @see Similar method
  */

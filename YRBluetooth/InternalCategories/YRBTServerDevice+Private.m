@@ -23,10 +23,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// Categories
 #import "YRBTServerDevice+Private.h"
-
-// Prefix
-#import "Constants.h" // TODO:
+#import "CoreBluetooth+YRBTPrivate.h"
 
 @implementation YRBTServerDevice (Private)
 
@@ -41,15 +40,15 @@
 #pragma mark - Dynamic Properties
 
 - (CBService *)internalService {
-    return [self serviceForUUID:internalServiceUUID()];
+    return [self serviceForUUID:[CBUUID yrbt_internalServiceUUID]];
 }
 
 - (CBCharacteristic *)sendCharacteristic {
-    return [self characteristicWithUUID:sendToServerCharacteristicUUID()];
+    return [self characteristicWithUUID:[CBUUID yrbt_receiveCharacteristicUUID]];
 }
 
 - (CBCharacteristic *)receiveCharacteristic {
-    return [self characteristicWithUUID:receiveFromServerCharacteristicUUID()];
+    return [self characteristicWithUUID:[CBUUID yrbt_sendCharacteristicUUID]];
 }
 
 #pragma mark - Private

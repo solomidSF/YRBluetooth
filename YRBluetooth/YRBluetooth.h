@@ -28,20 +28,20 @@
 
 @import CoreBluetooth;
 
-// Types.
+// Types
 #import "YRBluetoothTypes.h"
 
-// Peers.
+// Peers
 #import "YRBTPeer.h"
 #import "YRBTClient.h"
 #import "YRBTServer.h"
 
-// Devices.
+// Devices
 #import "YRBTRemoteDevice.h"
 #import "YRBTClientDevice.h"
 #import "YRBTServerDevice.h"
 
-// Messaging.
+// Messaging
 #import "YRBTMessage.h"
 
 // Operations

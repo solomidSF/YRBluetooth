@@ -64,7 +64,9 @@
                       ofObject:(id)object
                         change:(NSDictionary<NSString *,id> *)change
                        context:(void *)context {
-    !self.connectionStateCallback ? : self.connectionStateCallback(self, self.connectionState);    
+    if ([object isEqual:self.peripheral]) {
+        !self.connectionStateCallback ? : self.connectionStateCallback(self, self.connectionState);
+    }
 }
 
 #pragma mark - Dynamic Properties

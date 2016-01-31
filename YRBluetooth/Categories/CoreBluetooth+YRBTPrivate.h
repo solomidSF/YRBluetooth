@@ -25,11 +25,28 @@
 
 @import CoreBluetooth;
 
+@interface CBUUID (YRBTPrivate)
+
++ (instancetype)yrbt_internalServiceUUID;
++ (instancetype)yrbt_sendCharacteristicUUID;
++ (instancetype)yrbt_receiveCharacteristicUUID;
+
+@end
+
 @interface CBService (YRBTPrivate)
 
 @end
 
 @interface CBMutableService (YRBTPrivate)
+
++ (instancetype)yrbt_internalService;
+
+@end
+
+@interface CBMutableCharacteristic (YRBTPrivate)
+
++ (instancetype)yrbt_sendCharacteristic;
++ (instancetype)yrbt_receiveCharacteristic;
 
 @end
 

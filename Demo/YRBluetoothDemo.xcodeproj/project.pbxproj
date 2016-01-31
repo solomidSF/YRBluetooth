@@ -30,7 +30,6 @@
 		7D5285191C342AEB00775DD1 /* YRBTRemoteMessageRequest+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284C01C342AEB00775DD1 /* YRBTRemoteMessageRequest+Private.m */; };
 		7D52851A1C342AEB00775DD1 /* YRBTServerDevice+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284C21C342AEB00775DD1 /* YRBTServerDevice+Private.m */; };
 		7D52851B1C342AEB00775DD1 /* _YRBTRegisteredCallbacks.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284C51C342AEB00775DD1 /* _YRBTRegisteredCallbacks.m */; };
-		7D52851C1C342AEB00775DD1 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284C81C342AEB00775DD1 /* Constants.m */; };
 		7D52851D1C342AEB00775DD1 /* _YRBTChunkGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284CB1C342AEB00775DD1 /* _YRBTChunkGenerator.m */; };
 		7D52851E1C342AEB00775DD1 /* _YRBTChunkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284CD1C342AEB00775DD1 /* _YRBTChunkParser.m */; };
 		7D52851F1C342AEB00775DD1 /* _YRBTMessageBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284CF1C342AEB00775DD1 /* _YRBTMessageBuffer.m */; };
@@ -132,8 +131,6 @@
 		7D5284C41C342AEB00775DD1 /* _YRBTRegisteredCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTRegisteredCallbacks.h; sourceTree = "<group>"; };
 		7D5284C51C342AEB00775DD1 /* _YRBTRegisteredCallbacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTRegisteredCallbacks.m; sourceTree = "<group>"; };
 		7D5284C61C342AEB00775DD1 /* BTPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTPrefix.h; sourceTree = "<group>"; };
-		7D5284C71C342AEB00775DD1 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
-		7D5284C81C342AEB00775DD1 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		7D5284CA1C342AEB00775DD1 /* _YRBTChunkGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTChunkGenerator.h; sourceTree = "<group>"; };
 		7D5284CB1C342AEB00775DD1 /* _YRBTChunkGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTChunkGenerator.m; sourceTree = "<group>"; };
 		7D5284CC1C342AEB00775DD1 /* _YRBTChunkParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTChunkParser.h; sourceTree = "<group>"; };
@@ -240,7 +237,6 @@
 		7DE31AA41C52F85C00047EE0 /* ChatTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatTableCell.h; sourceTree = "<group>"; };
 		7DE31AA51C52F85C00047EE0 /* ChatTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatTableCell.m; sourceTree = "<group>"; };
 		7DEA936E1C5DAA3600353E31 /* _YRBTInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTInternal.h; sourceTree = "<group>"; };
-		7DEA936F1C5DAA3600353E31 /* _YRBTInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTInternal.m; sourceTree = "<group>"; };
 		7DF5673F1C59850F00CD016B /* ChatMembersController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMembersController.h; sourceTree = "<group>"; };
 		7DF567401C59850F00CD016B /* ChatMembersController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMembersController.m; sourceTree = "<group>"; };
 		7DF567421C59881800CD016B /* ChatMemberCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMemberCell.h; sourceTree = "<group>"; };
@@ -382,7 +378,6 @@
 				7D52850A1C342AEB00775DD1 /* YRBluetooth.h */,
 				7D52850B1C342AEB00775DD1 /* YRBluetoothTypes.h */,
 				7DEA936E1C5DAA3600353E31 /* _YRBTInternal.h */,
-				7DEA936F1C5DAA3600353E31 /* _YRBTInternal.m */,
 			);
 			name = YRBluetooth;
 			path = ../../../YRBluetooth;
@@ -456,8 +451,6 @@
 				7D5284C41C342AEB00775DD1 /* _YRBTRegisteredCallbacks.h */,
 				7D5284C51C342AEB00775DD1 /* _YRBTRegisteredCallbacks.m */,
 				7D5284C61C342AEB00775DD1 /* BTPrefix.h */,
-				7D5284C71C342AEB00775DD1 /* Constants.h */,
-				7D5284C81C342AEB00775DD1 /* Constants.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -848,7 +841,6 @@
 				7DBE5A6F1C5826F40068469C /* User+Private.m in Sources */,
 				7D5285311C342AEB00775DD1 /* _YRBTScanningService.m in Sources */,
 				7D52852B1C342AEB00775DD1 /* YRBTMessageOperation.m in Sources */,
-				7D52851C1C342AEB00775DD1 /* Constants.m in Sources */,
 				7D5285131C342AEB00775DD1 /* YRBTServer.m in Sources */,
 				7D5285321C342AEB00775DD1 /* _YRBTStreamingService.m in Sources */,
 				7D5285261C342AEB00775DD1 /* _YRBTHeaderChunk.m in Sources */,

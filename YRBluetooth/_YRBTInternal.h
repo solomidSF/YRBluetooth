@@ -25,10 +25,11 @@
 
 @import Foundation;
 
-/** Every server has internal service uuid. */
-extern NSString *const kInternalServiceUUID;
-/** Characteristics UUID to send data to client devices. */
-extern NSString *const kSendCharacteristicUUID;
-/** Characteristics UUID to receive data from clients. */
-extern NSString *const kReceiveCharacteristicUUID;
+//extern NSString *const kDeviceOperationName; // TODO:
 
+/** Every server has internal service uuid. */
+NSString *const kInternalServiceUUID = @"7A226372-0DDF-4745-B490-55CC951A0922";
+/** Characteristics UUID to send data to client devices. */
+NSString *const kSendCharacteristicUUID = @"B1BD5118-34B6-49A5-B634-4AD906E11633";
+/** Characteristics UUID to receive data from clients. */
+NSString *const kReceiveCharacteristicUUID = @"1E0E3384-8EBA-45F7-B13E-FE3F4BB96722";

@@ -31,7 +31,6 @@
 #import "YRBTRemoteDevice+Private.h"
 #import "YRBTServerDevice+Private.h"
 
-#import "Constants.h"
 #import "BTPrefix.h"
 
 // Runtime
@@ -100,9 +99,9 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
 - (void)scanForDevicesWithContiniousCallback:(YRBTContiniousScanCallback)callback
                                      failure:(YRBTFailureCallback)failure {
     if (_centralManager.state == CBCentralManagerStatePoweredOn) {
-        BTDebugMsg(@"[_YRBTScanningService]: Will start scanning for devices continiously.");
-        
         [self invalidate];
+        BTDebugMsg(@"[_YRBTScanningService]: Will start scanning for devices continiously.");
+
         _scanningState = kScanningStateScanningContinuously;
         
         _continiousScanCallback = callback;
@@ -111,6 +110,8 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
         
         [_centralManager scanForPeripheralsWithServices:@[_appUUID]
                                                 options:@{CBCentralManagerScanOptionAllowDuplicatesKey : @YES}];
+        
+        !_continiousScanCallback ? : _continiousScanCallback([_repeatedlyFoundDevices copy]);
     } else {
         BTDebugMsg(@"[_YRBTScanningService]: Can't start scanning, BT state is not powered on. %d", (int32_t)_centralManager.state);
         !failure ? : failure([_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]);
@@ -122,9 +123,9 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
                    withSuccessCallback:(YRBTFoundDevicesCallback)success
                            withFailure:(YRBTFailureCallback)failure {
     if (_centralManager.state == CBCentralManagerStatePoweredOn) {
-        BTDebugMsg(@"Will start scanning for devices.");
-        
         [self invalidate];
+        BTDebugMsg(@"Will start scanning for devices.");
+
         _scanningState = kScanningStateScanning;
         
         _foundDevices = [NSMutableArray array];
@@ -247,6 +248,11 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     _continiousScanCallback = NULL;
     !_continiousFailureCallback ? : _continiousFailureCallback(error);
     _continiousFailureCallback = NULL;
+
+    for (YRBTServerDevice *device in _repeatedlyFoundDevices) {
+        [self invalidateDiscoveryTimeoutForDevice:device];
+    }
+
     _repeatedlyFoundDevices = nil;
     
     _scanningState = kScanningStatePending;

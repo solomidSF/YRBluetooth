@@ -44,7 +44,7 @@ typedef NS_ENUM(int32_t, YRBTErrorCode) {
     /**
      *  Bluetooth is off.
      */
-    kYRBTErrorCodeBluetoothOff,
+    kYRBTErrorCodeBluetoothOff, // TODO: Add more error codes for bluetooth off/unath/unsupported
     /**
      *  Device isn't connected.
      */
@@ -103,13 +103,13 @@ typedef NS_ENUM(int32_t, YRBTErrorCode) {
     kYRBTErrorCodeSendCancelledByRemote,
 };
 
-// === Common === //
+// Common
 typedef void (^YRBTProgressCallback) (uint32_t currentBytes,
 									  uint32_t totalBytes);
 
 typedef void (^YRBTFailureCallback) (NSError *error);
 
-// === Sending-related === //
+// Sending
 typedef void (^YRBTSuccessSendCallback) (YRBTMessageOperation *operation);
 
 typedef void (^YRBTResponseCallback) (YRBTMessageOperation *operation, YRBTMessage *receivedMessage);
@@ -117,7 +117,7 @@ typedef void (^YRBTResponseCallback) (YRBTMessageOperation *operation, YRBTMessa
 typedef void (^YRBTOperationFailureCallback) (YRBTMessageOperation *operation,
 											  NSError *error);
 
-// === Receiving-related === //
+// Receiving
 typedef void (^YRBTWillReceiveRemoteRequestCallback) (YRBTRemoteMessageRequest *request);
 
 typedef YRBTMessageOperation *(^YRBTReceivedRemoteRequestCallback) (YRBTRemoteMessageRequest *request,
@@ -126,13 +126,11 @@ typedef YRBTMessageOperation *(^YRBTReceivedRemoteRequestCallback) (YRBTRemoteMe
 
 typedef void (^YRBTRemoteRequestFailureCallback) (YRBTRemoteMessageRequest *request, NSError *error);
 
-// === Scanning/Connection related === //
+// Scanning
 typedef void (^YRBTFoundDevicesCallback) (NSArray *foundDevices);
 typedef void (^YRBTContiniousScanCallback) (NSArray <YRBTServerDevice *> *devices);
 typedef void (^YRBTSuccessfulConnectionCallback) (YRBTServerDevice *device);
 typedef void (^YRBTFailureWithDeviceCallback) (YRBTRemoteDevice *device,
                                                NSError *error);
-
-// ====== //
 
 #endif

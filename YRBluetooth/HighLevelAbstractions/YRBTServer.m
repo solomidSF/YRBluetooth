@@ -41,14 +41,16 @@
 // Messaging
 #import "_YRBTMessaging.h"
 
+// Categories
+#import "CoreBluetooth+YRBTPrivate.h"
+
 // PrivateCategories
 #import "YRBTPeer+Private.h"
 #import "YRBTRemoteDevice+Private.h"
 #import "YRBTClientDevice+Private.h"
 
-// Prefix
+// Imports
 #import "BTPrefix.h"
-#import "Constants.h"
 
 @interface YRBTServer (Protocols)
 <
@@ -58,29 +60,18 @@ CBPeripheralManagerDelegate
 >
 @end
 
-@interface YRBTServer ()
-@property (nonatomic, readonly) CBMutableService *internalService;
-@property (nonatomic, readonly) CBMutableCharacteristic *sendCharacteristic;
-@property (nonatomic, readonly) CBMutableCharacteristic *receiveCharacteristic;
-@property (nonatomic, readonly) CBMutableCharacteristic *internalCharacteristic;
-@end
-
 @implementation YRBTServer {
-    // General
     CBPeripheralManager *_nativePeripheralManager;
+    
     _YRBTDeviceStorage *_storage;
-    
-    CBMutableService *_internalService;
-    // For sending message, used repeadetly, get a reference in performance purposes.
-    CBMutableCharacteristic *_sendCharacteristic;
-    // For receiving message, used repeadetly, get a reference in performance purposes.
-    CBMutableCharacteristic *_receiveCharacteristic;
-    // For now used to send name of client.
-    CBMutableCharacteristic *_internalCharacteristic;
-
     _YRBTStreamingService *_streamingService;
-    
     YRBTWriteCompletionHandler _currentWriteCompletion;
+
+    BOOL _didPerformInitialSetup;
+
+    CBMutableService *_internalService;
+    CBMutableCharacteristic *_sendCharacteristic;
+    CBMutableCharacteristic *_receiveCharacteristic;
 }
 
 #pragma mark - Lifecycle
@@ -92,6 +83,11 @@ CBPeripheralManagerDelegate
         _nativePeripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self
                                                                            queue:nil
                                                                          options:@{CBPeripheralManagerOptionShowPowerAlertKey : @YES}];
+        [_nativePeripheralManager addObserver:self
+                                   forKeyPath:@"isAdvertising"
+                                      options:NSKeyValueObservingOptionNew
+                                      context:NULL];
+        
         _storage = [_YRBTDeviceStorage new];
 
         _streamingService = [_YRBTStreamingService streamingServiceWithStorage:_storage];
@@ -99,7 +95,6 @@ CBPeripheralManagerDelegate
         _streamingService.sendingDelegate = self;
         _streamingService.receivingDelegate = self;
         
-        [self _createInternalService];
         [self registerCallbacksForInternalOperations];
     }
     
@@ -107,67 +102,45 @@ CBPeripheralManagerDelegate
 }
 
 - (void)dealloc {
+    [_nativePeripheralManager removeObserver:self forKeyPath:@"isAdvertising"];
     NSLog(@"%s", __FUNCTION__);
 }
 
-#pragma mark - Dynamic properties
+#pragma mark - Dynamic Properties
 
 - (NSArray <YRBTClientDevice *> *)connectedDevices {
     NSMutableArray *connectedDevices = [NSMutableArray new];
 
-    for (CBCentral *central in self.sendCharacteristic.subscribedCentrals) {
+    for (CBCentral *central in _sendCharacteristic.subscribedCentrals) {
         [connectedDevices addObject:[_storage deviceForPeer:central]];
     }
     
     return [NSArray arrayWithArray:connectedDevices];
 }
 
-- (CBMutableService *)internalService {
-    if (!_internalService) {
-        _internalService = [[CBMutableService alloc] initWithType:internalServiceUUID()
-                                                          primary:YES];
-    }
+- (YRBTBluetoothState)bluetoothState {
+    CBPeripheralManagerState realState = _nativePeripheralManager.state;
     
-    return _internalService;
+    switch (realState) {
+        case CBPeripheralManagerStateUnknown:
+            return kYRBTBluetoothStateUnknown;
+        case CBPeripheralManagerStateResetting:
+            return kYRBTBluetoothStateResetting;
+        case CBPeripheralManagerStatePoweredOff:
+            return kYRBTBluetoothStatePoweredOff;
+        case CBPeripheralManagerStatePoweredOn:
+            return kYRBTBluetoothStatePoweredOn;
+        case CBPeripheralManagerStateUnauthorized:
+            return kYRBTBluetoothStateUnauthorized;
+        case CBPeripheralManagerStateUnsupported:
+            return kYRBTBluetoothStateUnsupported;
+        default:
+            return kYRBTBluetoothStateUnknown;
+    }
 }
 
-- (CBMutableCharacteristic *)sendCharacteristic {
-    if (!_sendCharacteristic) {
-        CBCharacteristicProperties properties = CBCharacteristicPropertyIndicate | CBCharacteristicPropertyIndicateEncryptionRequired;
-        CBAttributePermissions permissions = CBAttributePermissionsReadable | CBAttributePermissionsReadEncryptionRequired;
-        
-        _sendCharacteristic = [[CBMutableCharacteristic alloc] initWithType:receiveFromServerCharacteristicUUID()
-                                                                 properties:properties
-                                                                      value:nil
-                                                                permissions:permissions];
-    }
-    
-    return _sendCharacteristic;
-}
-
-- (CBMutableCharacteristic *)receiveCharacteristic {
-    if (!_receiveCharacteristic) {
-        _receiveCharacteristic = [[CBMutableCharacteristic alloc] initWithType:sendToServerCharacteristicUUID()
-                                                                    properties:CBCharacteristicPropertyWrite
-                                                                         value:nil
-                                                                   permissions:CBAttributePermissionsWriteable];
-    }
-    
-    return _receiveCharacteristic;
-}
-
-- (CBMutableCharacteristic *)internalCharacteristic {
-    if (!_internalCharacteristic) {
-        CBCharacteristicProperties properties = CBCharacteristicPropertyIndicate | CBCharacteristicPropertyWrite;
-        CBAttributePermissions permissions = CBAttributePermissionsReadable | CBAttributePermissionsWriteable;
-        
-        _internalCharacteristic = [[CBMutableCharacteristic alloc] initWithType:internalCommandsCharacteristicUUID()
-                                                                     properties:properties
-                                                                          value:nil
-                                                                    permissions:permissions];
-    }
-    
-    return _internalCharacteristic;
+- (BOOL)isBroadcasting {
+    return _nativePeripheralManager.isAdvertising;
 }
 
 #pragma mark - Sending
@@ -282,11 +255,11 @@ CBPeripheralManagerDelegate
 #pragma mark - Broadcasting
 
 - (void)startBroadcasting {
-    if (![_nativePeripheralManager isAdvertising]) {
+    if (!_nativePeripheralManager.isAdvertising) {
         BTDebugMsg(@"Will start broadcasting with %@ name", self.peerName ? self.peerName : @"Unknown device");
         [_nativePeripheralManager startAdvertising:@{
              CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:self.appID]],
-             CBAdvertisementDataLocalNameKey    : self.peerName.length > 0 ? self.peerName : @"Unknown device"
+             CBAdvertisementDataLocalNameKey : self.peerName.length > 0 ? self.peerName : @"Unknown device"
         }];
     } else {
         BTDebugMsg(@"Already broadcasting! Ignoring.");
@@ -294,8 +267,20 @@ CBPeripheralManagerDelegate
 }
 - (void)stopBroadcasting {
     BTDebugMsg(@"");
-    if ([_nativePeripheralManager isAdvertising]) {
+    if (_nativePeripheralManager.isAdvertising) {
         [_nativePeripheralManager stopAdvertising];
+    }
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary<NSString *,id> *)change
+                       context:(void *)context {
+    if ([object isEqual:_nativePeripheralManager] &&
+        [keyPath isEqualToString:@"isAdvertising"]) {
+        !self.broadcastingStateChanged ? : self.broadcastingStateChanged(_nativePeripheralManager.isAdvertising);
     }
 }
 
@@ -332,22 +317,22 @@ CBPeripheralManagerDelegate
     }
 }
 
-#warning - CREATE FACTORY
-- (void)_createInternalService {
-    // TODO: No dispatch after!
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        NSLog(@"[YRBTServer]: Creating service...");
-        self.internalService.characteristics = @[self.receiveCharacteristic, self.sendCharacteristic];
-        
-        [_nativePeripheralManager addService:self.internalService];
-    });
+- (void)createInternalService {
+    NSLog(@"[YRBTServer]: Creating main service..");
+    _internalService = [CBMutableService yrbt_internalService];
+    _sendCharacteristic = [CBMutableCharacteristic yrbt_sendCharacteristic];
+    _receiveCharacteristic = [CBMutableCharacteristic yrbt_receiveCharacteristic];
+
+    _internalService.characteristics = @[_sendCharacteristic, _receiveCharacteristic];
+    
+    [_nativePeripheralManager addService:_internalService];
 }
 
 /** Parses messages received from CBCentral. */
 - (void)parseReceivedWriteRequests:(NSArray *)writeRequests {
     if (writeRequests.count > 1) {
         // TODO: Not tested. Couldn't reproduce more than 1 write request.
-        NSLog(@"YRBluetooth <WARNING>: Got more than 1 write request!");
+        NSLog(@"[YRBluetooth]: <WARNING> Got more than 1 write request!");
     }
     
     CBATTError resultingError = CBATTErrorSuccess;
@@ -403,7 +388,7 @@ CBPeripheralManagerDelegate
     _currentWriteCompletion = completion;
     
     BOOL didUpdate = [_nativePeripheralManager updateValue:[chunk packedChunkData]
-                                         forCharacteristic:self.sendCharacteristic
+                                         forCharacteristic:_sendCharacteristic
                                       onSubscribedCentrals:[operation.receivers valueForKey:@"central"]];
     
     if (didUpdate) {
@@ -428,7 +413,15 @@ CBPeripheralManagerDelegate
 - (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
     BTDebugMsg(@"%s. STATE IS : %d", __FUNCTION__, (int32_t)peripheral.state);
     
-    if (peripheral.state != CBPeripheralManagerStatePoweredOn) {
+    !self.bluetoothStateChanged ? : self.bluetoothStateChanged(self.bluetoothState);
+
+    if (peripheral.state == CBPeripheralManagerStatePoweredOn) {
+        if (!_didPerformInitialSetup) {
+            [self createInternalService];
+            
+            _didPerformInitialSetup = YES;
+        }
+    } else {
         [self invalidateWithError:[_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]];
     }
 }
@@ -436,29 +429,23 @@ CBPeripheralManagerDelegate
 - (void)peripheralManagerDidStartAdvertising:(CBPeripheralManager *)peripheral
                                        error:(NSError *)error {
     if (error) {
-        NSAssert(NO, @"[YRBluetooth]: Failed to start advertising! CBError: %@", error);
+        NSAssert(NO, @"[YRBluetooth]: <FATAL> Failed to start advertising! Error: %@", error);
     }
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral
             didAddService:(CBService *)service
                     error:(NSError *)error {
-    if (!error) {
-        if ([service.UUID isEqual:internalServiceUUID()]) {
-            for (YRBTClientDevice *device in self.connectedDevices) {
-                if (!device.didPerformHandshake) {
-                    [self requestNameForDevice:device];
-                }
-            }
-        }
-    } else {
-        NSAssert(NO, @"[YRBluetooth]: Couldn't instantiate communication channel on server side! CBError: %@", error);
+    NSLog(@"[YRBTServer]: Did add service: %@. Error: %@", service, error);
+
+    if (error) {
+        NSAssert(NO, @"[YRBluetooth]: <FATAL> Couldn't instantiate communication channel on server side! Error: %@", error);
     }
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central
                                        didSubscribeToCharacteristic:(CBCharacteristic *)characteristic {
-    if ([characteristic.UUID isEqual:receiveFromServerCharacteristicUUID()]) {
+    if ([characteristic.UUID isEqual:[CBUUID yrbt_sendCharacteristicUUID]]) {
         // Client did connect to us.
         YRBTClientDevice *device = [_storage deviceForPeer:central];
         
@@ -480,7 +467,7 @@ CBPeripheralManagerDelegate
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central
                                    didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {
-    if ([characteristic.UUID isEqual:receiveFromServerCharacteristicUUID()]) {
+    if ([characteristic.UUID isEqual:[CBUUID yrbt_sendCharacteristicUUID]]) {
         BTDebugMsg(@"[YRBTServer]: %@ did disconnect.", [_storage deviceForPeer:central]);
         YRBTClientDevice *device = [_storage deviceForPeer:central];
  
@@ -511,7 +498,7 @@ CBPeripheralManagerDelegate
         NSArray *receivers = [[_streamingService.pendingOperation receivers] valueForKey:@"central"];
         
         BOOL didUpdate = [_nativePeripheralManager updateValue:[_streamingService.pendingChunk packedChunkData]
-                                             forCharacteristic:self.sendCharacteristic
+                                             forCharacteristic:_sendCharacteristic
                                           onSubscribedCentrals:receivers];
         
         if (didUpdate) {

@@ -23,9 +23,59 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// Categories
 #import "CoreBluetooth+YRBTPrivate.h"
 
+// Imports
+#import "_YRBTInternal.h"
+
+@implementation CBUUID (YRBTPrivate)
+
++ (instancetype)yrbt_internalServiceUUID {
+    return [CBUUID UUIDWithString:kInternalServiceUUID];
+}
+
++ (instancetype)yrbt_sendCharacteristicUUID {
+    return [CBUUID UUIDWithString:kSendCharacteristicUUID];
+}
+
++ (instancetype)yrbt_receiveCharacteristicUUID {
+    return [CBUUID UUIDWithString:kReceiveCharacteristicUUID];
+}
+
+@end
+
 @implementation CBService (YRBTPrivate)
+
+@end
+
+@implementation CBMutableService (YRBTPrivate)
+
++ (instancetype)yrbt_internalService {
+    return [[CBMutableService alloc] initWithType:[CBUUID yrbt_internalServiceUUID]
+                                          primary:YES];
+}
+
+@end
+
+@implementation CBMutableCharacteristic (YRBTPrivate)
+
++ (instancetype)yrbt_sendCharacteristic {
+    CBCharacteristicProperties properties = CBCharacteristicPropertyIndicate | CBCharacteristicPropertyIndicateEncryptionRequired;
+    CBAttributePermissions permissions = CBAttributePermissionsReadable | CBAttributePermissionsReadEncryptionRequired;
+    
+    return [[CBMutableCharacteristic alloc] initWithType:[CBUUID yrbt_sendCharacteristicUUID]
+                                              properties:properties
+                                                   value:nil
+                                             permissions:permissions];
+}
+
++ (instancetype)yrbt_receiveCharacteristic {
+    return [[CBMutableCharacteristic alloc] initWithType:[CBUUID yrbt_receiveCharacteristicUUID]
+                                              properties:CBCharacteristicPropertyWrite
+                                                   value:nil
+                                             permissions:CBAttributePermissionsWriteable];
+}
 
 @end
 
