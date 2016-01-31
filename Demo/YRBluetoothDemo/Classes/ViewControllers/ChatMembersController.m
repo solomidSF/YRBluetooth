@@ -15,13 +15,14 @@
 @interface ChatMembersController ()
 <
 ClientChatSessionObserver,
+ServerChatSessionObserver,
 UITableViewDelegate,
 UITableViewDataSource
 >
 @end
 
 @implementation ChatMembersController {
-    NSArray <ClientUser *> *_users;
+    NSArray <__kindof User *> *_users;
     
     __weak IBOutlet UITableView *_membersTableView;
 }
@@ -34,21 +35,43 @@ UITableViewDataSource
     _membersTableView.rowHeight = UITableViewAutomaticDimension;
     _membersTableView.estimatedRowHeight = 40.0f;
     
-    [_session addObserver:self];
-
     [self refreshDatasourceAndReload];
 }
 
 - (void)dealloc {
-    [_session removeObserver:self];
+    [self.clientSession removeObserver:self];
+    [self.serverSession removeObserver:self];
+}
+
+#pragma mark - Dynamic Properties
+
+- (void)setClientSession:(ClientChatSession *)clientSession {
+    if (_clientSession != clientSession) {
+        _clientSession = clientSession;
+        
+        [_clientSession addObserver:self];
+    }
+}
+
+- (void)setServerSession:(ServerChatSession *)serverSession {
+    if (_serverSession != serverSession) {
+        _serverSession = serverSession;
+        
+        [_serverSession addObserver:self];
+    }
 }
 
 #pragma mark - Private
 
 - (void)refreshDatasourceAndReload {
-    NSMutableArray <ClientUser *> *allUsers = [NSMutableArray new];
+    NSMutableArray <__kindof User *> *allUsers = [NSMutableArray new];
 
-    [allUsers addObject:self.chat.creator];
+    BOOL isClient = self.clientSession != nil;
+    
+    if (isClient) {
+        [allUsers addObject:[(ClientChat *)self.chat creator]];
+    }
+    
     [allUsers addObject:self.chat.me];
     [allUsers addObjectsFromArray:self.chat.members];
     
@@ -58,12 +81,19 @@ UITableViewDataSource
 
 #pragma mark - <ClientChatSessionObserver>
 
-- (void)chatSession:(ClientChatSession *)session userDidConnect:(ClientUser *)user
-             toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
-    if ([self.chat isEqual:chat]) {
-        if (![_users containsObject:user]) {
+- (void)chatSession:(ClientChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event inChat:(ClientChat *)chat {
+    if ([self.chat isEqual:event.chat]) {
+        if (![_users containsObject:event.user]) {
             [self refreshDatasourceAndReload];
         }
+    }
+}
+
+#pragma mark - <ServerChatSessionObserver>
+
+- (void)chatSession:(ServerChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event {
+    if (![_users containsObject:event.user]) {
+        [self refreshDatasourceAndReload];
     }
 }
 
@@ -76,7 +106,12 @@ UITableViewDataSource
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     ChatMemberCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ChatMemberCell class])];
     
-    cell.session = self.session;
+    if (self.clientSession) {
+        cell.clientSession = self.clientSession;
+    } else if (self.serverSession) {
+        cell.serverSession = self.serverSession;
+    }
+
     cell.member = _users[indexPath.row];
     
     return cell;

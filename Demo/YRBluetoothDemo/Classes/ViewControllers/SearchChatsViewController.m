@@ -20,6 +20,7 @@ static NSString *const kClientChatControllerSegueIdentifier = @"ChatSegue";
 
 @interface SearchChatsViewController ()
 <
+ClientChatSessionObserver,
 UITableViewDelegate,
 UITableViewDataSource
 >
@@ -39,6 +40,7 @@ UITableViewDataSource
     
     _discoveredChats = [NSMutableArray new];
     _clientSession = [ClientChatSession sessionWithNickname:self.nickname];
+    [_clientSession addObserver:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -80,6 +82,10 @@ UITableViewDataSource
     [_clientSession stopScanningForChats];
 }
 
+- (void)dealloc {
+    [_clientSession removeObserver:self];
+}
+
 #pragma mark - Navigation
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -88,6 +94,30 @@ UITableViewDataSource
         
         controller.session = _clientSession;
         controller.pickedChat = sender;
+    }
+}
+
+#pragma mark - <ClientChatSessionObserver>
+
+- (void)chatSession:(ClientChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event inChat:(ClientChat *)chat {
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"User %@ connected to %@'s chat.", event.user.name, event.chat.name];
+        notification.soundName = @"ding.mp3";
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
+}
+
+- (void)chatSession:(ClientChatSession *)session didReceiveMessage:(NewMessageEvent *)event inChat:(ClientChat *)chat {
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"New message from %@ in %@'s chat:\n%@", event.message.sender.name, chat.name, event.message.messageText];
+        notification.soundName = UILocalNotificationDefaultSoundName;
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
     }
 }
 

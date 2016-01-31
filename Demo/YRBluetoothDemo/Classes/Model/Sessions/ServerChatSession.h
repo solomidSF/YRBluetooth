@@ -13,6 +13,10 @@
 #import "ServerUser.h"
 #import "Message.h"
 
+// Events
+#import "ConnectionEvent.h"
+#import "NewMessageEvent.h"
+
 @protocol ServerChatSessionObserver;
 
 @interface ServerChatSession : NSObject
@@ -42,9 +46,9 @@
 @protocol ServerChatSessionObserver <NSObject>
 @optional
 
-- (void)chatSession:(ServerChatSession *)session userDidConnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp;
-- (void)chatSession:(ServerChatSession *)session userDidDisconnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ServerChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event;
+- (void)chatSession:(ServerChatSession *)session userDidDisconnectWithEvent:(ConnectionEvent *)event;
 - (void)chatSession:(ServerChatSession *)session userDidUpdateName:(ServerUser *)user;
-- (void)chatSession:(ServerChatSession *)session didReceiveNewMessage:(Message *)message;
+- (void)chatSession:(ServerChatSession *)session didReceiveMessage:(NewMessageEvent *)event;
 
 @end

@@ -10,7 +10,9 @@
 
 // Model
 #import "User.h"
-#import "Message.h"
+
+// Events
+#import "EventObject.h"
 
 typedef enum {
     kChatStateDisconnected,
@@ -24,6 +26,6 @@ typedef enum {
 @property (nonatomic, readonly) __kindof User *me;
 @property (nonatomic, readonly) ChatState state;
 @property (nonatomic, readonly) NSArray <__kindof User *> *members;
-@property (nonatomic, readonly) NSArray <Message *> *messages; // TODO:
+@property (nonatomic, readonly) NSArray <__kindof EventObject *> *events;
 
 @end

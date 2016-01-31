@@ -12,7 +12,7 @@
 
 @dynamic me;
 @dynamic mutableMembers;
-@dynamic mutableMessages;
+@dynamic mutableEvents;
 
 @end
 
@@ -37,6 +37,7 @@
     ServerChat *chat = [self new];
     
     chat.me = user;
+    chat.mutableMembers = [NSMutableArray new];
     
     return chat;
 }

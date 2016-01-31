@@ -135,10 +135,6 @@ static NSString *const kUserNameChangedOperation = @"UNC";
             chat.creator = response.creator;
             chat.mutableMembers = response.otherUsers ? [response.otherUsers mutableCopy] : [NSMutableArray new];
             
-            // In case of reconnection clear all existing messages.
-            // TODO: Don't do that.
-            [chat.mutableMessages removeAllObjects];
-            
             !success ? : success(chat, response.subscribedUser);
             
             [_observers chatSession:self didConnectToChat:chat];
@@ -190,9 +186,15 @@ static NSString *const kUserNameChangedOperation = @"UNC";
                                                   timestamp:event.timestamp
                                                 messageText:event.messageText];
         
-        [_observers chatSession:self didSendMessage:newMessage inChat:chat];
+        NewMessageEvent *newMessageEvent = [[NewMessageEvent alloc] initWithChat:chat
+                                                                         message:newMessage
+                                                                       timestamp:newMessage.timestamp];
         
-        !success ? : success(newMessage);
+        [chat.mutableEvents addObject:newMessageEvent];
+        
+        [_observers chatSession:self didSendMessage:newMessageEvent inChat:chat];
+        
+        !success ? : success(newMessageEvent);
     };
     
     return [_client sendMessage:message
@@ -221,12 +223,9 @@ static NSString *const kUserNameChangedOperation = @"UNC";
     __typeof(self) __weak weakSelf = self;
     _savedChats = [NSMutableArray new];
     
-    // Register callbacks for user event operation
-    [_client registerWillReceiveRequestCallback:^(YRBTRemoteMessageRequest *request) {
-        NSLog(@"Will receive request: %@ for 'USR EVENT' operation", request);
-    } didReceiveRequestCallback:^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
-                                                        YRBTMessage *requestMessage,
-                                                        BOOL wantsResponse) {
+    YRBTReceivedRemoteRequestCallback userEventCallback = ^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
+                                                                                  YRBTMessage *requestMessage,
+                                                                                  BOOL wantsResponse) {
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
         if (!strongSelf) {
@@ -236,8 +235,8 @@ static NSString *const kUserNameChangedOperation = @"UNC";
         UserConnection *connection = [[UserConnection alloc] initWithMessage:requestMessage];
         
         ClientChat *chat = [strongSelf chatForRemoteDevice:request.sender];
-        
         ClientUser *user = [strongSelf userWithIdentifier:connection.userIdentifier fromChat:chat];
+        
         user.name = connection.userName;
         user.isConnected = connection.connected;
         
@@ -250,31 +249,31 @@ static NSString *const kUserNameChangedOperation = @"UNC";
             
             [chat.mutableMembers addObject:user];
         }
-
+        
+        EventType type = connection.eventType == kUserConnectionTypeConnected ? kEventTypeConnected : kEventTypeDisconnected;
+        
+        ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:chat
+                                                                  user:user
+                                                             eventType:type
+                                                             timestamp:connection.timestamp];
+        
         switch (connection.eventType) {
             case kUserConnectionTypeConnected:
-                [strongSelf->_observers chatSession:strongSelf userDidConnect:user toChat:chat timestamp:connection.timestamp];
+                [strongSelf->_observers chatSession:strongSelf userDidConnectWithEvent:event inChat:chat];
                 break;
             case kUserConnectionTypeDisconnected:
-                [strongSelf->_observers chatSession:strongSelf userDidDisconnect:user fromChat:chat timestamp:connection.timestamp];
+                [strongSelf->_observers chatSession:strongSelf userDidDisconnectWithEvent:event inChat:chat];
                 break;
             default:
                 break;
         }
         
         return nil;
-    } receivingProgressCallback:^(uint32_t currentBytes, uint32_t totalBytes) {
-        NSLog(@"RCV progress: %d/%d", currentBytes, totalBytes);
-    } failedToReceiveCallback:^(YRBTRemoteMessageRequest *request, NSError *error) {
-        NSLog(@"Failed to rcv 'USR EVNT OPERATION' request from client: %@, error: %@", request, error);
-    } forOperation:kUserEventOperation];
+    };
     
-    // Register callbacks for message operation
-    [_client registerWillReceiveRequestCallback:^(YRBTRemoteMessageRequest *request) {
-        NSLog(@"Will receive request: %@ for 'MSG' operation", request);
-    } didReceiveRequestCallback:^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
-                                                        YRBTMessage *requestMessage,
-                                                        BOOL wantsResponse) {
+    YRBTReceivedRemoteRequestCallback newMessageCallback = ^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
+                                                                                   YRBTMessage *requestMessage,
+                                                                                   BOOL wantsResponse) {
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
         if (!strongSelf) {
@@ -293,28 +292,29 @@ static NSString *const kUserNameChangedOperation = @"UNC";
         
         Message *newMessage = [[Message alloc] initWithChat:chat sender:sender timestamp:event.timestamp messageText:event.messageText];
         
-        [chat.mutableMessages addObject:newMessage];
+        NewMessageEvent *newMessageEvent = [[NewMessageEvent alloc] initWithChat:chat
+                                                                         message:newMessage
+                                                                       timestamp:newMessage.timestamp];
         
-        [strongSelf->_observers chatSession:strongSelf didReceiveMessage:newMessage inChat:chat];
+        [chat.mutableEvents addObject:newMessageEvent];
+        
+        [strongSelf->_observers chatSession:strongSelf didReceiveMessage:newMessageEvent inChat:chat];
         
         return nil;
-    } receivingProgressCallback:^(uint32_t currentBytes, uint32_t totalBytes) {
-        NSLog(@"Response progress: %d/%d", currentBytes, totalBytes);
-    } failedToReceiveCallback:^(YRBTRemoteMessageRequest *request, NSError *error) {
-        NSLog(@"Failed to respond %@. ERR: %@", request, error);
-    } forOperation:kMessageOperation];
+    };
     
-    YRBTReceivedRemoteRequestCallback requestCallback = ^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
-                                                                                YRBTMessage *requestMessage,
-                                                                                BOOL wantsResponse) {
+    YRBTReceivedRemoteRequestCallback userNameChangedCallback = ^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
+                                                                                        YRBTMessage *requestMessage,
+                                                                                        BOOL wantsResponse) {
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
         if (strongSelf) {
             UsernameChanged *usernameChanged = [[UsernameChanged alloc] initWithMessage:requestMessage];
-
+            
             ClientChat *chat = [strongSelf chatForRemoteDevice:request.sender];
             ClientUser *user = [strongSelf userWithIdentifier:usernameChanged.userID
                                                      fromChat:chat];
+            user.name = usernameChanged.updatedName;
             
             [strongSelf->_observers chatSession:strongSelf userDidUpdateName:user inChat:chat];
         }
@@ -323,7 +323,19 @@ static NSString *const kUserNameChangedOperation = @"UNC";
     };
     
     [_client registerWillReceiveRequestCallback:NULL
-                      didReceiveRequestCallback:requestCallback
+                      didReceiveRequestCallback:userEventCallback
+                      receivingProgressCallback:NULL
+                        failedToReceiveCallback:NULL
+                                   forOperation:kUserEventOperation];
+    
+    [_client registerWillReceiveRequestCallback:NULL
+                      didReceiveRequestCallback:newMessageCallback
+                      receivingProgressCallback:NULL
+                        failedToReceiveCallback:NULL
+                                   forOperation:kMessageOperation];
+    
+    [_client registerWillReceiveRequestCallback:NULL
+                      didReceiveRequestCallback:userNameChangedCallback
                       receivingProgressCallback:NULL
                         failedToReceiveCallback:NULL
                                    forOperation:kUserNameChangedOperation];

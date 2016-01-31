@@ -10,13 +10,12 @@
 
 // Sessions
 #import "ClientChatSession.h"
-
-// Entities
-#import "ClientUser.h"
+#import "ServerChatSession.h"
 
 @interface ChatMemberCell : UITableViewCell
 
-@property (nonatomic) ClientChatSession *session;
-@property (nonatomic) ClientUser *member;
+@property (nonatomic) ClientChatSession *clientSession;
+@property (nonatomic) ServerChatSession *serverSession;
+@property (nonatomic) __kindof User *member;
 
 @end

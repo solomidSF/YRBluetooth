@@ -50,11 +50,19 @@ UITableViewDataSource
     
     self.navigationItem.title = self.pickedChat.name;
     
-    _datasource = [NSMutableArray new];
+    _datasource = [self.pickedChat.events mutableCopy];
     _noMessagesView.hidden = _datasource.count > 0;
 
     _messagesTableView.rowHeight = UITableViewAutomaticDimension;
     _messagesTableView.estimatedRowHeight = 50.0f;
+
+    if (_datasource.count > 0) {
+        [_messagesTableView reloadData];
+        
+        [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
+                                  atScrollPosition:UITableViewScrollPositionBottom
+                                          animated:NO];
+    }
     
     [_session addObserver:self];
     
@@ -105,35 +113,30 @@ UITableViewDataSource
 }
 
 - (IBAction)sendClicked:(id)sender {
-    [_session sendText:_messageTextField.text
-                inChat:self.pickedChat
-           withSuccess:^(Message *message) {
-               _noMessagesView.hidden = YES;
-               
-               NewMessageEvent *event = [[NewMessageEvent alloc] initWithChat:self.pickedChat
-                                                                      message:message
-                                                                    timestamp:message.timestamp];
-               
-               [_datasource addObject:event];
-               
-               [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
-                   return [@(obj1.timestamp) compare:@(obj2.timestamp)];
+    NSString *filteredText = [_messageTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    filteredText = [filteredText stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    
+    if (filteredText.length > 0) {
+        [_session sendText:_messageTextField.text
+                    inChat:self.pickedChat
+               withSuccess:^(NewMessageEvent *event) {
+                   [self appendEventAndReload:event];
+               } failure:^(YRBTMessageOperation *operation, NSError *error) {
+                   [[[UIAlertView alloc] initWithTitle:@"Error"
+                                               message:error.localizedDescription
+                                              delegate:nil
+                                     cancelButtonTitle:@"OK"
+                                     otherButtonTitles:nil] show];
                }];
-               
-               [_messagesTableView reloadData];
-               
-               [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
-                                         atScrollPosition:UITableViewScrollPositionBottom
-                                                 animated:NO];
-    } failure:^(YRBTMessageOperation *operation, NSError *error) {
+        
+        _messageTextField.text = nil;
+    } else {
         [[[UIAlertView alloc] initWithTitle:@"Error"
-                                    message:error.localizedDescription
+                                    message:@"Please enter your message."
                                    delegate:nil
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil] show];
-    }];
-    
-    _messageTextField.text = nil;
+    }
 }
 
 #pragma mark - Navigation
@@ -142,7 +145,7 @@ UITableViewDataSource
     if ([segue.identifier isEqualToString:kChatMembersSegueIdentifier]) {
         ChatMembersController *membersController = segue.destinationViewController;
         
-        membersController.session = self.session;
+        membersController.clientSession = self.session;
         membersController.chat = self.pickedChat;
     }
 }
@@ -154,7 +157,7 @@ UITableViewDataSource
     
     if (self.pickedChat.state == kChatStateDisconnected) {
         [_session connectToChat:self.pickedChat withSuccess:^(ClientChat *chat, ClientUser *userInfo) {
-            
+            [self updateChatHeaderUI];
         } failure:^(NSError *error) {
             self.navigationItem.rightBarButtonItem = _retryConnectionButton;
             
@@ -184,6 +187,22 @@ UITableViewDataSource
                               forState:UIControlStateNormal];
 }
 
+- (void)appendEventAndReload:(__kindof EventObject *)event {
+    _noMessagesView.hidden = YES;
+
+    [_datasource addObject:event];
+    
+    [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
+        return [@(obj1.timestamp) compare:@(obj2.timestamp)];
+    }];
+    
+    [_messagesTableView reloadData];
+    
+    [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
+                              atScrollPosition:UITableViewScrollPositionBottom
+                                      animated:NO];
+}
+
 #pragma mark - <ClientChatSessionObserver>
 
 - (void)chatSession:(ClientChatSession *)session chatStateDidUpdate:(Chat *)chat {
@@ -192,89 +211,29 @@ UITableViewDataSource
     }
 }
 
-- (void)chatSession:(ClientChatSession *)session userDidConnect:(ClientUser *)user
-             toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
-    _noMessagesView.hidden = YES;
-
-    ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:self.pickedChat
-                                                              user:user
-                                                         eventType:kEventTypeConnected
-                                                         timestamp:timestamp];
-    
-    [_datasource addObject:event];
-    
-    [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
-        return [@(obj1.timestamp) compare:@(obj2.timestamp)];
-    }];
-    
-    [self updateChatHeaderUI];
-    
-    [_messagesTableView reloadData];
-    
-    [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
-                              atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:NO];
-    
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UILocalNotification *notification = [UILocalNotification new];
-        
-        notification.alertBody = [NSString stringWithFormat:@"User %@ connected to %@'s chat.", user.name, chat.name];
-        notification.soundName = @"ding.mp3";
-        
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+- (void)chatSession:(ClientChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event inChat:(ClientChat *)chat {
+    if ([self.pickedChat isEqual:event.chat]) {
+        [self updateChatHeaderUI];
+        [self appendEventAndReload:event];        
     }
 }
 
-- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(ClientUser *)user
-           fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
-    _noMessagesView.hidden = YES;
-    
-    ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:self.pickedChat
-                                                              user:user
-                                                         eventType:kEventTypeDisconnected
-                                                         timestamp:timestamp];
-    
-    [_datasource addObject:event];
-    
-    [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
-        return [@(obj1.timestamp) compare:@(obj2.timestamp)];
-    }];
-    
-    [self updateChatHeaderUI];
-    
-    [_messagesTableView reloadData];
-    
-    [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
-                              atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:NO];
+- (void)chatSession:(ClientChatSession *)session userDidDisconnectWithEvent:(ConnectionEvent *)event inChat:(ClientChat *)chat {
+    if ([self.pickedChat isEqual:event.chat]) {
+        [self updateChatHeaderUI];
+        [self appendEventAndReload:event];
+    }
 }
 
-- (void)chatSession:(ClientChatSession *)session didReceiveMessage:(Message *)message inChat:(ClientChat *)chat {
-    _noMessagesView.hidden = YES;
+- (void)chatSession:(ClientChatSession *)session userDidUpdateName:(ClientUser *)user inChat:(ClientChat *)chat {
+    if ([self.pickedChat isEqual:chat]) {
+        [_messagesTableView reloadData];
+    }
+}
 
-    NewMessageEvent *event = [[NewMessageEvent alloc] initWithChat:self.pickedChat
-                                                           message:message
-                                                         timestamp:message.timestamp];
-    
-    [_datasource addObject:event];
-    
-    [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
-        return [@(obj1.timestamp) compare:@(obj2.timestamp)];
-    }];
-    
-    [_messagesTableView reloadData];
-    
-    [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
-                              atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:NO];
-    
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UILocalNotification *notification = [UILocalNotification new];
-        
-        notification.alertBody = [NSString stringWithFormat:@"New message from %@ in %@'s chat:\n%@", message.sender.name, chat.name, message.messageText];
-        notification.soundName = UILocalNotificationDefaultSoundName;
-        
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+- (void)chatSession:(ClientChatSession *)session didReceiveMessage:(NewMessageEvent *)event inChat:(ClientChat *)chat {
+    if ([self.pickedChat isEqual:chat]) {        
+        [self appendEventAndReload:event];
     }
 }
 
@@ -289,7 +248,6 @@ UITableViewDataSource
     
     __kindof BaseEventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:event.reuseIdentifier];
     
-    cell.clientSession = _session;
     cell.event = event;
     
     return cell;

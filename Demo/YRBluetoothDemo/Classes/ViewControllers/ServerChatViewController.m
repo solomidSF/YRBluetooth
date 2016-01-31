@@ -8,6 +8,7 @@
 
 // Controllers
 #import "ServerChatViewController.h"
+#import "ChatMembersController.h"
 
 // Sessions
 #import "ServerChatSession.h"
@@ -26,6 +27,8 @@
 #import "MessageTableCell.h"
 #import "MyMessageTableCell.h"
 
+static NSString *const kChatMembersSegueIdentifier = @"ChatMembersSegue";
+
 @interface ServerChatViewController ()
 <
 ServerChatSessionObserver,
@@ -40,6 +43,8 @@ UITableViewDataSource
     
     id _keyboardObserver;
 
+    __weak IBOutlet UIButton *_participantsCountButton;
+    __weak IBOutlet UIView *_noMessagesView;
     __weak IBOutlet UITableView *_messagesTableView;
     __weak IBOutlet UITextField *_messageTextField;
     __weak IBOutlet NSLayoutConstraint *_messageBottomConstraint;
@@ -51,6 +56,7 @@ UITableViewDataSource
     [super viewDidLoad];
     
     _datasource = [NSMutableArray new];
+    _noMessagesView.hidden = _datasource.count > 0;
     
     _messagesTableView.rowHeight = UITableViewAutomaticDimension;
     _messagesTableView.estimatedRowHeight = 50.0f;
@@ -58,6 +64,8 @@ UITableViewDataSource
     _serverSession = [ServerChatSession sessionWithNickname:self.nickname];
     
     [_serverSession addObserver:self];
+    
+    [self updateChatHeaderUI];
     
     // TODO: temp solution
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -103,10 +111,102 @@ UITableViewDataSource
 
 #pragma mark - Callbacks
 
+- (IBAction)participantsClicked:(id)sender {
+    [self performSegueWithIdentifier:kChatMembersSegueIdentifier sender:self];
+}
+
 - (IBAction)sendClicked:(id)sender {
-    [_serverSession sendMessage:_messageTextField.text];
+    NSString *filteredText = [_messageTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    filteredText = [filteredText stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     
-    _messageTextField.text = nil;
+    if (filteredText.length > 0) {
+        [_serverSession sendMessage:_messageTextField.text];
+        
+        _messageTextField.text = nil;
+    } else {
+        [[[UIAlertView alloc] initWithTitle:@"Error"
+                                    message:@"Please enter your message."
+                                   delegate:nil
+                          cancelButtonTitle:@"OK"
+                          otherButtonTitles:nil] show];
+    }
+}
+
+#pragma mark - Navigation
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kChatMembersSegueIdentifier]) {
+        ChatMembersController *membersController = segue.destinationViewController;
+        
+        membersController.serverSession = _serverSession;
+        membersController.chat = _serverSession.chat;
+    }
+}
+
+#pragma mark - Private
+
+- (void)updateChatHeaderUI {
+    int32_t participants = (int32_t)_serverSession.chat.members.count + 1;
+    
+    NSString *participantsTitle = [NSString stringWithFormat:@"%d %@", participants, participants == 1 ? @"Participant" : @"Participants"];
+    
+    [_participantsCountButton setTitle:participantsTitle
+                              forState:UIControlStateNormal];
+}
+
+- (void)appendEventAndReload:(__kindof EventObject *)event {
+    _noMessagesView.hidden = YES;
+    
+    [_datasource addObject:event];
+    
+    [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
+        return [@(obj1.timestamp) compare:@(obj2.timestamp)];
+    }];
+    
+    [_messagesTableView reloadData];
+    
+    [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
+                              atScrollPosition:UITableViewScrollPositionBottom
+                                      animated:NO];
+}
+
+#pragma mark - <ServerChatSessionObserver>
+
+- (void)chatSession:(ServerChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event {
+    [self updateChatHeaderUI];
+    [self appendEventAndReload:event];
+    
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"%@ connected!", event.user.name];
+        notification.soundName = @"ding.mp3";
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
+}
+
+- (void)chatSession:(ServerChatSession *)session userDidDisconnectWithEvent:(ConnectionEvent *)event {
+    [self updateChatHeaderUI];
+    [self appendEventAndReload:event];
+}
+
+- (void)chatSession:(ServerChatSession *)session userDidUpdateName:(ServerUser *)user {
+    [_messagesTableView reloadData];
+}
+
+- (void)chatSession:(ServerChatSession *)session didReceiveMessage:(NewMessageEvent *)event {
+    [self appendEventAndReload:event];
+    
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
+        Message *message = event.message;
+        UILocalNotification *notification = [UILocalNotification new];
+        
+        notification.alertBody = [NSString stringWithFormat:@"New message from %@:\n%@", message.sender.name, message.messageText];
+        notification.soundName = UILocalNotificationDefaultSoundName;
+        
+        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
+    }
 }
 
 #pragma mark - <UITableViewDelegate/Datasource>
@@ -120,86 +220,9 @@ UITableViewDataSource
     
     __kindof BaseEventTableCell *cell = [tableView dequeueReusableCellWithIdentifier:event.reuseIdentifier];
     
-    cell.serverSession = _serverSession;
     cell.event = event;
     
     return cell;
-}
-
-#pragma mark - <ServerChatSessionObserver>
-
-- (void)chatSession:(ServerChatSession *)session userDidConnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp {
-    ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:_serverSession.chat
-                                                              user:user
-                                                         eventType:kEventTypeConnected
-                                                         timestamp:timestamp];
-    
-    [_datasource addObject:event];
-    
-    [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
-        return [@(obj1.timestamp) compare:@(obj2.timestamp)];
-    }];
-    
-    [_messagesTableView reloadData];
-    
-    [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
-                              atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:NO];
-    
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UILocalNotification *notification = [UILocalNotification new];
-        
-        notification.alertBody = [NSString stringWithFormat:@"%@ connected!", user.name];
-        notification.soundName = @"ding.mp3";
-        
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-    }
-}
-
-- (void)chatSession:(ServerChatSession *)session userDidDisconnect:(ServerUser *)user timestamp:(NSTimeInterval)timestamp {
-    ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:_serverSession.chat
-                                                              user:user
-                                                         eventType:kEventTypeDisconnected
-                                                         timestamp:timestamp];
-    
-    [_datasource addObject:event];
-    
-    [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
-        return [@(obj1.timestamp) compare:@(obj2.timestamp)];
-    }];
-    
-    [_messagesTableView reloadData];
-    
-    [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
-                              atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:NO];
-}
-
-- (void)chatSession:(ServerChatSession *)session didReceiveNewMessage:(Message *)message {
-    NewMessageEvent *event = [[NewMessageEvent alloc] initWithChat:_serverSession.chat
-                                                           message:message
-                                                         timestamp:message.timestamp];
-    
-    [_datasource addObject:event];
-    
-    [_datasource sortUsingComparator:^NSComparisonResult(EventObject *obj1, EventObject *obj2) {
-        return [@(obj1.timestamp) compare:@(obj2.timestamp)];
-    }];
-    
-    [_messagesTableView reloadData];
-    
-    [_messagesTableView scrollToRowAtIndexPath:[NSIndexPath indexPathForItem:_datasource.count - 1 inSection:0]
-                              atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:NO];
-    
-    if ([UIApplication sharedApplication].applicationState == UIApplicationStateBackground) {
-        UILocalNotification *notification = [UILocalNotification new];
-        
-        notification.alertBody = [NSString stringWithFormat:@"New message from %@:\n%@", message.sender.name, message.messageText];
-        notification.soundName = UILocalNotificationDefaultSoundName;
-        
-        [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
-    }
 }
 
 @end

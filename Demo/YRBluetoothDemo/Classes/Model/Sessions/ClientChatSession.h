@@ -12,13 +12,17 @@
 #import "ClientChat.h"
 #import "ClientUser.h"
 
+// Events
+#import "ConnectionEvent.h"
+#import "NewMessageEvent.h"
+
 // Components
 #import "YRBluetooth.h"
 
 typedef void (^ChatScanningCallback) (NSArray <ClientChat *> *chats);
 typedef void (^ChatScanningFailureCallback) (NSError *error);
 
-typedef void (^ChatSuccessSendCallback) (Message *message);
+typedef void (^ChatSuccessSendCallback) (NewMessageEvent *message);
 
 typedef void (^ChatConnectionSuccessCallback) (ClientChat *chat, ClientUser *userInfo);
 typedef void (^ChatConnectionFailureCallback) (NSError *error);
@@ -72,14 +76,13 @@ typedef void (^ChatConnectionFailureCallback) (NSError *error);
 - (void)chatSession:(ClientChatSession *)session didConnectToChat:(ClientChat *)chat;
 - (void)chatSession:(ClientChatSession *)session didFailToConnectToChat:(ClientChat *)chat withError:(NSError *)error;
 
-- (void)chatSession:(ClientChatSession *)session userDidConnect:(ClientUser *)user
-             toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
-- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(ClientUser *)user
-           fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp;
+- (void)chatSession:(ClientChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event inChat:(ClientChat *)chat;
+- (void)chatSession:(ClientChatSession *)session userDidDisconnectWithEvent:(ConnectionEvent *)event inChat:(ClientChat *)chat;
 - (void)chatSession:(ClientChatSession *)session userDidUpdateName:(ClientUser *)user inChat:(ClientChat *)chat;
 
-- (void)chatSession:(ClientChatSession *)session didSendMessage:(Message *)message inChat:(ClientChat *)chat;
-- (void)chatSession:(ClientChatSession *)session didReceiveMessage:(Message *)message inChat:(ClientChat *)chat;
-- (void)chatSession:(ClientChatSession *)session failedToSendMessage:(Message *)message inChat:(ClientChat *)chat withError:(NSError *)error;
+- (void)chatSession:(ClientChatSession *)session didSendMessage:(NewMessageEvent *)event inChat:(ClientChat *)chat;
+- (void)chatSession:(ClientChatSession *)session didReceiveMessage:(NewMessageEvent *)event inChat:(ClientChat *)chat;
+- (void)chatSession:(ClientChatSession *)session failedToSendMessage:(NSString *)text
+             inChat:(ClientChat *)chat withError:(NSError *)error;
 
 @end

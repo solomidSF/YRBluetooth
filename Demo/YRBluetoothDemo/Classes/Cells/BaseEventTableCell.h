@@ -17,8 +17,6 @@
 
 @interface BaseEventTableCell : UITableViewCell
 
-@property (nonatomic) ClientChatSession *clientSession;
-@property (nonatomic) ServerChatSession *serverSession;
 @property (nonatomic) __kindof EventObject *event;
 
 @end

@@ -15,27 +15,27 @@
 @interface Chat ()
 @property (nonatomic, readwrite) NSString *name;
 @property (nonatomic, readwrite) User *me;
-@property (nonatomic, readonly) NSMutableArray <Message *> *mutableMessages;
 @property (nonatomic, readwrite) NSMutableArray <User *> *mutableMembers;
+@property (nonatomic, readonly) NSMutableArray <__kindof EventObject *> *mutableEvents;
 
 @end
 
 @implementation Chat {
-    NSMutableArray <Message *> *_mutableMessages;
+    NSMutableArray <__kindof EventObject *> *_mutableEvents;
 }
 
 #pragma mark - Dynamic Properties 
 
-- (NSMutableArray <Message *> *)mutableMessages {
-    if (!_mutableMessages) {
-        _mutableMessages = [NSMutableArray new];
+- (NSMutableArray <__kindof EventObject *> *)mutableEvents {
+    if (!_mutableEvents) {
+        _mutableEvents = [NSMutableArray new];
     }
     
-    return _mutableMessages;
+    return _mutableEvents;
 }
 
-- (NSArray <Message *> *)messages {
-    return [self.mutableMessages copy];
+- (NSArray <__kindof EventObject *> *)events {
+    return [self.mutableEvents copy];
 }
 
 - (NSArray <User *> *)members {

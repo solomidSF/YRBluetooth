@@ -10,10 +10,12 @@
 
 // Sessions
 #import "ClientChatSession.h"
+#import "ServerChatSession.h"
 
 @interface ChatMembersController : UIViewController
 
-@property (nonatomic) ClientChatSession *session;
-@property (nonatomic) ClientChat *chat;
+@property (nonatomic) ClientChatSession *clientSession;
+@property (nonatomic) ServerChatSession *serverSession;
+@property (nonatomic) __kindof Chat *chat;
 
 @end

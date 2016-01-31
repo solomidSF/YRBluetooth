@@ -307,9 +307,10 @@ _YRBTChunkParserDelegate
 	return nil;
 }
 
-- (YRBTRemoteMessageRequest *)remoteRequestForChunk:(__kindof _YRBTMessageChunk *)chunk {
+- (YRBTRemoteMessageRequest *)remoteRequestForChunk:(__kindof _YRBTMessageChunk *)chunk sender:(__kindof CBPeer *)peer {
     for (YRBTRemoteMessageRequest *request in _remoteRequests) {
-        if (request.messageID == chunk.messageID) {
+        if (request.messageID == chunk.messageID &&
+            [request.sender isEqual:[_storage deviceForPeer:peer]]) {
             return request;
         }
     }
@@ -529,7 +530,7 @@ _YRBTChunkParserDelegate
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseRequestHeaderChunk:(_YRBTHeaderChunk *)chunk
          fromSender:(CBPeer *)sender {
     // We shouldn't have any operation for this.
-	YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk];
+    YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk sender:sender];
 	NSAssert(remoteRequest == nil, @"[_YRBTStreamingService]: Received header chunk from remote, but already has remote request for it.");
     NSLog(@"[_YRBTStreamingService]: Did parse REQUEST header chunk: %@", chunk);
 
@@ -546,7 +547,7 @@ _YRBTChunkParserDelegate
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseOperationNameChunk:(_YRBTOperationNameChunk *)chunk
          fromSender:(CBPeer *)sender {
-	YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk];
+    YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk sender:sender];
     
     if (!remoteRequest) {
         // It may fail already.
@@ -585,7 +586,7 @@ _YRBTChunkParserDelegate
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseRequestRegularMessageChunk:(_YRBTRegularMessageChunk *)chunk
          fromSender:(CBPeer *)sender {
-    YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk];
+    YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk sender:sender];
     if (!remoteRequest) {
         // It may fail already.
         return;

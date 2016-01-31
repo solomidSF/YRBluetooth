@@ -13,14 +13,17 @@
 #import "ClientUser.h"
 #import "ServerUser.h"
 
+// Events
+#import "EventObject.h"
+
 // Components
 #import "YRBluetooth.h"
 
 @interface Chat (Private)
 
 @property (nonatomic) __kindof User *me;
-@property (nonatomic, readonly) NSMutableArray <Message *> *mutableMessages;
-@property (nonatomic) NSMutableArray <User *> *mutableMembers;
+@property (nonatomic, readonly) NSMutableArray <__kindof EventObject *> *mutableEvents;
+@property (nonatomic) NSMutableArray <__kindof User *> *mutableMembers;
 
 @end
 

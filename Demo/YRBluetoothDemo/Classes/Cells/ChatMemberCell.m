@@ -6,11 +6,17 @@
 //  Copyright © 2016 solomidSF. All rights reserved.
 //
 
+// Cells
 #import "ChatMemberCell.h"
+
+// Entities
+#import "ClientUser.h"
+#import "ServerUser.h"
 
 @interface ChatMemberCell ()
 <
-ClientChatSessionObserver
+ClientChatSessionObserver,
+ServerChatSessionObserver
 >
 @end
 
@@ -22,16 +28,25 @@ ClientChatSessionObserver
 #pragma mark - Lifecycle
 
 - (void)dealloc {
-    [self.session removeObserver:self];
+    [self.clientSession removeObserver:self];
+    [self.serverSession removeObserver:self];
 }
 
 #pragma mark - Dynamic Properties
 
-- (void)setSession:(ClientChatSession *)session {
-    if (_session != session) {
-        _session = session;
+- (void)setClientSession:(ClientChatSession *)clientSession {
+    if (_clientSession != clientSession) {
+        _clientSession = clientSession;
         
-        [_session addObserver:self];        
+        [_clientSession addObserver:self];
+    }
+}
+
+- (void)setServerSession:(ServerChatSession *)serverSession {
+    if (_serverSession != serverSession) {
+        _serverSession = serverSession;
+        
+        [_serverSession addObserver:self];
     }
 }
 
@@ -45,7 +60,11 @@ ClientChatSessionObserver
 
 - (void)updateUI {
     _memberNameLabel.text = _member.name;
-    _memberOnlineStatusImageView.image = [UIImage imageNamed:_member.isConnected ? @"online" : @"offline"];
+
+    BOOL isClientUser = self.clientSession != nil;
+    BOOL isMemberConnected = isClientUser ? [(ClientUser *)_member isConnected] : [(ServerUser *)_member isSubscribed];
+    
+    _memberOnlineStatusImageView.image = [UIImage imageNamed:isMemberConnected ? @"online" : @"offline"];
 }
 
 #pragma mark - <ClientChatSessionObserver>
@@ -59,15 +78,39 @@ ClientChatSessionObserver
     }
 }
 
-- (void)chatSession:(ClientChatSession *)session userDidConnect:(ClientUser *)user
-             toChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
+- (void)chatSession:(ClientChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event inChat:(ClientChat *)chat {
+    if ([self.member isEqual:event.user]) {
+        [self updateUI];
+    }
+}
+
+- (void)chatSession:(ClientChatSession *)session userDidDisconnectWithEvent:(ConnectionEvent *)event inChat:(ClientChat *)chat {
+    if ([self.member isEqual:event.user]) {
+        [self updateUI];
+    }
+}
+
+- (void)chatSession:(ClientChatSession *)session userDidUpdateName:(ClientUser *)user inChat:(ClientChat *)chat {
     if ([self.member isEqual:user]) {
         [self updateUI];
     }
 }
 
-- (void)chatSession:(ClientChatSession *)session userDidDisconnect:(ClientUser *)user
-           fromChat:(ClientChat *)chat timestamp:(NSTimeInterval)timestamp {
+#pragma mark - <ServerChatSessionObserver>
+
+- (void)chatSession:(ServerChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event {
+    if ([self.member isEqual:event.user]) {
+        [self updateUI];
+    }
+}
+
+- (void)chatSession:(ServerChatSession *)session userDidDisconnectWithEvent:(ConnectionEvent *)event {
+    if ([self.member isEqual:event.user]) {
+        [self updateUI];
+    }
+}
+
+- (void)chatSession:(ServerChatSession *)session userDidUpdateName:(ServerUser *)user {
     if ([self.member isEqual:user]) {
         [self updateUI];
     }
