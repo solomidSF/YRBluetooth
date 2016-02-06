@@ -26,7 +26,7 @@
 
 @property (nonatomic, readonly) NSArray <ServerUser *> *participants;
 @property (nonatomic, readonly) ServerChat *chat;
-@property (nonatomic, readonly) YRBTBluetoothState bluetoothState;
+@property (nonatomic, readonly) YRBluetoothState bluetoothState;
 @property (nonatomic, readonly) BOOL isAdvertising;
 
 #pragma mark - Session Management
@@ -51,7 +51,7 @@
 @protocol ServerChatSessionObserver <NSObject>
 @optional
 
-- (void)chatSession:(ServerChatSession *)session bluetoothStateDidChange:(YRBTBluetoothState)newState;
+- (void)chatSession:(ServerChatSession *)session bluetoothStateDidChange:(YRBluetoothState)newState;
 - (void)chatSession:(ServerChatSession *)session advertisingStateChanged:(BOOL)isAdvertising;
 - (void)chatSession:(ServerChatSession *)session userDidConnectWithEvent:(ConnectionEvent *)event;
 - (void)chatSession:(ServerChatSession *)session userDidDisconnectWithEvent:(ConnectionEvent *)event;

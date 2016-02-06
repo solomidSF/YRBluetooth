@@ -31,30 +31,33 @@
 // Model
 #import "_YRBTDeviceStorage.h"
 
+@class YRBTClient;
 @class YRBTServerDevice;
 
 typedef enum {
-    kScanningStatePending,
-    kScanningStateScanning,
-    kScanningStateScanningContinuously
-} ScanningState;
+    kYRBTScanningStatePending,
+    kYRBTScanningStateScanning,
+    kYRBTScanningStateScanningContinuously
+} YRBTScanningState;
 
 /**
  *  Class that is responsible for scanning.
  */
 @interface _YRBTScanningService : NSObject
 
+@property (nonatomic, readonly, weak) YRBTClient *client;
 /**
  *  Returns current scanning state.
  */
-@property (nonatomic, readonly) ScanningState scanningState;
+@property (nonatomic, readonly) YRBTScanningState scanningState;
 @property (nonatomic, readonly) BOOL isScanning;
 
 #pragma mark - Init
 
-+ (instancetype)scanningServiceForCentralManager:(CBCentralManager *)manager
-                                   deviceStorage:(_YRBTDeviceStorage *)storage
-                                           appID:(CBUUID *)uuid;
++ (instancetype)scanningServiceForClient:(YRBTClient *)client
+                          centralManager:(CBCentralManager *)manager
+                           deviceStorage:(_YRBTDeviceStorage *)storage
+                                   appID:(CBUUID *)uuid;
 
 #pragma mark - Scanning
 

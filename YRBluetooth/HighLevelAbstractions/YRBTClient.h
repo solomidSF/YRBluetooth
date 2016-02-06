@@ -35,7 +35,7 @@
 @interface YRBTClient : YRBTPeer
 
 /** Array of YRBTServerDevice instances that contains devices to which current one is connected. */
-@property (nonatomic, readonly) NSArray <YRBTServerDevice*> *connectedDevices;
+@property (nonatomic, readonly) NSArray <YRBTServerDevice *> *connectedDevices;
 @property (nonatomic, readonly) BOOL isScanning;
 
 #pragma mark - Scanning

@@ -27,35 +27,6 @@
 
 #import "YRBluetoothTypes.h"
 
-typedef enum {
-    /**
-     *  State unknown, update imminent.
-     */
-    kYRBTBluetoothStateUnknown,
-    /**
-     *  The connection with the system service was momentarily lost, update imminent.
-     */
-    kYRBTBluetoothStateResetting,
-    /**
-     *  The platform doesn't support the Bluetooth Low Energy Central/Client role.
-     */
-    kYRBTBluetoothStateUnsupported,
-    /**
-     *  The application is not authorized to use the Bluetooth Low Energy Central/Client role.
-     */
-    kYRBTBluetoothStateUnauthorized,
-    /**
-     *  Bluetooth is currently powered off.
-     */
-    kYRBTBluetoothStatePoweredOff,
-    /**
-     *  Bluetooth is currently powered on and available to use.
-     */
-    kYRBTBluetoothStatePoweredOn
-} YRBTBluetoothState;
-
-typedef void (^YRBTBluetoothStateChanged) (YRBTBluetoothState newState);
-
 /**
  *  Abstract class for client/server.
  */
@@ -88,11 +59,12 @@ typedef void (^YRBTBluetoothStateChanged) (YRBTBluetoothState newState);
 /**
  *  Current bluetooth peer state.
  */
-@property (nonatomic, readonly) YRBTBluetoothState bluetoothState;
+@property (nonatomic, readonly) YRBluetoothState bluetoothState;
+
 /**
  *  Callback that will be called when bluetooth state changes.
  */
-@property (nonatomic, copy) YRBTBluetoothStateChanged bluetoothStateChanged;
+@property (nonatomic, copy) YRBluetoothStateChanged bluetoothStateChanged;
 
 #pragma mark - Init
 

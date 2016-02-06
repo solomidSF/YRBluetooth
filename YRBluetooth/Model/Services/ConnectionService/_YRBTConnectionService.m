@@ -23,6 +23,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// High Level Abstractions
+#import "YRBTClient.h"
+
 // Services
 #import "_YRBTConnectionService.h"
 #import "_YRBTConnectionOperation.h"
@@ -54,15 +57,20 @@ TimeoutDelegate
 
 #pragma mark - Init
 
-+ (instancetype)connectionServiceForCentralManager:(CBCentralManager *)manager
-                                     deviceStorage:(_YRBTDeviceStorage *)storage {
-    return [[self alloc] initWithCentralManager:manager
-                                        storage:storage];
++ (instancetype)connectionServiceForClient:(YRBTClient *)client
+                            centralManager:(CBCentralManager *)manager
+                             deviceStorage:(_YRBTDeviceStorage *)storage {
+    return [[self alloc] initWithClient:client
+                         centralManager:manager
+                                storage:storage];
 }
 
-- (instancetype)initWithCentralManager:(CBCentralManager *)manager
-                               storage:(_YRBTDeviceStorage *)storage {
+- (instancetype)initWithClient:(YRBTClient *)client
+                centralManager:(CBCentralManager *)manager
+                       storage:(_YRBTDeviceStorage *)storage {
     if (self = [super init]) {
+        _client = client;
+        
         _centralManager = manager;
         _storage = storage;
 
@@ -153,7 +161,7 @@ TimeoutDelegate
         BTDebugMsg(@"[_YRBTConnectionService]: Can't connect to server: %@, because bluetooth is not on. %d",
                    server,
                    (int32_t)_centralManager.state);
-        !failure ? : failure(server, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]);
+        !failure ? : failure(server, [_YRBTErrorService buildErrorForBluetoothState:self.client.bluetoothState]);
     }
 }
 

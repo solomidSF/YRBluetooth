@@ -29,6 +29,7 @@
 #import "YRBluetoothTypes.h"
 #import "_YRBTDeviceStorage.h"
 
+@class YRBTClient;
 @class YRBTServerDevice;
 
 /**
@@ -36,6 +37,7 @@
  */
 @interface _YRBTConnectionService : NSObject
 
+@property (nonatomic, readonly, weak) YRBTClient *client;
 /**
  *  Returns devices to which central is currently connected to.
  */
@@ -43,8 +45,9 @@
 
 #pragma mark - Init
 
-+ (instancetype)connectionServiceForCentralManager:(CBCentralManager *)manager
-                                     deviceStorage:(_YRBTDeviceStorage *)storage;
++ (instancetype)connectionServiceForClient:(YRBTClient *)client
+                            centralManager:(CBCentralManager *)manager
+                             deviceStorage:(_YRBTDeviceStorage *)storage;
 
 #pragma mark - Connection
 

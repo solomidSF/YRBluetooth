@@ -23,6 +23,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// High Level Abstractions
+#import "YRBTClient.h"
+
 // Services
 #import "_YRBTScanningService.h"
 #import "_YRBTErrorService.h"
@@ -43,7 +46,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     _YRBTDeviceStorage *_storage;
     CBUUID *_appUUID;
     
-    ScanningState _scanningState;
+    YRBTScanningState _scanningState;
     
     // ==== Timed scan variables ==== //
     NSMutableArray *_foundDevices;
@@ -63,18 +66,23 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
 
 #pragma mark - Lifecycle
 
-+ (instancetype)scanningServiceForCentralManager:(CBCentralManager *)manager
-                                   deviceStorage:(_YRBTDeviceStorage *)storage
-                                           appID:(CBUUID *)uuid {
-    return [[self alloc] initWithCentralManager:manager
-                                        storage:storage
-                                          appID:uuid];
++ (instancetype)scanningServiceForClient:(YRBTClient *)client
+                          centralManager:(CBCentralManager *)manager
+                           deviceStorage:(_YRBTDeviceStorage *)storage
+                                   appID:(CBUUID *)uuid {
+    return [[self alloc] initWithClient:client
+                         centralManager:manager
+                                storage:storage
+                                  appID:uuid];
 }
 
-- (instancetype)initWithCentralManager:(CBCentralManager *)manager
-                               storage:(_YRBTDeviceStorage *)storage
-                                 appID:(CBUUID *)uuid {
+- (instancetype)initWithClient:(YRBTClient *)client
+                centralManager:(CBCentralManager *)manager
+                       storage:(_YRBTDeviceStorage *)storage
+                         appID:(CBUUID *)uuid {
     if (self = [super init]) {
+        _client = client;
+        
         _centralManager = manager;
         _storage = storage;
         _appUUID = uuid;
@@ -91,7 +99,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
 #pragma mark - Dynamic Properties
 
 - (BOOL)isScanning {
-    return self.scanningState != kScanningStatePending;
+    return self.scanningState != kYRBTScanningStatePending;
 }
 
 #pragma mark - Scanning
@@ -102,7 +110,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
         [self invalidate];
         BTDebugMsg(@"[_YRBTScanningService]: Will start scanning for devices continiously.");
 
-        _scanningState = kScanningStateScanningContinuously;
+        _scanningState = kYRBTScanningStateScanningContinuously;
         
         _continiousScanCallback = callback;
         _continiousFailureCallback = failure;
@@ -114,7 +122,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
         !_continiousScanCallback ? : _continiousScanCallback([_repeatedlyFoundDevices copy]);
     } else {
         BTDebugMsg(@"[_YRBTScanningService]: Can't start scanning, BT state is not powered on. %d", (int32_t)_centralManager.state);
-        !failure ? : failure([_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]);
+        !failure ? : failure([_YRBTErrorService buildErrorForBluetoothState:self.client.bluetoothState]);
     }
 }
 
@@ -126,7 +134,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
         [self invalidate];
         BTDebugMsg(@"Will start scanning for devices.");
 
-        _scanningState = kScanningStateScanning;
+        _scanningState = kYRBTScanningStateScanning;
         
         _foundDevices = [NSMutableArray array];
         _maxDeviceCount = maxDevices;
@@ -147,7 +155,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
         }
     } else {
         BTDebugMsg(@"ERROR, BT NOT AVAILABLE!");
-        !failure ? : failure([_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]);
+        !failure ? : failure([_YRBTErrorService buildErrorForBluetoothState:self.client.bluetoothState]);
     }
 }
 
@@ -176,10 +184,10 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     }
     
     switch (_scanningState) {
-        case kScanningStatePending:
+        case kYRBTScanningStatePending:
             NSAssert(NO, @"Bluetooth scanning state is not supposed to be pending while scan callback fired.");
             break;
-        case kScanningStateScanning:
+        case kYRBTScanningStateScanning:
             if (![[_foundDevices valueForKey:@"peripheral"] containsObject:peripheral]) {
                 [_foundDevices addObject:device];
                 
@@ -191,7 +199,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
             }
             
             break;
-        case kScanningStateScanningContinuously: {
+        case kYRBTScanningStateScanningContinuously: {
             if (![[_repeatedlyFoundDevices valueForKey:@"peripheral"] containsObject:peripheral]) {
                 [_repeatedlyFoundDevices addObject:device];
             }
@@ -226,7 +234,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     
     _repeatedlyFoundDevices = nil;
     
-    _scanningState = kScanningStatePending;
+    _scanningState = kYRBTScanningStatePending;
     
     if (_centralManager.state == CBCentralManagerStatePoweredOn) {
         // Otherwise it will crash.
@@ -255,7 +263,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
 
     _repeatedlyFoundDevices = nil;
     
-    _scanningState = kScanningStatePending;
+    _scanningState = kYRBTScanningStatePending;
     
     if (_centralManager.state == CBCentralManagerStatePoweredOn) {
         // Otherwise it will crash.
@@ -302,7 +310,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     
     [_repeatedlyFoundDevices removeObject:device];
     
-    NSAssert(self.scanningState == kScanningStateScanningContinuously,
+    NSAssert(self.scanningState == kYRBTScanningStateScanningContinuously,
              @"[_YRBTScanningService]: Received discovery timeout for device: %@, but scanning state is incorrect!",
              device);
     

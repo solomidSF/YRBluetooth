@@ -37,7 +37,7 @@
 @class YRBTSendingMessageOperation;
 @class YRBTReceivingMessageOperation;
 
-@class _YRBTWriteOperation;
+//@class _YRBTWriteOperation;
 
 typedef void (^YRBTWriteCompletionHandler) (BOOL success, NSError *cbError);
 
@@ -53,12 +53,6 @@ typedef void (^YRBTWriteCompletionHandler) (BOOL success, NSError *cbError);
 
 @property (nonatomic, weak) id <_YRBTReceivingStreamDelegate> receivingDelegate;
 @property (nonatomic, weak) id <_YRBTSendingStreamDelegate> sendingDelegate;
-
-/**
- *  Current write opearation that should be completed.
- *  It may be nil, sendingDelegate will be notified when currentWriteOperation should be satisfied.
- */
-@property (nonatomic, readonly) _YRBTWriteOperation *currentWriteOperation;
 
 /**
  *  Chunk that should be sent to receivers contained in pending operation.

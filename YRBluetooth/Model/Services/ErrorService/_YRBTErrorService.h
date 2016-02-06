@@ -31,6 +31,8 @@
 @interface _YRBTErrorService : NSObject
 
 + (NSError *)buildErrorForCode:(YRBTErrorCode)code;
++ (NSError *)buildErrorForBluetoothState:(YRBluetoothState)state;
+
 // TODO: Error are human readable.
 + (NSError *)buildErrorForCentralState:(CBCentralManagerState)state;
 + (NSError *)buildErrorForPeriphrealState:(CBPeripheralManagerState)state;

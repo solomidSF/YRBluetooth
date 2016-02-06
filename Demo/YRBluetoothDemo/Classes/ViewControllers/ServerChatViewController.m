@@ -166,9 +166,9 @@ UITableViewDataSource
     NSString *broadcastTitle = _serverSession.isAdvertising ? @"Stop" : @"Broadcast";
     
     [_broadcastButton setTitle:broadcastTitle forState:UIControlStateNormal];
-    _broadcastButton.enabled = (_serverSession.bluetoothState == kYRBTBluetoothStatePoweredOn);
+    _broadcastButton.enabled = (_serverSession.bluetoothState == kYRBluetoothStatePoweredOn);
     
-    BOOL isBluetoothEnabled = _serverSession.bluetoothState == kYRBTBluetoothStatePoweredOn;
+    BOOL isBluetoothEnabled = _serverSession.bluetoothState == kYRBluetoothStatePoweredOn;
     
     _bluetoothStateLabel.text = [self humanReadableBluetoothState:_serverSession.bluetoothState];
     _bluetoothStateImageView.image = [UIImage imageNamed:isBluetoothEnabled ? @"online" : @"offline"];
@@ -190,18 +190,18 @@ UITableViewDataSource
                                       animated:NO];
 }
 
-- (NSString *)humanReadableBluetoothState:(YRBTBluetoothState)state {
+- (NSString *)humanReadableBluetoothState:(YRBluetoothState)state {
     return @[@"Unknown BT State",
              @"Bluetooth Reset",
              @"Bluetooth Unsupported",
              @"Bluetooth Unauthorized",
-             @"Blueooth OFF",
+             @"Bluetooth OFF",
              @"Bluetooth ON"][state];
 }
 
 #pragma mark - <ServerChatSessionObserver>
 
-- (void)chatSession:(ServerChatSession *)session bluetoothStateDidChange:(YRBTBluetoothState)newState {
+- (void)chatSession:(ServerChatSession *)session bluetoothStateDidChange:(YRBluetoothState)newState {
     [self updateChatHeaderUI];
 }
 

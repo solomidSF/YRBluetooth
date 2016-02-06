@@ -78,7 +78,7 @@ static NSString *const kUserNameChangedOperation = @"UNC";
     return [self subscribedUsers];
 }
 
-- (YRBTBluetoothState)bluetoothState {
+- (YRBluetoothState)bluetoothState {
     return _server.bluetoothState;
 }
 
@@ -128,11 +128,11 @@ static NSString *const kUserNameChangedOperation = @"UNC";
 - (void)setupServer {
     __typeof(self) __weak weakSelf = self;
     
-    _server.bluetoothStateChanged = ^(YRBTBluetoothState newState) {
+    _server.bluetoothStateChanged = ^(YRBluetoothState newState) {
         __typeof(weakSelf) __strong strongSelf = weakSelf;
         
         if (strongSelf) {
-            if (newState == kYRBTBluetoothStatePoweredOn) {
+            if (newState == kYRBluetoothStatePoweredOn) {
                 [strongSelf currentUserInfo].isSubscribed = YES;
             } else {
                 [strongSelf currentUserInfo].isSubscribed = NO;
@@ -333,7 +333,7 @@ static NSString *const kUserNameChangedOperation = @"UNC";
 - (ServerUser *)currentUserInfo {
     if (!_currentUserInfo) {
         _currentUserInfo = [[ServerUser alloc] initWithIdentifier:@"0" name:_server.peerName isChatOwner:YES];
-        _currentUserInfo.isSubscribed = (_server.bluetoothState == kYRBTBluetoothStatePoweredOn);
+        _currentUserInfo.isSubscribed = (_server.bluetoothState == kYRBluetoothStatePoweredOn);
     }
     
     return _currentUserInfo;

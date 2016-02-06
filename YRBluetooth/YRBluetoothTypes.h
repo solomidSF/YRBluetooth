@@ -34,17 +34,30 @@
 @class YRBTMessageOperation;
 @class YRBTRemoteMessageRequest;
 
+// Errors
 static NSString *const kYRBTErrorDomain = @"YRBTErrorDomain";
 
 typedef NS_ENUM(int32_t, YRBTErrorCode) {
     /**
      *  Unknown error. No information available.
      */
-    kYRBTErrorUnknown,
+    kYRBTErrorCodeUnknown,
     /**
      *  Bluetooth is off.
      */
-    kYRBTErrorCodeBluetoothOff, // TODO: Add more error codes for bluetooth off/unath/unsupported
+    kYRBTErrorCodeBluetoothOff,
+    /**
+     *  The connection with the system service was momentarily lost, update imminent.
+     */
+    kYRBTErrorCodeBluetoothServiceReset,
+    /**
+     *  The platform doesn't support the Bluetooth Low Energy Central/Client role.
+     */
+    kYRBTErrorCodeBluetoothUnsupported,
+    /**
+     *  The application is not authorized to use the Bluetooth Low Energy Central/Client role.
+     */
+    kYRBTErrorCodeBluetoothUnathorized,
     /**
      *  Device isn't connected.
      */
@@ -102,6 +115,36 @@ typedef NS_ENUM(int32_t, YRBTErrorCode) {
      */
     kYRBTErrorCodeSendCancelledByRemote,
 };
+
+// Bluetooth state
+typedef enum {
+    /**
+     *  State unknown, update imminent.
+     */
+    kYRBluetoothStateUnknown,
+    /**
+     *  The connection with the system service was momentarily lost, update imminent.
+     */
+    kYRBluetoothStateResetting,
+    /**
+     *  The platform doesn't support the Bluetooth Low Energy Central/Client role.
+     */
+    kYRBluetoothStateUnsupported,
+    /**
+     *  The application is not authorized to use the Bluetooth Low Energy Central/Client role.
+     */
+    kYRBluetoothStateUnauthorized,
+    /**
+     *  Bluetooth is currently powered off.
+     */
+    kYRBluetoothStatePoweredOff,
+    /**
+     *  Bluetooth is currently powered on and available to use.
+     */
+    kYRBluetoothStatePoweredOn
+} YRBluetoothState;
+
+typedef void (^YRBluetoothStateChanged) (YRBluetoothState newState);
 
 // Common
 typedef void (^YRBTProgressCallback) (uint32_t currentBytes,

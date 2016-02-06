@@ -36,6 +36,9 @@
         errorDescriptions = @[
                               @"Unknown error.",
                               @"Bluetooth is not enabled.",
+                              @"Bluetooth service is resetting.",
+                              @"Bluetooth Low Energy is not supported on current device.",
+                              @"Bluetooth Low Energy is not allowed for current application.",
                               @"Device isn't connected.",
                               @"Connected to device but communication channel is not established.",
                               @"Failed to establish communication channel.",
@@ -57,6 +60,33 @@
                                code:code
                            userInfo:@{NSLocalizedDescriptionKey : errorDescriptions[code]}];
 }
+
++ (NSError *)buildErrorForBluetoothState:(YRBluetoothState)state {
+    return [self buildErrorForCode:[self errorCodeForBluetoothState:state]];
+}
+
+#pragma mark - Private
+
++ (YRBTErrorCode)errorCodeForBluetoothState:(YRBluetoothState)state {
+    switch (state) {
+        case kYRBluetoothStateUnknown:
+        case kYRBluetoothStatePoweredOff: // Fall-through
+            return kYRBTErrorCodeBluetoothOff;
+        case kYRBluetoothStateResetting:
+            return kYRBTErrorCodeBluetoothServiceReset;
+        case kYRBluetoothStateUnsupported:
+            return kYRBTErrorCodeBluetoothUnsupported;
+        case kYRBluetoothStateUnauthorized:
+            return kYRBTErrorCodeBluetoothUnathorized;
+        case kYRBluetoothStatePoweredOn:
+            NSAssert(NO, @"[YRBluetooth]: Asked for error code for correct bluetooth state.");
+            return kYRBTErrorCodeUnknown;
+        default:
+            return kYRBTErrorCodeUnknown;
+    }
+}
+
+// TODO: REMOVE
 
 + (NSError *)buildErrorForCentralState:(CBCentralManagerState)state {
     NSAssert(state != CBCentralManagerStatePoweredOn, @"[_YRBTErrorService]: Asked to build error for valid bluetooth state[ON]");

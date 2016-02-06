@@ -84,11 +84,15 @@ CBPeripheralDelegate
         _storage = [_YRBTDeviceStorage new];
         
         // Initialize all services.
-        _scanningService = [_YRBTScanningService scanningServiceForCentralManager:_nativeCentralManager
-                                                                    deviceStorage:_storage
-                                                                            appID:[CBUUID UUIDWithString:appID]];
-        _connectionService = [_YRBTConnectionService connectionServiceForCentralManager:_nativeCentralManager
-                                                                          deviceStorage:_storage];
+        _scanningService = [_YRBTScanningService scanningServiceForClient:self
+                                                           centralManager:_nativeCentralManager
+                                                            deviceStorage:_storage
+                                                                    appID:[CBUUID UUIDWithString:appID]];
+        
+        _connectionService = [_YRBTConnectionService connectionServiceForClient:self
+                                                                 centralManager:_nativeCentralManager
+                                                                  deviceStorage:_storage];
+        
         _streamingService = [_YRBTStreamingService streamingServiceWithStorage:_storage];
         
         _streamingService.sendingDelegate = self;
@@ -107,24 +111,24 @@ CBPeripheralDelegate
 
 #pragma mark - Dynamic Properties
 
-- (YRBTBluetoothState)bluetoothState {
+- (YRBluetoothState)bluetoothState {
     CBCentralManagerState realState = _nativeCentralManager.state;
     
     switch (realState) {
         case CBCentralManagerStateUnknown:
-            return kYRBTBluetoothStateUnknown;
+            return kYRBluetoothStateUnknown;
         case CBCentralManagerStateResetting:
-            return kYRBTBluetoothStateResetting;
+            return kYRBluetoothStateResetting;
         case CBCentralManagerStatePoweredOff:
-            return kYRBTBluetoothStatePoweredOff;
+            return kYRBluetoothStatePoweredOff;
         case CBCentralManagerStatePoweredOn:
-            return kYRBTBluetoothStatePoweredOn;
+            return kYRBluetoothStatePoweredOn;
         case CBCentralManagerStateUnauthorized:
-            return kYRBTBluetoothStateUnauthorized;
+            return kYRBluetoothStateUnauthorized;
         case CBCentralManagerStateUnsupported:
-            return kYRBTBluetoothStateUnsupported;
+            return kYRBluetoothStateUnsupported;
         default:
-            return kYRBTBluetoothStateUnknown;
+            return kYRBluetoothStateUnknown;
     }
 }
 
@@ -376,7 +380,7 @@ CBPeripheralDelegate
     !self.bluetoothStateChanged ? : self.bluetoothStateChanged(self.bluetoothState);
     
     if (central.state != CBCentralManagerStatePoweredOn) {
-        [self invalidateWithError:[_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]];
+        [self invalidateWithError:[_YRBTErrorService buildErrorForBluetoothState:self.bluetoothState]];
     }
 }
 

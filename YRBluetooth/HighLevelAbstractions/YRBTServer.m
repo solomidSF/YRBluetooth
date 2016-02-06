@@ -118,24 +118,24 @@ CBPeripheralManagerDelegate
     return [NSArray arrayWithArray:connectedDevices];
 }
 
-- (YRBTBluetoothState)bluetoothState {
+- (YRBluetoothState)bluetoothState {
     CBPeripheralManagerState realState = _nativePeripheralManager.state;
     
     switch (realState) {
         case CBPeripheralManagerStateUnknown:
-            return kYRBTBluetoothStateUnknown;
+            return kYRBluetoothStateUnknown;
         case CBPeripheralManagerStateResetting:
-            return kYRBTBluetoothStateResetting;
+            return kYRBluetoothStateResetting;
         case CBPeripheralManagerStatePoweredOff:
-            return kYRBTBluetoothStatePoweredOff;
+            return kYRBluetoothStatePoweredOff;
         case CBPeripheralManagerStatePoweredOn:
-            return kYRBTBluetoothStatePoweredOn;
+            return kYRBluetoothStatePoweredOn;
         case CBPeripheralManagerStateUnauthorized:
-            return kYRBTBluetoothStateUnauthorized;
+            return kYRBluetoothStateUnauthorized;
         case CBPeripheralManagerStateUnsupported:
-            return kYRBTBluetoothStateUnsupported;
+            return kYRBluetoothStateUnsupported;
         default:
-            return kYRBTBluetoothStateUnknown;
+            return kYRBluetoothStateUnknown;
     }
 }
 
@@ -422,7 +422,7 @@ CBPeripheralManagerDelegate
             _didPerformInitialSetup = YES;
         }
     } else {
-        [self invalidateWithError:[_YRBTErrorService buildErrorForCode:kYRBTErrorCodeBluetoothOff]];
+        [self invalidateWithError:[_YRBTErrorService buildErrorForBluetoothState:self.bluetoothState]];
     }
 }
 

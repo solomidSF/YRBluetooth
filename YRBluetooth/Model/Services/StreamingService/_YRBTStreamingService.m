@@ -100,6 +100,7 @@ _YRBTChunkParserDelegate
         return;
     }
     
+    operation.streamingService = self;
     operation.status = kYRBTMessageOperationStatusSending;
     
     [_operations addObject:operation];
@@ -331,7 +332,6 @@ _YRBTChunkParserDelegate
  *  Invalidates operation SILENTLY, without calling any callbacks.
  */
 - (void)invalidateRemoteRequest:(YRBTRemoteMessageRequest *)request {
-    NSLog(@"Invalidating request: %@", request);
 	[request.timeoutTimer invalidate];
 	request.timeoutTimer = nil;
 	
@@ -536,6 +536,7 @@ _YRBTChunkParserDelegate
     if (!remoteRequest) {
         // Create receiving operation.
         remoteRequest = [[YRBTRemoteMessageRequest alloc] initWithHeaderChunk:chunk sender:[_storage deviceForPeer:sender]];
+        remoteRequest.streamingService = self;
 		remoteRequest.status = kYRBTRemoteMessageRequestStatusReceiving;
 		
 		[_remoteRequests addObject:remoteRequest];
