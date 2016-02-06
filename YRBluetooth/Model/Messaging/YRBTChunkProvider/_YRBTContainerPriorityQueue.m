@@ -59,7 +59,7 @@
 
 - (_YRBTChunksContainer *)nextHighestPriorityContainer {
     _YRBTChunksContainer *firstContainer = [_highPriorityContainers firstObject];
-
+    
     if (firstContainer) {
         [_highPriorityContainers removeObjectIdenticalTo:firstContainer];
         [_highPriorityContainers addObject:firstContainer];

@@ -29,10 +29,10 @@
 #import "_YRBTHeaderChunk.h"
 
 typedef enum {
-	kYRBTReceivingStateHeader,
-	kYRBTReceivingStateOperationName,
-	kYRBTReceivingStateRawData,
-	kYRBTReceivingStateReceived
+    kYRBTReceivingStateHeader,
+    kYRBTReceivingStateOperationName,
+    kYRBTReceivingStateRawData,
+    kYRBTReceivingStateReceived
 } YRBTReceivingState;
 
 @interface _YRBTMessageBuffer : NSObject

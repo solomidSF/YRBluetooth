@@ -46,6 +46,6 @@
 
 // Operations
 #import "YRBTMessageOperation.h"
-#import "YRBTRemoteMessageRequest.h"
+#import "YRBTRemoteMessageOperation.h"
 
 #endif

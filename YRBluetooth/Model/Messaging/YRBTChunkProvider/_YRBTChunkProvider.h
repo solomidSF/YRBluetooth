@@ -30,7 +30,7 @@
 @class YRBTMessageOperation;
 
 /**
- *  Provides chunks for outgoing requests.
+ *  Provides chunks for outgoing messages.
  */
 @interface _YRBTChunkProvider : NSObject
 
@@ -56,7 +56,7 @@
 @protocol _YRBTChunkProviderDelegate <NSObject>
 
 - (void)chunkProvider:(_YRBTChunkProvider *)provider didGenerateChunk:(_YRBTChunk *)chunk
-           forOperation:(YRBTMessageOperation *)operation isLastOne:(BOOL)isLastOne;
+         forOperation:(YRBTMessageOperation *)operation isLastOne:(BOOL)isLastOne;
 
 // TODO: Looks like it's not needed.
 - (void)chunkProvider:(_YRBTChunkProvider *)provider willFinishGeneratingChunksForOperation:(YRBTMessageOperation *)operation;

@@ -42,6 +42,6 @@
 @property (nonatomic, readonly) NSData *commandData;
 
 + (instancetype)internalChunkWithCode:(YRBTInternalChunkCode)code
-						  commandData:(NSData *)commandData;
+                          commandData:(NSData *)commandData;
 
 @end

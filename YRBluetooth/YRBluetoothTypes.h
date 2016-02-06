@@ -32,7 +32,7 @@
 @class YRBTRemoteDevice;
 @class YRBTServerDevice;
 @class YRBTMessageOperation;
-@class YRBTRemoteMessageRequest;
+@class YRBTRemoteMessageOperation;
 
 // Errors
 static NSString *const kYRBTErrorDomain = @"YRBTErrorDomain";
@@ -83,7 +83,7 @@ typedef NS_ENUM(int32_t, YRBTErrorCode) {
      */
     kYRBTErrorCodeDisconnected,
     /**
-     *  Failed to receive remote request.
+     *  Failed to receive remote operation.
      */
     kYRBTErrorCodeReceivingFailed,
     /**
@@ -99,7 +99,7 @@ typedef NS_ENUM(int32_t, YRBTErrorCode) {
      */
     kYRBTErrorCodeNoReceivers,
     /**
-     *  Timeout for remote request.
+     *  Timeout for remote operation.
      */
     kYRBTErrorCodeReceiveTimeout,
     /**
@@ -148,7 +148,7 @@ typedef void (^YRBluetoothStateChanged) (YRBluetoothState newState);
 
 // Common
 typedef void (^YRBTProgressCallback) (uint32_t currentBytes,
-									  uint32_t totalBytes);
+                                      uint32_t totalBytes);
 
 typedef void (^YRBTFailureCallback) (NSError *error);
 
@@ -158,16 +158,16 @@ typedef void (^YRBTSuccessSendCallback) (YRBTMessageOperation *operation);
 typedef void (^YRBTResponseCallback) (YRBTMessageOperation *operation, YRBTMessage *receivedMessage);
 
 typedef void (^YRBTOperationFailureCallback) (YRBTMessageOperation *operation,
-											  NSError *error);
+                                              NSError *error);
 
 // Receiving
-typedef void (^YRBTWillReceiveRemoteRequestCallback) (YRBTRemoteMessageRequest *request);
+typedef void (^YRBTWillReceiveRemoteOperationCallback) (YRBTRemoteMessageOperation *operation);
 
-typedef YRBTMessageOperation *(^YRBTReceivedRemoteRequestCallback) (YRBTRemoteMessageRequest *request,
-																	YRBTMessage *requestMessage,
-																	BOOL wantsResponse);
+typedef YRBTMessageOperation *(^YRBTReceivedRemoteOperationCallback) (YRBTRemoteMessageOperation *operation,
+                                                                      YRBTMessage *receivedMessage,
+                                                                      BOOL wantsResponse);
 
-typedef void (^YRBTRemoteRequestFailureCallback) (YRBTRemoteMessageRequest *request, NSError *error);
+typedef void (^YRBTRemoteOperationFailureCallback) (YRBTRemoteMessageOperation *operation, NSError *error);
 
 // Scanning
 typedef void (^YRBTFoundDevicesCallback) (NSArray *foundDevices);

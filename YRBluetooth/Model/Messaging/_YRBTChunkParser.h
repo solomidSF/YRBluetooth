@@ -48,20 +48,20 @@
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseInternalChunk:(_YRBTInternalChunk *)chunk
          fromSender:(CBPeer *)sender;
 
-- (void)chunkParser:(_YRBTChunkParser *)parser didParseRequestHeaderChunk:(_YRBTHeaderChunk *)chunk
-		 fromSender:(CBPeer *)sender;
+- (void)chunkParser:(_YRBTChunkParser *)parser didParseRemoteOperationHeaderChunk:(_YRBTHeaderChunk *)chunk
+         fromSender:(CBPeer *)sender;
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseOperationNameChunk:(_YRBTOperationNameChunk *)chunk
          fromSender:(CBPeer *)sender;
 
-- (void)chunkParser:(_YRBTChunkParser *)parser didParseRequestRegularMessageChunk:(_YRBTRegularMessageChunk *)chunk
-		 fromSender:(CBPeer *)sender;
+- (void)chunkParser:(_YRBTChunkParser *)parser didParseRemoteOperationRegularMessageChunk:(_YRBTRegularMessageChunk *)chunk
+         fromSender:(CBPeer *)sender;
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseResponseHeaderChunk:(_YRBTHeaderChunk *)chunk
-		 fromSender:(CBPeer *)sender;
+         fromSender:(CBPeer *)sender;
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseResponseRegularMessageChunk:(_YRBTRegularMessageChunk *)chunk
-		 fromSender:(CBPeer *)sender;
+         fromSender:(CBPeer *)sender;
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didFailToParseChunkFromData:(NSData *)chunkData
          fromSender:(CBPeer *)sender withError:(NSError *)error;

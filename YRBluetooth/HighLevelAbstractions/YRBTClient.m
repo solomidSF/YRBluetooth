@@ -98,7 +98,6 @@ CBPeripheralDelegate
         _streamingService.sendingDelegate = self;
         _streamingService.receivingDelegate = self;
         
-        // Register callbacks
         [self registerCallbacksForInternalOperations];
     }
     
@@ -176,7 +175,7 @@ CBPeripheralDelegate
     if (!device.peripheral.delegate) {
         device.peripheral.delegate = self;
     }
-
+    
     [_connectionService connectServer:device
                           withSuccess:success
                               failure:failure];
@@ -207,7 +206,7 @@ CBPeripheralDelegate
                                                                          successSend:successSend
                                                                      sendingProgress:progress
                                                                              failure:failure];
- 
+    
     if ([server canReceiveMessages]) {
         [_streamingService scheduleOperation:operation];
     } else {
@@ -288,25 +287,21 @@ CBPeripheralDelegate
 - (void)registerCallbacksForInternalOperations {
     __typeof(self) __weak weakSelf = self;
     
-    YRBTReceivedRemoteRequestCallback requestCallback = ^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
-                                                                                YRBTMessage *requestMessage,
-                                                                                BOOL wantsResponse) {
-        return [YRBTMessageOperation responseOperationForRemoteRequest:request
-                                                              response:[YRBTMessage messageWithString:self.peerName]
-                                                                   MTU:weakSelf.MTU
-                                                           successSend:^(YRBTMessageOperation *operation) {
-                                                               NSLog(@"Device name was sent!");
-                                                           } sendingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
-                                                               NSLog(@"Device name progress: %d/%d", currentBytes, totalBytes);
-                                                           } failure:^(YRBTMessageOperation *operation, NSError *error) {
-                                                               NSLog(@"Failed to send device name: %@", error);
-                                                           }];
+    YRBTReceivedRemoteOperationCallback deviceNameCallback = ^YRBTMessageOperation *(YRBTRemoteMessageOperation *operation,
+                                                                                     YRBTMessage *receivedMessage,
+                                                                                     BOOL wantsResponse) {
+        return [YRBTMessageOperation responseOperationForRemoteOperation:operation
+                                                                response:[YRBTMessage messageWithString:self.peerName]
+                                                                     MTU:weakSelf.MTU
+                                                             successSend:NULL
+                                                         sendingProgress:NULL
+                                                                 failure:NULL];
     };
     
-    _YRBTRemoteRequestCallbacks *callbacks = [_YRBTRemoteRequestCallbacks new];
-    callbacks.receivedRequestCallback = requestCallback;
+    _YRBTRemoteOperationCallbacks *callbacks = [_YRBTRemoteOperationCallbacks new];
+    callbacks.receivedOperationCallback = deviceNameCallback;
     callbacks.isFinal = YES;
-
+    
     // TODO: Const string
     [self.callbacks registerCallbacks:callbacks forOperation:@"_YRBTDeviceName"];
 }
@@ -336,16 +331,16 @@ CBPeripheralDelegate
 #pragma mark - _YRBTSendingStreamDelegate
 
 - (void)streamingService:(_YRBTStreamingService *)service didReceiveServiceCommand:(_YRBTInternalChunk *)commandChunk
-				fromPeer:(CBPeer *)peer {
-	// TODO: Create callback-based.    
+                fromPeer:(CBPeer *)peer {
+    // TODO: Create callback-based.
 }
 
 - (void)streamingService:(_YRBTStreamingService *)service shouldSendChunk:(_YRBTChunk *)chunk
-			forOperation:(YRBTMessageOperation *)operation completionHandler:(YRBTWriteCompletionHandler)completion {
-	_currentWriteCompletion = completion;
-	
-	YRBTServerDevice *device = [operation.receivers firstObject];
-	
+            forOperation:(YRBTMessageOperation *)operation completionHandler:(YRBTWriteCompletionHandler)completion {
+    _currentWriteCompletion = completion;
+    
+    YRBTServerDevice *device = [operation.receivers firstObject];
+    
     if ([device canReceiveMessages]) {
         [device.peripheral writeValue:[chunk packedChunkData]
                     forCharacteristic:device.sendCharacteristic
@@ -366,8 +361,8 @@ CBPeripheralDelegate
 
 #pragma mark - _YRBTReceivingStreamDelegate
 
-- (_YRBTRemoteRequestCallbacks *)streamingService:(_YRBTStreamingService *)service
-              registeredCallbacksForOperationName:(NSString *)operationName {
+- (_YRBTRemoteOperationCallbacks *)streamingService:(_YRBTStreamingService *)service
+                registeredCallbacksForOperationName:(NSString *)operationName {
     return [self.callbacks callbacksForOperationType:operationName];
 }
 
@@ -396,7 +391,7 @@ CBPeripheralDelegate
 }
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral
-                                                                        error:(NSError *)error {
+                 error:(NSError *)error {
     [_connectionService handleDidFailToConnectPeripheral:peripheral
                                              withCBError:error];
 }
@@ -419,14 +414,14 @@ CBPeripheralDelegate
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service
-                                                                             error:(NSError *)error {
+             error:(NSError *)error {
     [_connectionService handlePeripheral:peripheral didDiscoverCharacteristics:service.characteristics
-                                                                    forService:service
-                                                                       cbError:error];
+                              forService:service
+                                 cbError:error];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic
-                                                                        error:(NSError *)error {
+             error:(NSError *)error {
     [_streamingService handleReceivedData:characteristic.value
                                   forPeer:peripheral
                            characteristic:characteristic
@@ -434,15 +429,15 @@ CBPeripheralDelegate
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic
-                                                                       error:(NSError *)error {
+             error:(NSError *)error {
     !_currentWriteCompletion ? : _currentWriteCompletion(error == nil, error);
     _currentWriteCompletion = NULL;
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
-                                                                                    error:(NSError *)error {
+             error:(NSError *)error {
     [_connectionService handlePeripheral:peripheral didUpdateNotificationStateForCharacteristic:characteristic
-                                                                                        cbError:error];
+                                 cbError:error];
 }
 
 @end

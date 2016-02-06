@@ -45,11 +45,11 @@
                               @"Failed to connect to device.",
                               @"Connection timeout.",
                               @"Disconnected from device.",
-                              @"Failed to receive remote request.",
+                              @"Failed to receive message from remote.",
                               @"Received unsupported chunk.",
                               @"Failed to send message.",
                               @"Failed to send message because no receivers left.",
-                              @"Failed to receive remote request due to timeout.",
+                              @"Failed to receive message from remote due to timeout.",
                               @"Failed to send message due to timeout.",
                               @"Cancelled.",
                               @"Cancelled by remote."
@@ -90,7 +90,7 @@
 
 + (NSError *)buildErrorForCentralState:(CBCentralManagerState)state {
     NSAssert(state != CBCentralManagerStatePoweredOn, @"[_YRBTErrorService]: Asked to build error for valid bluetooth state[ON]");
-
+    
     NSString *readableState = @[@"unknown",
                                 @"resetting...",
                                 @"unsupported",

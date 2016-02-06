@@ -54,6 +54,6 @@
 
 - (__kindof _YRBTChunk *)initWithRawData:(NSData *)data;
 - (__kindof _YRBTChunk *)initWithChunkType:(YRBTChunkType)type
-								 chunkSize:(uint16_t)chunkSize;
+                                 chunkSize:(uint16_t)chunkSize;
 
 @end

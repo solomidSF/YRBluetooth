@@ -11,6 +11,11 @@
 
 @import Foundation;
 
+static NSString *const kSubscribeOperation = @"SBS";
+static NSString *const kMessageOperation = @"MSG";
+static NSString *const kUserEventOperation = @"UET";
+static NSString *const kUserNameChangedOperation = @"UNC";
+
 static NSString *const kChatAppID = @"967A3682-1BD7-4C1B-ABED-FFDB18ECA3F0";
 
 #endif

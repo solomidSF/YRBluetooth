@@ -74,11 +74,11 @@
                  cbError:(NSError *)error;
 
 - (void)handlePeripheral:(CBPeripheral *)peripheral didDiscoverCharacteristics:(NSArray *)characteristics
-                                                                    forService:(CBService *)service
-                                                                       cbError:(NSError *)error;
+              forService:(CBService *)service
+                 cbError:(NSError *)error;
 
 - (void)handlePeripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
-                                                                                        cbError:(NSError *)error;
+                 cbError:(NSError *)error;
 // ========= //
 
 #pragma mark - Cleanup

@@ -27,14 +27,14 @@
 #import "_YRBTMessageBuffer.h"
 #import "_YRBTStreamingService.h"
 
-@class YRBTRemoteMessageRequest;
+@class YRBTRemoteMessageOperation;
 
 @interface YRBTMessageOperation (Private)
 
 @property (nonatomic, readonly) message_id_t messageID;
 
 + (instancetype)cancelOperationForOperation:(YRBTMessageOperation *)operation;
-+ (instancetype)cancelOperationForRemoteRequest:(YRBTRemoteMessageRequest *)request;
++ (instancetype)cancelOperationForRemoteOperation:(YRBTRemoteMessageOperation *)operation;
 
 @end
 

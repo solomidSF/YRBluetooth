@@ -33,7 +33,7 @@
 @property (nonatomic, readonly) NSData *chunkData;
 
 + (instancetype)regularMessageChunkWithMessageID:(message_id_t)messageID
-									  isResponse:(BOOL)isResponse
-									   chunkData:(NSData *)data;
+                                      isResponse:(BOOL)isResponse
+                                       chunkData:(NSData *)data;
 
 @end

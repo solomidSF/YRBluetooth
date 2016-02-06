@@ -1,5 +1,5 @@
 //
-// YRBTRemoteMessageRequest+Private.h
+// YRBTRemoteMessageOperation+Private.h
 //
 // The MIT License (MIT)
 //
@@ -24,7 +24,7 @@
 // SOFTWARE.
 
 // Operations
-#import "YRBTRemoteMessageRequest.h"
+#import "YRBTRemoteMessageOperation.h"
 
 // Services
 #import "_YRBTStreamingService.h"
@@ -33,31 +33,31 @@
 #import "_YRBTMessageBuffer.h"
 #import "_YRBTMessagingTypes.h"
 
-@interface YRBTRemoteMessageRequest (PrivateInterface)
+@interface YRBTRemoteMessageOperation (PrivateInterface)
 
 @property (nonatomic, readonly) message_id_t messageID;
 
 - (instancetype)initWithHeaderChunk:(_YRBTHeaderChunk *)headerChunk
-							 sender:(__kindof YRBTRemoteDevice *)sender;
+                             sender:(__kindof YRBTRemoteDevice *)sender;
 
 @end
 
-@interface YRBTRemoteMessageRequest (Mutable)
+@interface YRBTRemoteMessageOperation (Mutable)
 
 @property (nonatomic, weak) _YRBTStreamingService *streamingService;
-@property (nonatomic) YRBTRemoteMessageRequestStatus status;
+@property (nonatomic) YRBTRemoteMessageOperationStatus status;
 @property (nonatomic) __kindof YRBTRemoteDevice *sender;
 @property (nonatomic) uint32_t bytesReceived;
 
 @end
 
-@interface YRBTRemoteMessageRequest (Timeout)
+@interface YRBTRemoteMessageOperation (Timeout)
 
 @property (nonatomic) NSTimer *timeoutTimer;
 
 @end
 
-@interface YRBTRemoteMessageRequest (Receiving)
+@interface YRBTRemoteMessageOperation (Receiving)
 
 @property (nonatomic, readonly) _YRBTMessageBuffer *buffer;
 

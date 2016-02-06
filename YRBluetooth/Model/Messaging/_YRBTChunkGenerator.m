@@ -55,7 +55,7 @@ typedef void (^YRBTChunkProviderSubchunkCallback) (NSData *subchunk);
                    totalBytes:(out uint32_t *)totalBytes {
     NSCParameterAssert(MTU >= kYRBTMinChunkSize);
     NSCParameterAssert(operationName.length > 0);
-
+    
     // Cut down operation name if it's too long.
     if (operationName.length > UINT8_MAX) {
         operationName = [operationName substringWithRange:(NSRange){0, UINT8_MAX}];
@@ -73,18 +73,18 @@ typedef void (^YRBTChunkProviderSubchunkCallback) (NSData *subchunk);
     [allChunks addObject:header];
     
     // 2. Create operation name chunks or ignore this step if this is response message.
-	if (!isResponse) {
-		[self createSubchunksFromData:[operationName dataUsingEncoding:NSUTF8StringEncoding]
-						 maxChunkSize:MTU - kYRBTMessageChunkLayoutSize
-							 callback:^(NSData *subchunk) {
-								 _YRBTOperationNameChunk *operationNameChunk = nil;
-								 
-								 operationNameChunk = [_YRBTOperationNameChunk operationNameChunkWithMessageID:messageID
-																										 chunk:subchunk];
-								 [allChunks addObject:operationNameChunk];
-							 }];
-	}
-	
+    if (!isResponse) {
+        [self createSubchunksFromData:[operationName dataUsingEncoding:NSUTF8StringEncoding]
+                         maxChunkSize:MTU - kYRBTMessageChunkLayoutSize
+                             callback:^(NSData *subchunk) {
+                                 _YRBTOperationNameChunk *operationNameChunk = nil;
+                                 
+                                 operationNameChunk = [_YRBTOperationNameChunk operationNameChunkWithMessageID:messageID
+                                                                                                         chunk:subchunk];
+                                 [allChunks addObject:operationNameChunk];
+                             }];
+    }
+    
     // 3. Create regular message chunks.
     [self createSubchunksFromData:message.messageData
                      maxChunkSize:MTU - kYRBTMessageChunkLayoutSize
@@ -92,7 +92,7 @@ typedef void (^YRBTChunkProviderSubchunkCallback) (NSData *subchunk);
                              _YRBTRegularMessageChunk *chunk = nil;
                              
                              chunk = [_YRBTRegularMessageChunk regularMessageChunkWithMessageID:messageID
-																					 isResponse:isResponse
+                                                                                     isResponse:isResponse
                                                                                       chunkData:subchunk];
                              
                              [allChunks addObject:chunk];
@@ -116,13 +116,13 @@ typedef void (^YRBTChunkProviderSubchunkCallback) (NSData *subchunk);
     NSMutableData *operationNameData = [NSMutableData new];
     NSMutableData *messageData = [NSMutableData new];
     message_id_t messageID = 0;
-	BOOL isResponse = NO;
+    BOOL isResponse = NO;
     
     for (_YRBTChunk *chunk in existingChunks) {
         if (chunk.chunkType == kYRBTChunkTypeHeader) {
             headerChunk = (_YRBTHeaderChunk *)chunk;
             messageID = headerChunk.messageID;
-			isResponse = headerChunk.isResponse;
+            isResponse = headerChunk.isResponse;
         }
         
         if (chunk.chunkType == kYRBTChunkTypeOperationName) {
@@ -137,7 +137,7 @@ typedef void (^YRBTChunkProviderSubchunkCallback) (NSData *subchunk);
             _YRBTRegularMessageChunk *messageChunk = (_YRBTRegularMessageChunk *)chunk;
             
             messageID = messageChunk.messageID;
-			isResponse = messageChunk.isResponse;
+            isResponse = messageChunk.isResponse;
             
             [messageData appendData:messageChunk.chunkData];
         }
@@ -174,7 +174,7 @@ typedef void (^YRBTChunkProviderSubchunkCallback) (NSData *subchunk);
                                  _YRBTRegularMessageChunk *chunk = nil;
                                  
                                  chunk = [_YRBTRegularMessageChunk regularMessageChunkWithMessageID:messageID
-																						 isResponse:isResponse
+                                                                                         isResponse:isResponse
                                                                                           chunkData:subchunk];
                                  
                                  [resultingChunks addObject:chunk];

@@ -52,38 +52,38 @@
 - (void)parseChunk:(NSData *)chunk fromSender:(CBPeer *)sender {
     __kindof _YRBTChunk *packedChunk = [[_YRBTChunk alloc] initWithRawData:chunk];
     NSLog(@"[RECEIVING]: Received: %@. from %@. Parsed: %@", chunk, sender, packedChunk);
-
+    
     switch (packedChunk.chunkType) {
         case kYRBTChunkTypeInternal:
             [self.delegate chunkParser:self didParseInternalChunk:packedChunk
                             fromSender:sender];
             break;
-		case kYRBTChunkTypeHeader: {
-			_YRBTHeaderChunk *headerChunk = packedChunk;
-			
-			if (!headerChunk.isResponse) {
-				[self.delegate chunkParser:self didParseRequestHeaderChunk:headerChunk fromSender:sender];
-			} else {
-				[self.delegate chunkParser:self didParseResponseHeaderChunk:headerChunk fromSender:sender];
-			}
-			
+        case kYRBTChunkTypeHeader: {
+            _YRBTHeaderChunk *headerChunk = packedChunk;
+            
+            if (!headerChunk.isResponse) {
+                [self.delegate chunkParser:self didParseRemoteOperationHeaderChunk:headerChunk fromSender:sender];
+            } else {
+                [self.delegate chunkParser:self didParseResponseHeaderChunk:headerChunk fromSender:sender];
+            }
+            
             break;
-		}
+        }
         case kYRBTChunkTypeOperationName:
             [self.delegate chunkParser:self didParseOperationNameChunk:packedChunk
                             fromSender:sender];
             break;
-		case kYRBTChunkTypeRegular: {
-			_YRBTRegularMessageChunk *messageChunk = packedChunk;
-			
-			if (!messageChunk.isResponse) {
-				[self.delegate chunkParser:self didParseRequestRegularMessageChunk:messageChunk fromSender:sender];
-			} else {
-				[self.delegate chunkParser:self didParseResponseRegularMessageChunk:messageChunk fromSender:sender];
-			}
-			
+        case kYRBTChunkTypeRegular: {
+            _YRBTRegularMessageChunk *messageChunk = packedChunk;
+            
+            if (!messageChunk.isResponse) {
+                [self.delegate chunkParser:self didParseRemoteOperationRegularMessageChunk:messageChunk fromSender:sender];
+            } else {
+                [self.delegate chunkParser:self didParseResponseRegularMessageChunk:messageChunk fromSender:sender];
+            }
+            
             break;
-		}
+        }
         default:
             NSAssert(NO, @"Received incorrect chunk with incorrect chunk layout.");
             NSError *error = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivedIncorrectChunk];

@@ -73,7 +73,7 @@ TimeoutDelegate
         
         _centralManager = manager;
         _storage = storage;
-
+        
         _connectedDevices = [NSMutableOrderedSet new];
         _operationStack = [_YRBTConnectionOperationStack new];
         _operationStack.timeoutDelegate = self;
@@ -104,7 +104,7 @@ TimeoutDelegate
     
     if (_centralManager.state == CBCentralManagerStatePoweredOn) {
         if (server && ![_storage hasDevice:server]) {
-            NSAssert(NO, @"[YRBluetooth]: <WARNING> You didn't specify device which should be connected or you're trying to use device from another session. Ignoring (Connection request)");            
+            NSAssert(NO, @"[YRBluetooth]: <WARNING> You didn't specify device which should be connected or you're trying to use device from another session. Ignoring (Connection request)");
             return;
         }
         
@@ -152,7 +152,7 @@ TimeoutDelegate
                 return;
             }
         }
-
+        
         _YRBTConnectionOperation *operation = [_YRBTConnectionOperation operationWithServerDevice:server
                                                                                   successCallback:success
                                                                                   failureCallback:failure];
@@ -172,7 +172,7 @@ TimeoutDelegate
 
 #pragma mark - Convenience Methods
 
-- (void)handleDidConnectPeripheral:(CBPeripheral *)peripheral {    
+- (void)handleDidConnectPeripheral:(CBPeripheral *)peripheral {
     YRBTServerDevice *device = [_storage deviceForPeer:peripheral];
     
     [_connectedDevices addObject:device];
@@ -201,7 +201,7 @@ TimeoutDelegate
     if (error) {
         // Notify all connection establishing waiters about failure.
         NSError *resultingError = [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected];
-
+        
         // According to documentation error will be filled in if we didn't call cancelPeripheralConnection:
         [self notifyFailureForPeripheralAndDisconnect:peripheral
                                             withError:resultingError];
@@ -212,7 +212,7 @@ TimeoutDelegate
 
 - (void)handlePeripheral:(CBPeripheral *)peripheral didInvalidateServices:(NSArray *)services {
     BTDebugMsg(@"[_YRBTConnectionService]: Device %@ invalidated %@ services.", [_storage deviceForPeer:peripheral], services);
-
+    
     if ([[services valueForKey:@"UUID"] containsObject:[CBUUID yrbt_internalServiceUUID]]) {
         [self notifyFailureForPeripheralAndDisconnect:peripheral
                                             withError:[_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected]];
@@ -220,7 +220,7 @@ TimeoutDelegate
 }
 
 - (void)handlePeripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSArray *)services
-                                                                cbError:(NSError *)error {
+                 cbError:(NSError *)error {
     BTDebugMsg(@"[_YRBTConnectionService]: Did discover services callback. Services discovered: %d. Error: %@",
                (int32_t)peripheral.services.count,
                error);
@@ -247,8 +247,8 @@ TimeoutDelegate
 }
 
 - (void)handlePeripheral:(CBPeripheral *)peripheral didDiscoverCharacteristics:(NSArray *)characteristics
-                                                                    forService:(CBService *)service
-                                                                       cbError:(NSError *)error {
+              forService:(CBService *)service
+                 cbError:(NSError *)error {
     BTDebugMsg(@"[_YRBTConnectionService]: Did discover %d characteristics callback. Error: %@.",
                (int32_t)service.characteristics.count, error);
     
@@ -277,7 +277,7 @@ TimeoutDelegate
 }
 
 - (void)handlePeripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic
-                                                                                        cbError:(NSError *)error {
+                 cbError:(NSError *)error {
     if ([characteristic.UUID isEqual:[CBUUID yrbt_sendCharacteristicUUID]]) {
         YRBTServerDevice *device = [_storage deviceForPeer:peripheral];
         
@@ -305,11 +305,11 @@ TimeoutDelegate
     for (CBPeripheral *peripheral in [_operationStack peripherals]) {
         [_centralManager cancelPeripheralConnection:peripheral];
     }
-
+    
     for (CBPeripheral *peripheral in [_connectedDevices valueForKey:@"peripheral"]) {
         [_centralManager cancelPeripheralConnection:peripheral];
     }
-
+    
     [_operationStack invalidate];
     [_connectedDevices removeAllObjects];
 }
@@ -345,14 +345,14 @@ TimeoutDelegate
                                       withError:(NSError *)error {
     YRBTServerDevice *device = [_storage deviceForPeer:peripheral];
     BTDebugMsg(@"[_YRBTConnectionService]: Will notify failure: %@ and will disconnect from: %@", error, device);
-        
+    
     NSArray *operations = [_operationStack operationsForPeripheral:peripheral];
     [_operationStack removeOperations:operations];
     
     if (device.receiveCharacteristic) {
         [peripheral setNotifyValue:NO forCharacteristic:device.receiveCharacteristic];
     }
-
+    
     if (peripheral.state != CBPeripheralStateDisconnected) {
         [_centralManager cancelPeripheralConnection:peripheral];
     }

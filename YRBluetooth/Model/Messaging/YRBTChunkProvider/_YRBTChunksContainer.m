@@ -32,7 +32,7 @@
 #pragma mark - Init
 
 + (instancetype)containerWithChunks:(NSArray *)chunks
-                        fromOperation:(YRBTMessageOperation *)operation {
+                      fromOperation:(YRBTMessageOperation *)operation {
     return [[self alloc] initWithChunks:chunks
                           fromOperation:operation];
 }

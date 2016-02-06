@@ -79,21 +79,21 @@
 /**
  *  Method associates given callbacks for specific operation name.
  */
-- (void)registerWillReceiveRequestCallback:(YRBTWillReceiveRemoteRequestCallback)willReceiveRequest
-				 didReceiveRequestCallback:(YRBTReceivedRemoteRequestCallback)receivedRequest
-                 receivingProgressCallback:(YRBTProgressCallback)progress
-                   failedToReceiveCallback:(YRBTRemoteRequestFailureCallback)failure
-                              forOperation:(NSString *)operation;
+- (void)registerWillReceiveRemoteOperationCallback:(YRBTWillReceiveRemoteOperationCallback)willReceive
+                 didReceiveRemoteOperationCallback:(YRBTReceivedRemoteOperationCallback)received
+                         receivingProgressCallback:(YRBTProgressCallback)progress
+                           failedToReceiveCallback:(YRBTRemoteOperationFailureCallback)failure
+                                      forOperation:(NSString *)operation;
 
 /**
- *  Associates request callback for any unknown operation.
+ *  Associates received remote operation callback for any unknown operation.
  */
-- (void)registerReceivedRemoteRequestForUnknownOperation:(YRBTReceivedRemoteRequestCallback)requestCallback;
+- (void)registerReceivedRemoteOperationForUnknownOperationName:(YRBTReceivedRemoteOperationCallback)operationCallback;
 
 #pragma mark - Cleanup
 
 /**
- *  Should be called when you don't need a peer. 
+ *  Should be called when you don't need a peer.
  *  This would invalidate all internal operations, so peer can be safely deallocated.
  *  Also it's called automatically when instance deallocates.
  */

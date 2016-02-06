@@ -30,23 +30,23 @@
 #pragma mark - Init
 
 + (instancetype)regularMessageChunkWithMessageID:(message_id_t)messageID
-									  isResponse:(BOOL)isResponse
-									   chunkData:(NSData *)data {
-	return [self messageChunkWithMessageID:messageID
-								isResponse:isResponse
-								 chunkType:kYRBTChunkTypeRegular
-							   messageData:data];
+                                      isResponse:(BOOL)isResponse
+                                       chunkData:(NSData *)data {
+    return [self messageChunkWithMessageID:messageID
+                                isResponse:isResponse
+                                 chunkType:kYRBTChunkTypeRegular
+                               messageData:data];
 }
 
 #pragma mark - Dynamic Properties
 
 - (NSData *)chunkData {
-	return self.rawMessageData;
+    return self.rawMessageData;
 }
 
 #pragma mark - NSObject
 
-- (NSString *)description {    
+- (NSString *)description {
     return [NSString stringWithFormat:@"%@ Chunk: %@", [super description], [[NSString alloc] initWithData:self.chunkData encoding:NSUTF8StringEncoding]];
 }
 

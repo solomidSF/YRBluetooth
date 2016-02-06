@@ -46,8 +46,8 @@
 @property (nonatomic, readonly) NSData *rawMessageData;
 
 + (instancetype)messageChunkWithMessageID:(message_id_t)messageID
-							   isResponse:(BOOL)isResponse
-								chunkType:(YRBTChunkType)chunkType
-							  messageData:(NSData *)messageData;
+                               isResponse:(BOOL)isResponse
+                                chunkType:(YRBTChunkType)chunkType
+                              messageData:(NSData *)messageData;
 
 @end

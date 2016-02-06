@@ -66,9 +66,9 @@ CBPeripheralManagerDelegate
     _YRBTDeviceStorage *_storage;
     _YRBTStreamingService *_streamingService;
     YRBTWriteCompletionHandler _currentWriteCompletion;
-
+    
     BOOL _didPerformInitialSetup;
-
+    
     CBMutableService *_internalService;
     CBMutableCharacteristic *_sendCharacteristic;
     CBMutableCharacteristic *_receiveCharacteristic;
@@ -89,7 +89,7 @@ CBPeripheralManagerDelegate
                                       context:NULL];
         
         _storage = [_YRBTDeviceStorage new];
-
+        
         _streamingService = [_YRBTStreamingService streamingServiceWithStorage:_storage];
         
         _streamingService.sendingDelegate = self;
@@ -110,7 +110,7 @@ CBPeripheralManagerDelegate
 
 - (NSArray <YRBTClientDevice *> *)connectedDevices {
     NSMutableArray *connectedDevices = [NSMutableArray new];
-
+    
     for (CBCentral *central in _sendCharacteristic.subscribedCentrals) {
         [connectedDevices addObject:[_storage deviceForPeer:central]];
     }
@@ -154,7 +154,7 @@ CBPeripheralManagerDelegate
                     receivingProgress:(YRBTProgressCallback)receivingProgress
                               failure:(YRBTOperationFailureCallback)failure {
     NSAssert(operationName.length > 0, @"[YRBluetooth]: You must specify operation name.");
-
+    
     return [self sendMessage:msg
                operationName:operationName
                    toDevices:@[client]
@@ -211,7 +211,7 @@ CBPeripheralManagerDelegate
                                                                                          NSDictionary *bindings) {
         return device.connectionState == kYRBTConnectionStateConnected && [_storage hasDevice:device];
     }]];
-
+    
     uint16_t minMTU = UINT16_MAX;
     
     for (YRBTClientDevice *device in devices) {
@@ -258,9 +258,9 @@ CBPeripheralManagerDelegate
     if (!_nativePeripheralManager.isAdvertising) {
         BTDebugMsg(@"Will start broadcasting with %@ name", self.peerName ? self.peerName : @"Unknown device");
         [_nativePeripheralManager startAdvertising:@{
-             CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:self.appID]],
-             CBAdvertisementDataLocalNameKey : self.peerName.length > 0 ? self.peerName : @"Unknown device"
-        }];
+                                                     CBAdvertisementDataServiceUUIDsKey : @[[CBUUID UUIDWithString:self.appID]],
+                                                     CBAdvertisementDataLocalNameKey : self.peerName.length > 0 ? self.peerName : @"Unknown device"
+                                                     }];
     } else {
         BTDebugMsg(@"Already broadcasting! Ignoring.");
     }
@@ -322,7 +322,7 @@ CBPeripheralManagerDelegate
     _internalService = [CBMutableService yrbt_internalService];
     _sendCharacteristic = [CBMutableCharacteristic yrbt_sendCharacteristic];
     _receiveCharacteristic = [CBMutableCharacteristic yrbt_receiveCharacteristic];
-
+    
     _internalService.characteristics = @[_sendCharacteristic, _receiveCharacteristic];
     
     [_nativePeripheralManager addService:_internalService];
@@ -365,7 +365,7 @@ CBPeripheralManagerDelegate
 - (void)invalidateWithError:(NSError *)error {
     BTDebugMsg(@"Will invalidate ALL data with error: %@", error);
     [_streamingService invalidateWithError:error];
-    _currentWriteCompletion = NULL;    
+    _currentWriteCompletion = NULL;
 }
 
 #pragma mark - _YRBTSendingStreamDelegate
@@ -379,7 +379,7 @@ CBPeripheralManagerDelegate
             minMTU = (int16_t)peer.maximumUpdateValueLength;
         }
     }
-
+    
     return (minMTU == INT16_MAX) ? 0 : minMTU;
 }
 
@@ -403,9 +403,9 @@ CBPeripheralManagerDelegate
 
 #pragma mark - _YRBTReceivingStreamDelegate
 
-- (_YRBTRemoteRequestCallbacks *)streamingService:(_YRBTStreamingService *)service
-			  registeredCallbacksForOperationName:(NSString *)operationName {
-	return [self.callbacks callbacksForOperationType:operationName];
+- (_YRBTRemoteOperationCallbacks *)streamingService:(_YRBTStreamingService *)service
+                registeredCallbacksForOperationName:(NSString *)operationName {
+    return [self.callbacks callbacksForOperationType:operationName];
 }
 
 #pragma mark - CBPeripheralManagerDelegate
@@ -414,7 +414,7 @@ CBPeripheralManagerDelegate
     BTDebugMsg(@"%s. STATE IS : %d", __FUNCTION__, (int32_t)peripheral.state);
     
     !self.bluetoothStateChanged ? : self.bluetoothStateChanged(self.bluetoothState);
-
+    
     if (peripheral.state == CBPeripheralManagerStatePoweredOn) {
         if (!_didPerformInitialSetup) {
             [self createInternalService];
@@ -437,7 +437,7 @@ CBPeripheralManagerDelegate
             didAddService:(CBService *)service
                     error:(NSError *)error {
     NSLog(@"[YRBTServer]: Did add service: %@. Error: %@", service, error);
-
+    
     if (error) {
         NSAssert(NO, @"[YRBluetooth]: <FATAL> Couldn't instantiate communication channel on server side! Error: %@", error);
     }
@@ -450,7 +450,7 @@ CBPeripheralManagerDelegate
         YRBTClientDevice *device = [_storage deviceForPeer:central];
         
         device.connectionState = kYRBTConnectionStateConnected;
- 
+        
         // TODO: Check/Test/Integrate into component.
         [peripheral setDesiredConnectionLatency:CBPeripheralManagerConnectionLatencyLow
                                      forCentral:central];
@@ -466,16 +466,16 @@ CBPeripheralManagerDelegate
 }
 
 - (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central
-                                   didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {
+didUnsubscribeFromCharacteristic:(CBCharacteristic *)characteristic {
     if ([characteristic.UUID isEqual:[CBUUID yrbt_sendCharacteristicUUID]]) {
         BTDebugMsg(@"[YRBTServer]: %@ did disconnect.", [_storage deviceForPeer:central]);
         YRBTClientDevice *device = [_storage deviceForPeer:central];
- 
+        
         device.didPerformHandshake = NO;
         device.connectionState = kYRBTConnectionStateNotConnected;
         
         !self.deviceDisconnectCallback ? : self.deviceDisconnectCallback(device);
-
+        
         [_streamingService handlePeerDisconnected:central];
     }
 }
@@ -494,7 +494,7 @@ CBPeripheralManagerDelegate
 - (void)peripheralManagerIsReadyToUpdateSubscribers:(CBPeripheralManager *)peripheral {
     if (_streamingService.pendingChunk &&
         _streamingService.pendingOperation) {
-
+        
         NSArray *receivers = [[_streamingService.pendingOperation receivers] valueForKey:@"central"];
         
         BOOL didUpdate = [_nativePeripheralManager updateValue:[_streamingService.pendingChunk packedChunkData]

@@ -1,5 +1,5 @@
 //
-// YRBTRemoteMessageRequest+Private.m
+// YRBTRemoteMessageOperation+Private.m
 //
 // The MIT License (MIT)
 //
@@ -24,35 +24,35 @@
 // SOFTWARE.
 
 // Operations
-#import "YRBTRemoteMessageRequest+Private.h"
+#import "YRBTRemoteMessageOperation+Private.h"
 
 // Obj-C
 #import <objc/runtime.h>
 
-@implementation YRBTRemoteMessageRequest (PrivateInterface)
+@implementation YRBTRemoteMessageOperation (PrivateInterface)
 
 #pragma mark - Init
 
 - (instancetype)initWithHeaderChunk:(_YRBTHeaderChunk *)headerChunk
-							 sender:(__kindof YRBTRemoteDevice *)sender {
-	if (self = [super init]) {
-		self.sender = sender;
-		
-		[self.buffer appendChunk:headerChunk];
-	}
-	
-	return self;
+                             sender:(__kindof YRBTRemoteDevice *)sender {
+    if (self = [super init]) {
+        self.sender = sender;
+        
+        [self.buffer appendChunk:headerChunk];
+    }
+    
+    return self;
 }
 
 #pragma mark - Dynamic Properties
 
 - (message_id_t)messageID {
-	return self.buffer.header.messageID;
+    return self.buffer.header.messageID;
 }
 
 @end
 
-@implementation YRBTRemoteMessageRequest (Mutable)
+@implementation YRBTRemoteMessageOperation (Mutable)
 
 @dynamic status;
 @dynamic streamingService;
@@ -61,21 +61,21 @@
 
 @end
 
-@implementation YRBTRemoteMessageRequest (Timeout)
+@implementation YRBTRemoteMessageOperation (Timeout)
 
 #pragma mark - Dynamic Properties
 
 - (void)setTimeoutTimer:(NSTimer *)timeoutTimer {
-	objc_setAssociatedObject(self, &@selector(timeoutTimer), timeoutTimer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &@selector(timeoutTimer), timeoutTimer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSTimer *)timeoutTimer {
-	return objc_getAssociatedObject(self, &@selector(timeoutTimer));
+    return objc_getAssociatedObject(self, &@selector(timeoutTimer));
 }
 
 @end
 
-@implementation YRBTRemoteMessageRequest (Receiving)
+@implementation YRBTRemoteMessageOperation (Receiving)
 
 @dynamic buffer;
 

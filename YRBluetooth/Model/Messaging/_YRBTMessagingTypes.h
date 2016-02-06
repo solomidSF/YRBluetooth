@@ -64,26 +64,26 @@ typedef enum {
 #pragma pack(push, 2)
 
 typedef struct {
-	YRBTChunkType chunkType;
-	uint16_t chunkSize;
-	void *variadicData;
+    YRBTChunkType chunkType;
+    uint16_t chunkSize;
+    void *variadicData;
 } YRBTChunkLayout;
 
 typedef struct {
-	YRBTInternalChunkCode code;
-	void *variadicData;
+    YRBTInternalChunkCode code;
+    void *variadicData;
 } YRBTInternalChunkLayout;
 
 typedef struct {
     message_id_t messageID;
-	uint16_t isResponse; // TODO: Too much bits available and not used in operation name chunk.
-	void *variadicData;
+    uint16_t isResponse; // TODO: Too much bits available and not used in operation name chunk.
+    void *variadicData;
 } YRBTMessageChunkLayout; // 10 bytes overhead !!! consider lowering message id?
 
 typedef struct {
-	message_size_t messageSize;
-	uint8_t operationNameSize;
-	message_additional_info_t additionalInfo;
+    message_size_t messageSize;
+    uint8_t operationNameSize;
+    message_additional_info_t additionalInfo;
 } YRBTHeaderChunkLayout;
 
 typedef struct {

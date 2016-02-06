@@ -59,7 +59,7 @@
 
 - (BOOL)hasDevice:(__kindof YRBTRemoteDevice *)device {
     __kindof YRBTRemoteDevice *candidate = _devicesTable[device.uuid.UUIDString];
-
+    
     return device && (device == candidate);
 }
 

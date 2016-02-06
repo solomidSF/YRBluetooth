@@ -55,7 +55,7 @@
                                                                             error:nil]];
         case kYRBTObjectTypeDictionary:
             return [self messageWithDictionary:[NSJSONSerialization JSONObjectWithData:data
-                                                                              options:NSJSONReadingMutableContainers
+                                                                               options:NSJSONReadingMutableContainers
                                                                                  error:nil]];
         case kYRBTObjectTypeString:
             return [self messageWithString:[[NSString alloc] initWithData:data
@@ -63,7 +63,7 @@
         case kYRBTObjectTypeServiceCommand: {
             void *packetData = malloc(data.length);
             [data getBytes:packetData length:data.length];
-
+            
             YRBTMessage *message = [self messageWithServiceCommand:packetData
                                                             length:(int32_t)data.length];
             
@@ -81,7 +81,7 @@
                                    isSender:(BOOL)isSender {
     YRBTCancelCommandInternalChunkLayout cancelLayout = {isSender, messageID};
     NSData *cancelData = [NSData dataWithBytes:&cancelLayout length:sizeof(cancelLayout)];
-
+    
     _YRBTInternalChunk *chunk = [_YRBTInternalChunk internalChunkWithCode:kYRBTInternalChunkCodeCancel
                                                               commandData:cancelData];
     

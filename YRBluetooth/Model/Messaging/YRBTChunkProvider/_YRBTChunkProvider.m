@@ -86,7 +86,7 @@ static void *kCallingQueueDummyValue = (void *)0xCAFEBABE;
             
             NSLog(@"[_YRBTChunkProvider]: <ADD> Common message %@, got %d chunks! KBytes: %d", operation.message, (int32_t)chunks.count, totalBytes / 1024);
         } else {
-            NSLog(@"[_YRBTChunkProvider]: <ADD> Service command request. %@", operation);
+            NSLog(@"[_YRBTChunkProvider]: <ADD> Service command message. %@", operation);
             _YRBTInternalChunk *internalChunk = [[_YRBTInternalChunk alloc] initWithRawData:operation.message.messageData];
             chunks = @[internalChunk];
             
@@ -163,7 +163,7 @@ static void *kCallingQueueDummyValue = (void *)0xCAFEBABE;
 - (void)resume {
     NSAssert(dispatch_get_specific(kCallingQueueDummyKey) == kCallingQueueDummyValue,
              @"All calls to chunk provider must be done on queue that was provided on init!");
-
+    
     if (_paused) {
         NSLog(@"[_YRBTChunkProvider]: <RESUME> Will resume chunk generation!");
         _paused = NO;
@@ -261,8 +261,8 @@ static void *kCallingQueueDummyValue = (void *)0xCAFEBABE;
                                 forOperation:_pendingOperation isLastOne:_isLastChunk];
                 
                 if (_isLastChunk) {
-					NSLog(@"[_YRBTChunkProvider]: <GENERATE> Finished generating chunks for %@", _pendingOperation);
-					
+                    NSLog(@"[_YRBTChunkProvider]: <GENERATE> Finished generating chunks for %@", _pendingOperation);
+                    
                     _YRBTChunksContainer *emptyContainer = [self containerForOperation:_pendingOperation];
                     
                     [_containerPriorityQueue removeContainer:emptyContainer];
@@ -276,7 +276,7 @@ static void *kCallingQueueDummyValue = (void *)0xCAFEBABE;
                 
                 [_containerPriorityQueue removeContainer:container];
                 [_chunkContainers removeObject:container];
-
+                
                 if (!_pendingOperation.isDeallocatingSilently) {
                     [self.delegate chunkProvider:self didCancelChunkGenerationForOperation:_pendingOperation];
                 }

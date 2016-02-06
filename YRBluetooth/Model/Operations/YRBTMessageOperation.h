@@ -28,7 +28,7 @@
 #import "YRBluetoothTypes.h"
 #import "YRBTMessage.h"
 #import "YRBTRemoteDevice.h"
-#import "YRBTRemoteMessageRequest.h"
+#import "YRBTRemoteMessageOperation.h"
 
 @interface YRBTMessageOperation : NSObject
 
@@ -41,7 +41,7 @@ typedef enum {
     kYRBTMessageOperationStatusFinished,
     kYRBTMessageOperationStatusFailed,
     kYRBTMessageOperationStatusCancelled,
-	kYRBTMessageOperationStatusCancelledByRemote,
+    kYRBTMessageOperationStatusCancelledByRemote,
 } YRBTMessageOperationStatus;
 
 @property (nonatomic, readonly) YRBTMessageOperationStatus status;
@@ -67,7 +67,7 @@ typedef enum {
 @property (nonatomic, copy) YRBTOperationFailureCallback failureCallback;
 
 /**
- *  Tells if given operation is a response for some request.
+ *  Tells if given operation is a response.
  */
 @property (nonatomic, readonly) BOOL isResponse;
 
@@ -97,12 +97,12 @@ typedef enum {
                    receivingProgress:(YRBTProgressCallback)receivingProgressCallback
                              failure:(YRBTOperationFailureCallback)failureCallback;
 
-+ (instancetype)responseOperationForRemoteRequest:(YRBTRemoteMessageRequest *)request
-										 response:(YRBTMessage *)responseMessage
-                                              MTU:(uint16_t)MTU
-                                      successSend:(YRBTSuccessSendCallback)successSend
-                                  sendingProgress:(YRBTProgressCallback)progress
-                                          failure:(YRBTOperationFailureCallback)failure;
++ (instancetype)responseOperationForRemoteOperation:(YRBTRemoteMessageOperation *)operation
+                                           response:(YRBTMessage *)responseMessage
+                                                MTU:(uint16_t)MTU
+                                        successSend:(YRBTSuccessSendCallback)successSend
+                                    sendingProgress:(YRBTProgressCallback)progress
+                                            failure:(YRBTOperationFailureCallback)failure;
 
 + (instancetype)operationWithFastCommand:(YRBTMessage *)message
                                receivers:(NSArray <YRBTRemoteDevice *> *)receivers

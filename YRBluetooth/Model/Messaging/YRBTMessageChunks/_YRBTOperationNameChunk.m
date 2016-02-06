@@ -31,18 +31,18 @@
 #pragma mark - Init
 
 + (instancetype)operationNameChunkWithMessageID:(message_id_t)messageID
-										  chunk:(NSData *)chunk {
-	// Operation name is never sent in response message, because it will be the same as were on a request.
-	return [self messageChunkWithMessageID:messageID
-								isResponse:NO
-								 chunkType:kYRBTChunkTypeOperationName
-							   messageData:chunk];
+                                          chunk:(NSData *)chunk {
+    // Operation name is never sent in response message.
+    return [self messageChunkWithMessageID:messageID
+                                isResponse:NO
+                                 chunkType:kYRBTChunkTypeOperationName
+                               messageData:chunk];
 }
 
 #pragma mark - Dynamic Properties
 
 - (NSData *)operationNameUTFChunk {
-	return self.rawMessageData;
+    return self.rawMessageData;
 }
 
 #pragma mark - NSObject

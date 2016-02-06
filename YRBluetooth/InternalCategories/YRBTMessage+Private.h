@@ -31,7 +31,7 @@
 @property (nonatomic, readonly) YRBTMessagePriority priority;
 
 + (instancetype)messageWithData:(NSData *)data
-						   type:(YRBTObjectType)type;
+                           type:(YRBTObjectType)type;
 
 + (instancetype)cancelMessageForOperationID:(message_id_t)messageID
                                    isSender:(BOOL)isSender;

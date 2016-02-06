@@ -27,7 +27,7 @@
 @import CoreBluetooth;
 
 #import "YRBTMessageOperation.h"
-#import "_YRBTRemoteRequestCallbacks.h"
+#import "_YRBTRemoteOperationCallbacks.h"
 
 @class _YRBTDeviceStorage;
 
@@ -41,7 +41,7 @@
 
 typedef void (^YRBTWriteCompletionHandler) (BOOL success, NSError *cbError);
 
-@class YRBTRemoteMessageRequest;
+@class YRBTRemoteMessageOperation;
 @class _YRBTOutgoingMessage;
 @class _YRBTChunk;
 @class _YRBTInternalChunk;
@@ -88,7 +88,7 @@ typedef void (^YRBTWriteCompletionHandler) (BOOL success, NSError *cbError);
             characteristic:(id)characteristic
                    cbError:(NSError *)cbError;
 
-- (void)cancelRemoteRequest:(YRBTRemoteMessageRequest *)request;
+- (void)cancelRemoteOperation:(YRBTRemoteMessageOperation *)operation;
 
 #pragma mark - Cleanup
 
@@ -114,7 +114,7 @@ typedef void (^YRBTWriteCompletionHandler) (BOOL success, NSError *cbError);
 // TODO: Not needed
 - (NSArray *)sendingStreamServiceAsksForConnectedPeers:(_YRBTStreamingService *)service;
 - (id)sendingStreamService:(_YRBTStreamingService *)service sendingCharacteristicForPeer:(CBPeer *)peer
-                                                                              isInternal:(BOOL)isInternal;
+                isInternal:(BOOL)isInternal;
 - (int16_t)sendingStreamService:(_YRBTStreamingService *)service
              minimalMTUForPeers:(NSArray *)peers;
 
@@ -125,7 +125,7 @@ typedef void (^YRBTWriteCompletionHandler) (BOOL success, NSError *cbError);
 - (void)streamingService:(_YRBTStreamingService *)service didReceiveServiceCommand:(_YRBTInternalChunk *)commandChunk
                 fromPeer:(CBPeer *)peer;
 
-- (_YRBTRemoteRequestCallbacks *)streamingService:(_YRBTStreamingService *)service
-		 registeredCallbacksForOperationName:(NSString *)operationName;
+- (_YRBTRemoteOperationCallbacks *)streamingService:(_YRBTStreamingService *)service
+                registeredCallbacksForOperationName:(NSString *)operationName;
 
 @end

@@ -27,11 +27,11 @@
 
 // Messaging
 #import "_YRBTMessaging.h"
-#import "YRBTRemoteMessageRequest.h"
+#import "YRBTRemoteMessageOperation.h"
 
 // Categories.
 #import "YRBTMessageOperation+Private.h"
-#import "YRBTRemoteMessageRequest+Private.h"
+#import "YRBTRemoteMessageOperation+Private.h"
 
 // TODO: Refactor
 #import "YRBTRemoteDevice.h"
@@ -57,12 +57,12 @@ _YRBTChunkParserDelegate
     _YRBTDeviceStorage *_storage;
     
     NSMutableArray <YRBTMessageOperation *> *_operations;
-    NSMutableArray <YRBTRemoteMessageRequest *> *_remoteRequests;
-	
+    NSMutableArray <YRBTRemoteMessageOperation *> *_remoteOperations;
+    
     _YRBTChunkProvider *_provider;
     _YRBTChunkParser *_parser;
     
-    dispatch_queue_t _streamingQueue;    
+    dispatch_queue_t _streamingQueue;
 }
 
 #pragma mark - Init
@@ -77,15 +77,15 @@ _YRBTChunkParserDelegate
         _storage = storage;
         
         _operations = [NSMutableArray new];
-        _remoteRequests = [NSMutableArray new];
-		
+        _remoteOperations = [NSMutableArray new];
+        
         _provider = [_YRBTChunkProvider providerWithDelegate:self
                                                 callingQueue:dispatch_get_main_queue()];
         _parser = [_YRBTChunkParser parserWithDelegate:self];
-		
-		_streamingQueue = dispatch_queue_create("com.YRBluetooth.streaming-queue", DISPATCH_QUEUE_SERIAL);
+        
+        _streamingQueue = dispatch_queue_create("com.YRBluetooth.streaming-queue", DISPATCH_QUEUE_SERIAL);
     }
-	
+    
     return self;
 }
 
@@ -93,8 +93,8 @@ _YRBTChunkParserDelegate
 
 - (void)scheduleOperation:(YRBTMessageOperation *)operation {
     NSAssert(operation.status == kYRBTMessageOperationStatusWaiting,
-			 @"[YRBTStreamingService]: You can't schedule same operation twice!");
-
+             @"[YRBTStreamingService]: You can't schedule same operation twice!");
+    
     if (operation.status != kYRBTMessageOperationStatusWaiting) {
         // Operation was already scheduled.
         return;
@@ -145,7 +145,7 @@ _YRBTChunkParserDelegate
     if (!cbError) {
         [_parser parseChunk:data
                  fromSender:peer];
-                
+        
         return YES;
     } else {
         // Shouldn't happen.
@@ -157,18 +157,18 @@ _YRBTChunkParserDelegate
     }
 }
 
-- (void)cancelRemoteRequest:(YRBTRemoteMessageRequest *)request {
-    if ([_remoteRequests containsObject:request] &&
-        request.status == kYRBTRemoteMessageRequestStatusReceiving) {
+- (void)cancelRemoteOperation:(YRBTRemoteMessageOperation *)operation {
+    if ([_remoteOperations containsObject:operation] &&
+        operation.status == kYRBTRemoteMessageOperationStatusReceiving) {
         
         // TODO: It would work like that till we move all logic to our queue. (Callouts will be in the same runloop cycle)
-        [self invalidateRemoteRequest:request];
-
-        request.status = kYRBTRemoteMessageRequestStatusCancelled;
-        !request.failureCallback ? : request.failureCallback(request,
-                                                             [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelled]);
+        [self invalidateRemoteOperation:operation];
         
-        YRBTMessageOperation *cancelOperation = [YRBTMessageOperation cancelOperationForRemoteRequest:request];
+        operation.status = kYRBTRemoteMessageOperationStatusCancelled;
+        !operation.failureCallback ? : operation.failureCallback(operation,
+                                                                 [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelled]);
+        
+        YRBTMessageOperation *cancelOperation = [YRBTMessageOperation cancelOperationForRemoteOperation:operation];
         
         [self scheduleOperation:cancelOperation];
     }
@@ -177,43 +177,44 @@ _YRBTChunkParserDelegate
 #pragma mark - Cleanup
 
 - (void)handlePeerDisconnected:(CBPeer *)peer {
-    BTDebugMsg(@"[StreamingService]: <%@> disconnected! Will invalidate current requests for it.", [_storage deviceForPeer:peer]);
+    BTDebugMsg(@"[StreamingService]: <%@> disconnected! Will invalidate current operations for it.", [_storage deviceForPeer:peer]);
     YRBTRemoteDevice *device = [_storage deviceForPeer:peer];
     
-	for (YRBTMessageOperation *operation in [_operations copy]) {
-		if ([operation.mutableReceivers containsObject:device]) {
-			
-			[operation.mutableReceivers removeObject:device];
-			
-			if (operation.mutableReceivers.count == 0) {
+    for (YRBTMessageOperation *operation in [_operations copy]) {
+        if ([operation.mutableReceivers containsObject:device]) {
+            
+            [operation.mutableReceivers removeObject:device];
+            
+            if (operation.mutableReceivers.count == 0) {
                 NSLog(@"[_YRBTStreamingService]: No receivers left for %@", operation);
                 [self invalidateOperation:operation];
-				
+                
                 [_provider invalidateChunkGenerationForOperation:operation];
                 
-				operation.status = kYRBTMessageOperationStatusFailed;
+                operation.status = kYRBTMessageOperationStatusFailed;
                 !operation.failureCallback ? : operation.failureCallback(operation,
                                                                          [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeNoReceivers]);
-				
-				if (_pendingOperation == operation) {
-					// If current message to be written was this one and we don't have receivers for it anymore - resume chunk generation and perform cleanup.
-					[_provider resume];
-					
-					_pendingChunk = nil;
+                
+                if (_pendingOperation == operation) {
+                    // If current message to be written was this one and we don't have receivers for it anymore - resume chunk generation and perform cleanup.
+                    [_provider resume];
+                    
+                    _pendingChunk = nil;
                     _pendingOperation = nil;
-				}
-			} else if (/* mtu dynamic */1) {
-				// TODO: Set mtu to minimum value of receiving peers.
-			}
-		}
-	}
+                }
+            } else if (/* mtu dynamic */1) {
+                // TODO: Set mtu to minimum value of receiving peers.
+            }
+        }
+    }
     
-    for (YRBTRemoteMessageRequest *request in [_remoteRequests copy]) {
-        if ([request.sender isEqual:device]) {
-            [self invalidateRemoteRequest:request];
+    for (YRBTRemoteMessageOperation *operation in [_remoteOperations copy]) {
+        if ([operation.sender isEqual:device]) {
+            [self invalidateRemoteOperation:operation];
             
-            request.status = kYRBTRemoteMessageRequestStatusFailed;
-            !request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected]);
+            operation.status = kYRBTRemoteMessageOperationStatusFailed;
+            !operation.failureCallback ? : operation.failureCallback(operation,
+                                                                     [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeDisconnected]);
         }
     }
 }
@@ -221,44 +222,47 @@ _YRBTChunkParserDelegate
 - (void)invalidate {
     BTDebugMsg(@"[StreamingService]: Will invalidate.");
     [_provider invalidate];
-	
-	for (YRBTMessageOperation *operation in [_operations copy]) {
+    
+    for (YRBTMessageOperation *operation in [_operations copy]) {
         [self invalidateOperation:operation];
         
         [_provider invalidateChunkGenerationForOperation:operation];
         
         operation.status = kYRBTMessageOperationStatusFailed;
         !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendingFailed]);
-	}
-	
-    for (YRBTRemoteMessageRequest *request in [_remoteRequests copy]) {
-        [self invalidateRemoteRequest:request];
+    }
+    
+    for (YRBTRemoteMessageOperation *operation in [_remoteOperations copy]) {
+        [self invalidateRemoteOperation:operation];
         
-        request.status = kYRBTRemoteMessageRequestStatusFailed;
-
-        request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivingFailed]);
+        operation.status = kYRBTRemoteMessageOperationStatusFailed;
+        
+        operation.failureCallback ? : operation.failureCallback(operation,
+                                                                [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivingFailed]);
     }
 }
 
 - (void)invalidateWithError:(NSError *)error {
     BTDebugMsg(@"[StreamingService]: Will invalidate with error: %@", error);
     [_provider invalidate];
-
+    
     for (YRBTMessageOperation *operation in [_operations copy]) {
         [self invalidateOperation:operation];
-
+        
         [_provider invalidateChunkGenerationForOperation:operation];
         
         operation.status = kYRBTMessageOperationStatusFailed;
-		!operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendingFailed]);
+        !operation.failureCallback ? : operation.failureCallback(operation,
+                                                                 [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendingFailed]);
     }
-	
-    for (YRBTRemoteMessageRequest *request in [_remoteRequests copy]) {
-        [self invalidateRemoteRequest:request];
+    
+    for (YRBTRemoteMessageOperation *operation in [_remoteOperations copy]) {
+        [self invalidateRemoteOperation:operation];
         
-        request.status = kYRBTRemoteMessageRequestStatusFailed;
-
-        request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivingFailed]);
+        operation.status = kYRBTRemoteMessageOperationStatusFailed;
+        
+        operation.failureCallback ? : operation.failureCallback(operation,
+                                                                [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivingFailed]);
     }
 }
 
@@ -272,7 +276,7 @@ _YRBTChunkParserDelegate
     [_provider invalidateChunkGenerationForOperation:operation];
     
     operation.status = kYRBTMessageOperationStatusFailed;
-
+    
     !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendTimeout]);
     
     if (_pendingOperation == operation) {
@@ -284,34 +288,35 @@ _YRBTChunkParserDelegate
     }
 }
 
-- (void)handleTimeoutForRemoteRequest:(NSTimer *)timeoutTimer {
-	YRBTRemoteMessageRequest *request = timeoutTimer.userInfo;
-
-	[self invalidateRemoteRequest:request];
-	
-	request.status = kYRBTRemoteMessageRequestStatusFailed;
-	!request.failureCallback ? : request.failureCallback(request, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceiveTimeout]);
+- (void)handleTimeoutForRemoteOperation:(NSTimer *)timeoutTimer {
+    YRBTRemoteMessageOperation *operation = timeoutTimer.userInfo;
     
-    [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteRequest:request]];
+    [self invalidateRemoteOperation:operation];
+    
+    operation.status = kYRBTRemoteMessageOperationStatusFailed;
+    !operation.failureCallback ? : operation.failureCallback(operation,
+                                                             [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceiveTimeout]);
+    
+    [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteOperation:operation]];
 }
 
 #pragma mark - Private
 
 - (YRBTMessageOperation *)operationForResponseChunk:(__kindof _YRBTMessageChunk *)chunk {
-	for (YRBTMessageOperation *operation in _operations) {
-		if (operation.messageID == chunk.messageID) {
-			return operation;
-		}
-	}
-	
-	return nil;
+    for (YRBTMessageOperation *operation in _operations) {
+        if (operation.messageID == chunk.messageID) {
+            return operation;
+        }
+    }
+    
+    return nil;
 }
 
-- (YRBTRemoteMessageRequest *)remoteRequestForChunk:(__kindof _YRBTMessageChunk *)chunk sender:(__kindof CBPeer *)peer {
-    for (YRBTRemoteMessageRequest *request in _remoteRequests) {
-        if (request.messageID == chunk.messageID &&
-            [request.sender isEqual:[_storage deviceForPeer:peer]]) {
-            return request;
+- (YRBTRemoteMessageOperation *)remoteOperationForChunk:(__kindof _YRBTMessageChunk *)chunk sender:(__kindof CBPeer *)peer {
+    for (YRBTRemoteMessageOperation *operation in _remoteOperations) {
+        if (operation.messageID == chunk.messageID &&
+            [operation.sender isEqual:[_storage deviceForPeer:peer]]) {
+            return operation;
         }
     }
     
@@ -331,11 +336,11 @@ _YRBTChunkParserDelegate
 /**
  *  Invalidates operation SILENTLY, without calling any callbacks.
  */
-- (void)invalidateRemoteRequest:(YRBTRemoteMessageRequest *)request {
-	[request.timeoutTimer invalidate];
-	request.timeoutTimer = nil;
-	
-	[_remoteRequests removeObject:request];
+- (void)invalidateRemoteOperation:(YRBTRemoteMessageOperation *)operation {
+    [operation.timeoutTimer invalidate];
+    operation.timeoutTimer = nil;
+    
+    [_remoteOperations removeObject:operation];
 }
 
 - (void)restartTimerForOperation:(YRBTMessageOperation *)operation {
@@ -348,14 +353,14 @@ _YRBTChunkParserDelegate
                                                              repeats:NO];
 }
 
-- (void)restartTimerForRemoteRequest:(YRBTRemoteMessageRequest *)request {
-	[request.timeoutTimer invalidate];
-	
-    request.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:kYRBTDefaultTimeoutInterval
-                                                            target:self
-                                                          selector:@selector(handleTimeoutForRemoteRequest:)
-                                                          userInfo:request
-                                                           repeats:NO];
+- (void)restartTimerForRemoteOperation:(YRBTRemoteMessageOperation *)operation {
+    [operation.timeoutTimer invalidate];
+    
+    operation.timeoutTimer = [NSTimer scheduledTimerWithTimeInterval:kYRBTDefaultTimeoutInterval
+                                                              target:self
+                                                            selector:@selector(handleTimeoutForRemoteOperation:)
+                                                            userInfo:operation
+                                                             repeats:NO];
 }
 
 #pragma mark - <_YRBTChunkProviderDelegate>
@@ -382,45 +387,45 @@ _YRBTChunkParserDelegate
                                  (operation.status != kYRBTMessageOperationStatusCancelled &&
                                   operation.status != kYRBTMessageOperationStatusCancelledByRemote &&
                                   operation.status != kYRBTMessageOperationStatusFailed)) {
-                                 
-                                 if (success) {
-                                     operation.bytesSent += (uint32_t)[chunk packedChunkData].length;
                                      
-                                     YRBTProgressCallback progress = operation.sendingProgressCallback;
-                                     !progress ? : progress(operation.bytesSent, operation.totalBytesToSend);
-                                     
-                                     if (!isLastOne) {
-                                         // Simply remove timers.
-                                         [operation.timeoutTimer invalidate];
-                                         operation.timeoutTimer = nil;
-                                     } else {
-                                         if (operation.responseCallback != NULL) {
-                                             // If we are waiting for response -> restart our timeout timer.
-                                             [self restartTimerForOperation:operation];
-                                             
-                                             operation.status = kYRBTMessageOperationStatusReceiving;
-                                         } else {
-                                             operation.status = kYRBTMessageOperationStatusFinished;
-                                             
-                                             [self invalidateOperation:operation];
-                                         }
+                                     if (success) {
+                                         operation.bytesSent += (uint32_t)[chunk packedChunkData].length;
                                          
-                                         !operation.sendCallback ? : operation.sendCallback(operation);
+                                         YRBTProgressCallback progress = operation.sendingProgressCallback;
+                                         !progress ? : progress(operation.bytesSent, operation.totalBytesToSend);
+                                         
+                                         if (!isLastOne) {
+                                             // Simply remove timers.
+                                             [operation.timeoutTimer invalidate];
+                                             operation.timeoutTimer = nil;
+                                         } else {
+                                             if (operation.responseCallback != NULL) {
+                                                 // If we are waiting for response -> restart our timeout timer.
+                                                 [self restartTimerForOperation:operation];
+                                                 
+                                                 operation.status = kYRBTMessageOperationStatusReceiving;
+                                             } else {
+                                                 operation.status = kYRBTMessageOperationStatusFinished;
+                                                 
+                                                 [self invalidateOperation:operation];
+                                             }
+                                             
+                                             !operation.sendCallback ? : operation.sendCallback(operation);
+                                         }
+                                     } else {
+                                         [self invalidateOperation:operation];
+                                         [_provider invalidateChunkGenerationForOperation:operation];
+                                         
+                                         operation.status = kYRBTMessageOperationStatusFailed;
+                                         
+                                         !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendingFailed]);
                                      }
-                                 } else {
-                                     [self invalidateOperation:operation];
-                                     [_provider invalidateChunkGenerationForOperation:operation];
                                      
-                                     operation.status = kYRBTMessageOperationStatusFailed;
+                                     _pendingChunk = nil;
+                                     _pendingOperation = nil;
                                      
-                                     !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendingFailed]);
+                                     [_provider resume];
                                  }
-                                 
-                                 _pendingChunk = nil;
-                                 _pendingOperation = nil;
-                                 
-                                 [_provider resume];
-                             }
                          }];
 }
 
@@ -447,7 +452,7 @@ _YRBTChunkParserDelegate
         
         [chunk.commandData getBytes:&cancelLayout length:sizeof(YRBTCancelCommandInternalChunkLayout)];
         
-        // Is sender in this chunk means that remote is sender of request.
+        // Is sender in this chunk means that remote is sender of remote operation.
         BOOL isSearchingForResponse = cancelLayout.isSender;
         
         NSLog(@"[_YRBTStreamingService]: Remote cancel. Message id: %d. Is response: %d, remote: %@",
@@ -456,7 +461,7 @@ _YRBTChunkParserDelegate
               sender);
         
         for (YRBTMessageOperation *operation in [_operations copy]) {
-            // Find operation that remote request to cancel.
+            // Find operation that remote requests to cancel.
             if (operation.messageID == cancelLayout.messageID &&
                 isSearchingForResponse == operation.isResponse) {
                 
@@ -466,9 +471,9 @@ _YRBTChunkParserDelegate
                 if (operation.status == kYRBTMessageOperationStatusWaiting ||
                     operation.status == kYRBTMessageOperationStatusSending ||
                     operation.status == kYRBTMessageOperationStatusReceiving) {
-
+                    
                     __kindof YRBTRemoteDevice *device = [_storage deviceForPeer:sender];
-
+                    
                     // Remove remote from the list of receivers for given operation.
                     if ([operation.mutableReceivers containsObject:device]) {
                         [operation.mutableReceivers removeObject:device];
@@ -502,18 +507,18 @@ _YRBTChunkParserDelegate
         }
         
         if (isSearchingForResponse) {
-            for (YRBTRemoteMessageRequest *request in [_remoteRequests copy]) {
-                if (request.messageID == cancelLayout.messageID &&
-                    request.status == kYRBTRemoteMessageRequestStatusReceiving) {
-                    NSLog(@"[_YRBTStreamingService]: Found request to remove: %@", request);
+            for (YRBTRemoteMessageOperation *operation in [_remoteOperations copy]) {
+                if (operation.messageID == cancelLayout.messageID &&
+                    operation.status == kYRBTRemoteMessageOperationStatusReceiving) {
+                    NSLog(@"[_YRBTStreamingService]: Found request to remove: %@", operation);
                     
                     // TODO: It would work like that till we move all logic to our queue. (Callout in same runloop cycle)
-                    [self invalidateRemoteRequest:request];
+                    [self invalidateRemoteOperation:operation];
                     
-                    request.status = kYRBTRemoteMessageRequestStatusCancelledByRemote;
-
-                    !request.failureCallback ? : request.failureCallback(request,
-                                                                         [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelledByRemote]);
+                    operation.status = kYRBTRemoteMessageOperationStatusCancelledByRemote;
+                    
+                    !operation.failureCallback ? : operation.failureCallback(operation,
+                                                                             [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeSendCancelledByRemote]);
                 }
             }
         }
@@ -526,166 +531,166 @@ _YRBTChunkParserDelegate
     }
 }
 
-- (void)chunkParser:(_YRBTChunkParser *)parser didParseRequestHeaderChunk:(_YRBTHeaderChunk *)chunk
+- (void)chunkParser:(_YRBTChunkParser *)parser didParseRemoteOperationHeaderChunk:(_YRBTHeaderChunk *)chunk
          fromSender:(CBPeer *)sender {
     // We shouldn't have any operation for this.
-    YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk sender:sender];
-	NSAssert(remoteRequest == nil, @"[_YRBTStreamingService]: Received header chunk from remote, but already has remote request for it.");
-    NSLog(@"[_YRBTStreamingService]: Did parse REQUEST header chunk: %@", chunk);
-
-    if (!remoteRequest) {
+    YRBTRemoteMessageOperation *remoteOperation = [self remoteOperationForChunk:chunk sender:sender];
+    NSAssert(remoteOperation == nil, @"[_YRBTStreamingService]: Received header chunk from remote, but already has remote operation for it.");
+    NSLog(@"[_YRBTStreamingService]: Did parse REMOTE OPERATION header chunk: %@", chunk);
+    
+    if (!remoteOperation) {
         // Create receiving operation.
-        remoteRequest = [[YRBTRemoteMessageRequest alloc] initWithHeaderChunk:chunk sender:[_storage deviceForPeer:sender]];
-        remoteRequest.streamingService = self;
-		remoteRequest.status = kYRBTRemoteMessageRequestStatusReceiving;
-		
-		[_remoteRequests addObject:remoteRequest];
+        remoteOperation = [[YRBTRemoteMessageOperation alloc] initWithHeaderChunk:chunk sender:[_storage deviceForPeer:sender]];
+        remoteOperation.streamingService = self;
+        remoteOperation.status = kYRBTRemoteMessageOperationStatusReceiving;
+        
+        [_remoteOperations addObject:remoteOperation];
     }
-	
-    [self restartTimerForRemoteRequest:remoteRequest];
+    
+    [self restartTimerForRemoteOperation:remoteOperation];
 }
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseOperationNameChunk:(_YRBTOperationNameChunk *)chunk
          fromSender:(CBPeer *)sender {
-    YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk sender:sender];
+    YRBTRemoteMessageOperation *remoteOperation = [self remoteOperationForChunk:chunk sender:sender];
     
-    if (!remoteRequest) {
+    if (!remoteOperation) {
         // It may fail already.
         return;
     }
     
-    NSLog(@"[_YRBTStreamingService]: Did parse operation name chunk: %@ for request: %@", chunk, remoteRequest);
+    NSLog(@"[_YRBTStreamingService]: Did parse operation name chunk: %@ for remote operation: %@", chunk, remoteOperation);
     
-    BOOL didAppend = [remoteRequest.buffer appendChunk:chunk];
+    BOOL didAppend = [remoteOperation.buffer appendChunk:chunk];
     
     if (didAppend) {
-        [self restartTimerForRemoteRequest:remoteRequest];
+        [self restartTimerForRemoteOperation:remoteOperation];
         
-        if (remoteRequest.buffer.receivingState == kYRBTReceivingStateRawData) {
-            _YRBTRemoteRequestCallbacks *callbacks = [self.receivingDelegate streamingService:self
-                                                          registeredCallbacksForOperationName:remoteRequest.operationName];
-
-            remoteRequest.willReceiveRequestCallback = callbacks.willReceiveRequestCallback;
-            remoteRequest.receivedCallback = callbacks.receivedRequestCallback;
-            remoteRequest.progressCallback = callbacks.progressCallback;
-            remoteRequest.failureCallback = callbacks.failureCallback;
+        if (remoteOperation.buffer.receivingState == kYRBTReceivingStateRawData) {
+            _YRBTRemoteOperationCallbacks *callbacks = [self.receivingDelegate streamingService:self
+                                                            registeredCallbacksForOperationName:remoteOperation.operationName];
             
-			!remoteRequest.willReceiveRequestCallback ? : remoteRequest.willReceiveRequestCallback(remoteRequest);
-			!remoteRequest.progressCallback ? : remoteRequest.progressCallback(0, remoteRequest.buffer.header.messageSize);
+            remoteOperation.willReceiveRemoteOperationCallback = callbacks.willReceiveOperationCallback;
+            remoteOperation.receivedCallback = callbacks.receivedOperationCallback;
+            remoteOperation.progressCallback = callbacks.progressCallback;
+            remoteOperation.failureCallback = callbacks.failureCallback;
+            
+            !remoteOperation.willReceiveRemoteOperationCallback ? : remoteOperation.willReceiveRemoteOperationCallback(remoteOperation);
+            !remoteOperation.progressCallback ? : remoteOperation.progressCallback(0, remoteOperation.buffer.header.messageSize);
         }
     } else {
         // Buffer rejected to parse message chunk.
         // Invalidate receiving.
-		[self invalidateRemoteRequest:remoteRequest];
+        [self invalidateRemoteOperation:remoteOperation];
         
-        remoteRequest.status = kYRBTRemoteMessageRequestStatusFailed;
+        remoteOperation.status = kYRBTRemoteMessageOperationStatusFailed;
         
-        [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteRequest:remoteRequest]];
+        [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteOperation:remoteOperation]];
     }
 }
 
-- (void)chunkParser:(_YRBTChunkParser *)parser didParseRequestRegularMessageChunk:(_YRBTRegularMessageChunk *)chunk
+- (void)chunkParser:(_YRBTChunkParser *)parser didParseRemoteOperationRegularMessageChunk:(_YRBTRegularMessageChunk *)chunk
          fromSender:(CBPeer *)sender {
-    YRBTRemoteMessageRequest *remoteRequest = [self remoteRequestForChunk:chunk sender:sender];
-    if (!remoteRequest) {
+    YRBTRemoteMessageOperation *remoteOperation = [self remoteOperationForChunk:chunk sender:sender];
+    if (!remoteOperation) {
         // It may fail already.
         return;
     }
     
-    NSLog(@"[_YRBTStreamingService]: Did parse regular chunk: %@ for request: %@", chunk, remoteRequest);
-
-    BOOL didAppend = [remoteRequest.buffer appendChunk:chunk];
+    NSLog(@"[_YRBTStreamingService]: Did parse regular chunk: %@ for remote operation: %@", chunk, remoteOperation);
+    
+    BOOL didAppend = [remoteOperation.buffer appendChunk:chunk];
     
     if (didAppend) {
-        [self restartTimerForRemoteRequest:remoteRequest];
-
-		remoteRequest.bytesReceived = (uint32_t)remoteRequest.buffer.accumulatedData.length;
-		!remoteRequest.progressCallback ? : remoteRequest.progressCallback(remoteRequest.bytesReceived,
-																		   remoteRequest.totalBytesToReceive);
-
-        if (remoteRequest.buffer.receivingState == kYRBTReceivingStateReceived) {
-            [self invalidateRemoteRequest:remoteRequest];
-
-			remoteRequest.status = kYRBTRemoteMessageRequestStatusReceived;
-			
-			YRBTMessageOperation *responseOperation = nil;
-			
-			if (remoteRequest.receivedCallback) {
-				responseOperation = remoteRequest.receivedCallback(remoteRequest,
-																   remoteRequest.requestMessage,
-																   remoteRequest.wantsResponse);
-			}
-			
-			if (remoteRequest.wantsResponse) {
+        [self restartTimerForRemoteOperation:remoteOperation];
+        
+        remoteOperation.bytesReceived = (uint32_t)remoteOperation.buffer.accumulatedData.length;
+        !remoteOperation.progressCallback ? : remoteOperation.progressCallback(remoteOperation.bytesReceived,
+                                                                               remoteOperation.totalBytesToReceive);
+        
+        if (remoteOperation.buffer.receivingState == kYRBTReceivingStateReceived) {
+            [self invalidateRemoteOperation:remoteOperation];
+            
+            remoteOperation.status = kYRBTRemoteMessageOperationStatusReceived;
+            
+            YRBTMessageOperation *responseOperation = nil;
+            
+            if (remoteOperation.receivedCallback) {
+                responseOperation = remoteOperation.receivedCallback(remoteOperation,
+                                                                     remoteOperation.receivedMessage,
+                                                                     remoteOperation.wantsResponse);
+            }
+            
+            if (remoteOperation.wantsResponse) {
                 if (responseOperation) {
                     NSAssert(responseOperation.isResponse, @"[_YRBTStreamingService]: Use '+[YRBTMessageOperation responseOperationForRemoteRequest:response:MTU:successSend:sendingProgress:failure:]' to provide response for remote request.");
                     [self scheduleOperation:responseOperation];
                 } else {
                     NSLog(@"[_YRBTStreamingService]: <WARNING> No response provided for remote request: %@. Will respond with cancel.",
-                          remoteRequest);
-
+                          remoteOperation);
+                    
                     // TODO: Create <no response> operation.
-                    [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteRequest:remoteRequest]];
+                    [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteOperation:remoteOperation]];
                 }
-			}
+            }
         }
     } else {
         // Buffer rejected to parse message chunk.
         // Invalidate receiving.
-		[self invalidateRemoteRequest:remoteRequest];
+        [self invalidateRemoteOperation:remoteOperation];
         
-        remoteRequest.status = kYRBTRemoteMessageRequestStatusFailed;
-
-        !remoteRequest.failureCallback ? : remoteRequest.failureCallback(remoteRequest, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivedIncorrectChunk]);
+        remoteOperation.status = kYRBTRemoteMessageOperationStatusFailed;
         
-        [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteRequest:remoteRequest]];
+        !remoteOperation.failureCallback ? : remoteOperation.failureCallback(remoteOperation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivedIncorrectChunk]);
+        
+        [self scheduleOperation:[YRBTMessageOperation cancelOperationForRemoteOperation:remoteOperation]];
     }
 }
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseResponseHeaderChunk:(_YRBTHeaderChunk *)chunk
          fromSender:(CBPeer *)sender {
-	YRBTMessageOperation *operation = [self operationForResponseChunk:chunk];
+    YRBTMessageOperation *operation = [self operationForResponseChunk:chunk];
     NSLog(@"[_YRBTStreamingService]: Did parse RESPONSE header chunk: %@ for operation: %@", chunk, operation);
-
-	if (operation) {
-		[operation.buffer appendChunk:chunk];
-		
+    
+    if (operation) {
+        [operation.buffer appendChunk:chunk];
+        
         [self restartTimerForOperation:operation];
-		
-		// We will have this callback only if we're receiving response for request.
-		// Otherwise we will obtain them after parsing whole operation name (which is not sent for response messages).
-		!operation.receivingProgressCallback ? : operation.receivingProgressCallback(0, operation.totalBytesToReceive);
-	}
+        
+        // We will have this callback only if we're receiving response for request.
+        // Otherwise we will obtain them after parsing whole operation name (which is not sent for response messages).
+        !operation.receivingProgressCallback ? : operation.receivingProgressCallback(0, operation.totalBytesToReceive);
+    }
 }
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didParseResponseRegularMessageChunk:(_YRBTRegularMessageChunk *)chunk
          fromSender:(CBPeer *)sender {
     YRBTMessageOperation *operation = [self operationForResponseChunk:chunk];
     
-	BOOL didAppend = [operation.buffer appendChunk:chunk];
-	
-	if (didAppend) {
+    BOOL didAppend = [operation.buffer appendChunk:chunk];
+    
+    if (didAppend) {
         [self restartTimerForOperation:operation];
-		
-		operation.bytesReceived = (uint32_t)operation.buffer.accumulatedData.length;
-		
+        
+        operation.bytesReceived = (uint32_t)operation.buffer.accumulatedData.length;
+        
         !operation.receivingProgressCallback ? : operation.receivingProgressCallback(operation.bytesReceived,
                                                                                      operation.totalBytesToReceive);
-		
-		if (operation.buffer.receivingState == kYRBTReceivingStateReceived) {
+        
+        if (operation.buffer.receivingState == kYRBTReceivingStateReceived) {
             [self invalidateOperation:operation];
-
-			operation.status = kYRBTMessageOperationStatusFinished;
             
-			!operation.responseCallback ? : operation.responseCallback(operation, operation.buffer.message);
-		}
-	} else {
+            operation.status = kYRBTMessageOperationStatusFinished;
+            
+            !operation.responseCallback ? : operation.responseCallback(operation, operation.buffer.message);
+        }
+    } else {
         [self invalidateOperation:operation];
-		
-		operation.status = kYRBTMessageOperationStatusFailed;
-
-		!operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivedIncorrectChunk]);
-	}
+        
+        operation.status = kYRBTMessageOperationStatusFailed;
+        
+        !operation.failureCallback ? : operation.failureCallback(operation, [_YRBTErrorService buildErrorForCode:kYRBTErrorCodeReceivedIncorrectChunk]);
+    }
 }
 
 - (void)chunkParser:(_YRBTChunkParser *)parser didFailToParseChunkFromData:(NSData *)chunkData

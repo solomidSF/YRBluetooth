@@ -29,10 +29,10 @@
 
 #define VALIDATE_TYPE_AND_EXECUTE_WITH_RETURN(type, expected_type, block) \
 if (type == expected_type) { \
-    block(); \
-    return YES; \
+block(); \
+return YES; \
 } else { \
-    return NO; \
+return NO; \
 }
 
 @implementation _YRBTMessageBuffer {
@@ -58,7 +58,7 @@ if (type == expected_type) { \
 #pragma mark - Public
 
 - (BOOL)appendChunk:(__kindof _YRBTMessageChunk *)chunk {
-	switch (_receivingState) {
+    switch (_receivingState) {
         case kYRBTReceivingStateHeader:
             VALIDATE_TYPE_AND_EXECUTE_WITH_RETURN(chunk.chunkType, kYRBTChunkTypeHeader, ^{
                 _header = chunk;

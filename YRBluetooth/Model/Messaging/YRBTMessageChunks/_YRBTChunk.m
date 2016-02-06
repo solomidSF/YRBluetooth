@@ -51,44 +51,44 @@
         }
     }
     
-	if (self = [super init]) {
-		NSCParameterAssert(data.length > 0);
-		
-		_chunkLayout = malloc(data.length);
-		[data getBytes:_chunkLayout length:data.length];
-	}
-	
-	return self;
+    if (self = [super init]) {
+        NSCParameterAssert(data.length > 0);
+        
+        _chunkLayout = malloc(data.length);
+        [data getBytes:_chunkLayout length:data.length];
+    }
+    
+    return self;
 }
 
 - (instancetype)initWithChunkType:(YRBTChunkType)type
-						chunkSize:(uint16_t)chunkSize {
-	if (self = [super init]) {
-		_chunkLayout = calloc(1, chunkSize + sizeof(YRBTChunkLayout) - sizeof(void *));
-		
-		_chunkLayout->chunkType = type;
-		_chunkLayout->chunkSize = chunkSize;
-	}
-	
-	return self;
+                        chunkSize:(uint16_t)chunkSize {
+    if (self = [super init]) {
+        _chunkLayout = calloc(1, chunkSize + sizeof(YRBTChunkLayout) - sizeof(void *));
+        
+        _chunkLayout->chunkType = type;
+        _chunkLayout->chunkSize = chunkSize;
+    }
+    
+    return self;
 }
 
 - (void)dealloc {
-	free(_chunkLayout);
+    free(_chunkLayout);
 }
 
 #pragma mark - Dynamic Properties
 
 - (YRBTChunkType)chunkType {
-	return _chunkLayout->chunkType;
+    return _chunkLayout->chunkType;
 }
 
 - (uint16_t)chunkSize {
-	return _chunkLayout->chunkSize;
+    return _chunkLayout->chunkSize;
 }
 
 - (NSData *)packedChunkData {
-	return [NSData dataWithBytes:_chunkLayout length:_chunkLayout->chunkSize + sizeof(YRBTChunkLayout) - sizeof(void *)];
+    return [NSData dataWithBytes:_chunkLayout length:_chunkLayout->chunkSize + sizeof(YRBTChunkLayout) - sizeof(void *)];
 }
 
 #pragma mark - NSObject

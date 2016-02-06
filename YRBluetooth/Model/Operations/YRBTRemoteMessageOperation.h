@@ -1,5 +1,5 @@
 //
-// YRBTRemoteRequest.h
+// YRBTRemoteMessageOperation.h
 //
 // The MIT License (MIT)
 //
@@ -25,36 +25,40 @@
 
 @import Foundation;
 
+// Devices
 #import "YRBTRemoteDevice.h"
+
+// Messaging
 #import "YRBTMessage.h"
+
+// Imports
 #import "YRBluetoothTypes.h"
 
 typedef enum {
-	kYRBTRemoteMessageRequestStatusReceiving,
-	kYRBTRemoteMessageRequestStatusReceived,
-	kYRBTRemoteMessageRequestStatusFailed,
-	kYRBTRemoteMessageRequestStatusCancelled,
-	kYRBTRemoteMessageRequestStatusCancelledByRemote
-} YRBTRemoteMessageRequestStatus;
+    kYRBTRemoteMessageOperationStatusReceiving,
+    kYRBTRemoteMessageOperationStatusReceived,
+    kYRBTRemoteMessageOperationStatusFailed,
+    kYRBTRemoteMessageOperationStatusCancelled,
+    kYRBTRemoteMessageOperationStatusCancelledByRemote
+} YRBTRemoteMessageOperationStatus;
 
-// TODO: Rename it to be YRBTRemoteMessageOperation
-@interface YRBTRemoteMessageRequest : NSObject
+@interface YRBTRemoteMessageOperation : NSObject
 
 @property (nonatomic, readonly) __kindof YRBTRemoteDevice *sender;
 
-@property (nonatomic, readonly) YRBTRemoteMessageRequestStatus status;
+@property (nonatomic, readonly) YRBTRemoteMessageOperationStatus status;
 
-@property (nonatomic, readonly) YRBTMessage *requestMessage;
+@property (nonatomic, readonly) YRBTMessage *receivedMessage;
 @property (nonatomic, readonly) NSString *operationName;
 @property (nonatomic, readonly) BOOL wantsResponse;
 
 @property (nonatomic, readonly) uint32_t bytesReceived;
 @property (nonatomic, readonly) uint32_t totalBytesToReceive;
 
-@property (nonatomic, copy) YRBTWillReceiveRemoteRequestCallback willReceiveRequestCallback;
+@property (nonatomic, copy) YRBTWillReceiveRemoteOperationCallback willReceiveRemoteOperationCallback;
 @property (nonatomic, copy) YRBTProgressCallback progressCallback;
-@property (nonatomic, copy) YRBTReceivedRemoteRequestCallback receivedCallback;
-@property (nonatomic, copy) YRBTRemoteRequestFailureCallback failureCallback;
+@property (nonatomic, copy) YRBTReceivedRemoteOperationCallback receivedCallback;
+@property (nonatomic, copy) YRBTRemoteOperationFailureCallback failureCallback;
 
 - (void)cancel;
 

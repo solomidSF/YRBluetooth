@@ -28,7 +28,7 @@
 @implementation _YRBTRegisteredCallbacks {
     NSMutableDictionary *_callbacksTable;
     
-    _YRBTRemoteRequestCallbacks *_callbacksForUnknownOperation;
+    _YRBTRemoteOperationCallbacks *_callbacksForUnknownOperation;
 }
 
 #pragma mark - Init
@@ -43,20 +43,20 @@
 
 #pragma mark - Public
 
-- (void)registerCallbacks:(_YRBTRemoteRequestCallbacks *)callbacks
+- (void)registerCallbacks:(_YRBTRemoteOperationCallbacks *)callbacks
              forOperation:(NSString *)operation {
-    _YRBTRemoteRequestCallbacks *existingCallbacks = _callbacksTable[operation];
+    _YRBTRemoteOperationCallbacks *existingCallbacks = _callbacksTable[operation];
     
     if (!existingCallbacks.isFinal) {
         _callbacksTable[operation] = callbacks;
     }
 }
 
-- (void)registerCallbacksForUnknownOperation:(_YRBTRemoteRequestCallbacks *)callback {
-    _callbacksForUnknownOperation = callback;
+- (void)registerCallbacksForUnknownOperation:(_YRBTRemoteOperationCallbacks *)callbacks {
+    _callbacksForUnknownOperation = callbacks;
 }
 
-- (_YRBTRemoteRequestCallbacks *)callbacksForOperationType:(NSString *)operationType {
+- (_YRBTRemoteOperationCallbacks *)callbacksForOperationType:(NSString *)operationType {
     return _callbacksTable[operationType] ? _callbacksTable[operationType] : _callbacksForUnknownOperation;
 }
 

@@ -28,7 +28,7 @@
 
 // InternalModel
 #import "_YRBTRegisteredCallbacks.h"
-#import "_YRBTRemoteRequestCallbacks.h"
+#import "_YRBTRemoteOperationCallbacks.h"
 
 #import "_YRBTMessagingTypes.h"
 
@@ -86,27 +86,29 @@ static int32_t const kMaxClientMTU = 512;
 
 #pragma mark - Public
 
-- (void)registerWillReceiveRequestCallback:(YRBTWillReceiveRemoteRequestCallback)willReceiveRequest
-                 didReceiveRequestCallback:(YRBTReceivedRemoteRequestCallback)receivedRequest
-                 receivingProgressCallback:(YRBTProgressCallback)progress
-                   failedToReceiveCallback:(YRBTRemoteRequestFailureCallback)failure
-                              forOperation:(NSString *)operation {
-    _YRBTRemoteRequestCallbacks *callbacks = [_YRBTRemoteRequestCallbacks callbacksWithWillReceiveRequestCallback:willReceiveRequest
-                                                                                          receivedRequestCallback:receivedRequest
-                                                                                        receivingProgressCallback:progress
-                                                                                                          failure:failure
-                                                                                                            final:NO];
+- (void)registerWillReceiveRemoteOperationCallback:(YRBTWillReceiveRemoteOperationCallback)willReceive
+                 didReceiveRemoteOperationCallback:(YRBTReceivedRemoteOperationCallback)received
+                         receivingProgressCallback:(YRBTProgressCallback)progress
+                           failedToReceiveCallback:(YRBTRemoteOperationFailureCallback)failure
+                                      forOperation:(NSString *)operation {
+    _YRBTRemoteOperationCallbacks *callbacks = nil;
+    callbacks = [_YRBTRemoteOperationCallbacks callbacksWithWillReceiveRemoteOperationCallback:willReceive
+                                                               receivedRemoteOperationCallback:received
+                                                                     receivingProgressCallback:progress
+                                                                                       failure:failure
+                                                                                         final:NO];
     
     [self.callbacks registerCallbacks:callbacks
                          forOperation:operation];
 }
 
-- (void)registerReceivedRemoteRequestForUnknownOperation:(YRBTReceivedRemoteRequestCallback)requestCallback {
-    _YRBTRemoteRequestCallbacks *callbacks = [_YRBTRemoteRequestCallbacks callbacksWithWillReceiveRequestCallback:NULL
-                                                                                          receivedRequestCallback:requestCallback
-                                                                                        receivingProgressCallback:NULL
-                                                                                                          failure:NULL
-                                                                                                            final:NO];
+- (void)registerReceivedRemoteOperationForUnknownOperationName:(YRBTReceivedRemoteOperationCallback)operationCallback {
+    _YRBTRemoteOperationCallbacks *callbacks = nil;
+    callbacks = [_YRBTRemoteOperationCallbacks callbacksWithWillReceiveRemoteOperationCallback:NULL
+                                                               receivedRemoteOperationCallback:operationCallback
+                                                                     receivingProgressCallback:NULL
+                                                                                       failure:NULL
+                                                                                         final:NO];
     
     [self.callbacks registerCallbacksForUnknownOperation:callbacks];
 }

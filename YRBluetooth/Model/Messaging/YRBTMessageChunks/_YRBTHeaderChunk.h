@@ -48,10 +48,10 @@
 @property (nonatomic, readonly) message_object_type_t objectType;
 
 + (instancetype)headerChunkForMessageID:(message_id_t)messageID
-					  operationNameSize:(uint8_t)operationNameSize
-							messageSize:(message_size_t)messageSize
-							 isResponse:(BOOL)isResponse
-						  wantsResponse:(BOOL)wantsResponse
-							 objectType:(message_object_type_t)objectType;
+                      operationNameSize:(uint8_t)operationNameSize
+                            messageSize:(message_size_t)messageSize
+                             isResponse:(BOOL)isResponse
+                          wantsResponse:(BOOL)wantsResponse
+                             objectType:(message_object_type_t)objectType;
 
 @end

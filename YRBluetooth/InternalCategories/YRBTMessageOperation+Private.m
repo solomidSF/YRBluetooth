@@ -26,7 +26,7 @@
 
 // InternalCategories
 #import "YRBTMessageOperation+Private.h"
-#import "YRBTRemoteMessageRequest+Private.h"
+#import "YRBTRemoteMessageOperation+Private.h"
 #import "YRBTMessage+Private.h"
 
 // Obj-C
@@ -37,25 +37,25 @@
 @dynamic messageID;
 
 + (instancetype)cancelOperationForOperation:(YRBTMessageOperation *)operation {
-	YRBTMessage *cancelCommand = [YRBTMessage cancelMessageForOperationID:operation.messageID
+    YRBTMessage *cancelCommand = [YRBTMessage cancelMessageForOperationID:operation.messageID
                                                                  isSender:!operation.isResponse];
-	
-	return [self operationWithFastCommand:cancelCommand
-								receivers:operation.receivers
-							  successSend:NULL
-						  sendingProgress:NULL
-								  failure:NULL];
+    
+    return [self operationWithFastCommand:cancelCommand
+                                receivers:operation.receivers
+                              successSend:NULL
+                          sendingProgress:NULL
+                                  failure:NULL];
 }
 
-+ (instancetype)cancelOperationForRemoteRequest:(YRBTRemoteMessageRequest *)request {
-	YRBTMessage *cancelCommand = [YRBTMessage cancelMessageForOperationID:request.buffer.header.messageID
++ (instancetype)cancelOperationForRemoteOperation:(YRBTRemoteMessageOperation *)operation {
+    YRBTMessage *cancelCommand = [YRBTMessage cancelMessageForOperationID:operation.buffer.header.messageID
                                                                  isSender:NO];
-	
-	return [self operationWithFastCommand:cancelCommand
-								receivers:@[request.sender]
-							  successSend:NULL
-						  sendingProgress:NULL
-								  failure:NULL];
+    
+    return [self operationWithFastCommand:cancelCommand
+                                receivers:@[operation.sender]
+                              successSend:NULL
+                          sendingProgress:NULL
+                                  failure:NULL];
 }
 
 @end
@@ -80,19 +80,19 @@
 @implementation YRBTMessageOperation (Multithreading)
 
 - (void)setIsDeallocating:(BOOL)isDeallocating {
-	objc_setAssociatedObject(self, &@selector(isDeallocating), @(isDeallocating), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &@selector(isDeallocating), @(isDeallocating), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (BOOL)isDeallocating {
-	return [objc_getAssociatedObject(self, &@selector(isDeallocating)) boolValue];
+    return [objc_getAssociatedObject(self, &@selector(isDeallocating)) boolValue];
 }
 
 - (void)setIsDeallocatingSilently:(BOOL)isDeallocatingSilently {
-	objc_setAssociatedObject(self, &@selector(isDeallocatingSilently), @(isDeallocatingSilently), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &@selector(isDeallocatingSilently), @(isDeallocatingSilently), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (BOOL)isDeallocatingSilently {
-	return [objc_getAssociatedObject(self, &@selector(isDeallocatingSilently)) boolValue];
+    return [objc_getAssociatedObject(self, &@selector(isDeallocatingSilently)) boolValue];
 }
 
 @end
@@ -100,11 +100,11 @@
 @implementation YRBTMessageOperation (Timeout)
 
 - (void)setTimeoutTimer:(NSTimer *)timeoutTimer {
-	objc_setAssociatedObject(self, &@selector(timeoutTimer), timeoutTimer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, &@selector(timeoutTimer), timeoutTimer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 - (NSTimer *)timeoutTimer {
-	return objc_getAssociatedObject(self, &@selector(timeoutTimer));
+    return objc_getAssociatedObject(self, &@selector(timeoutTimer));
 }
 
 @end

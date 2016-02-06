@@ -1,5 +1,5 @@
 //
-// YRBTRemoteRequest.m
+// YRBTRemoteMessageOperation.m
 //
 // The MIT License (MIT)
 //
@@ -24,7 +24,7 @@
 // SOFTWARE.
 
 // Operations
-#import "YRBTRemoteMessageRequest.h"
+#import "YRBTRemoteMessageOperation.h"
 
 // Services
 #import "_YRBTStreamingService.h"
@@ -35,53 +35,53 @@
 // Obj-C
 #import <objc/runtime.h>
 
-@interface YRBTRemoteMessageRequest ()
+@interface YRBTRemoteMessageOperation ()
 
 @property (nonatomic, weak) _YRBTStreamingService *streamingService;
-@property (nonatomic) YRBTRemoteMessageRequestStatus status;
+@property (nonatomic) YRBTRemoteMessageOperationStatus status;
 @property (nonatomic) __kindof YRBTRemoteDevice *sender;
 @property (nonatomic, readonly) _YRBTMessageBuffer *buffer;
 @property (nonatomic) uint32_t bytesReceived;
 
 @end
 
-@implementation YRBTRemoteMessageRequest
+@implementation YRBTRemoteMessageOperation
 
 #pragma mark - Dynamic Properties
 
 - (_YRBTMessageBuffer *)buffer {
-	_YRBTMessageBuffer *buffer = objc_getAssociatedObject(self, &@selector(buffer));
-	
-	if (!buffer) {
-		buffer = [_YRBTMessageBuffer new];
-		objc_setAssociatedObject(self, &@selector(buffer), buffer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-	}
-	
-	return buffer;
+    _YRBTMessageBuffer *buffer = objc_getAssociatedObject(self, &@selector(buffer));
+    
+    if (!buffer) {
+        buffer = [_YRBTMessageBuffer new];
+        objc_setAssociatedObject(self, &@selector(buffer), buffer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    
+    return buffer;
 }
 
-- (YRBTMessage *)requestMessage {
-	return self.buffer.message;
+- (YRBTMessage *)receivedMessage {
+    return self.buffer.message;
 }
 
 - (NSString *)operationName {
-	return self.buffer.operationName;
+    return self.buffer.operationName;
 }
 
 - (BOOL)wantsResponse {
-	return self.buffer.header.wantsResponse;
+    return self.buffer.header.wantsResponse;
 }
 
 - (uint32_t)totalBytesToReceive {
-	return self.buffer.header.messageSize;
+    return self.buffer.header.messageSize;
 }
 
 #pragma mark - Public
 
 - (void)cancel {
-	if (self.status == kYRBTRemoteMessageRequestStatusReceiving) {
-		[self.streamingService cancelRemoteRequest:self];
-	}
+    if (self.status == kYRBTRemoteMessageOperationStatusReceiving) {
+        [self.streamingService cancelRemoteOperation:self];
+    }
 }
 
 @end

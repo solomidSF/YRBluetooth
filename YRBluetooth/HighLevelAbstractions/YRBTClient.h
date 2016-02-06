@@ -29,7 +29,7 @@
 #import "YRBTMessageOperation.h"
 
 /**
- *  Peer that acts as a client. 
+ *  Peer that acts as a client.
  *  It can scan, connect to another device that is acting as server.
  */
 @interface YRBTClient : YRBTPeer

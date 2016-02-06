@@ -109,7 +109,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     if (_centralManager.state == CBCentralManagerStatePoweredOn) {
         [self invalidate];
         BTDebugMsg(@"[_YRBTScanningService]: Will start scanning for devices continiously.");
-
+        
         _scanningState = kYRBTScanningStateScanningContinuously;
         
         _continiousScanCallback = callback;
@@ -133,7 +133,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     if (_centralManager.state == CBCentralManagerStatePoweredOn) {
         [self invalidate];
         BTDebugMsg(@"Will start scanning for devices.");
-
+        
         _scanningState = kYRBTScanningStateScanning;
         
         _foundDevices = [NSMutableArray array];
@@ -177,7 +177,7 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     if (peripheralName.length > 0) {
         device.peerName = peripheralName;
     }
-
+    
     // If current discovery packet didn't contain peripheral name, but device was discovered earlier with it - process further.
     if (device.peerName.length == 0) {
         return;
@@ -203,11 +203,11 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
             if (![[_repeatedlyFoundDevices valueForKey:@"peripheral"] containsObject:peripheral]) {
                 [_repeatedlyFoundDevices addObject:device];
             }
-
+            
             [self restartDiscoveryTimeoutForDevice:device];
             
             !_continiousScanCallback ? : _continiousScanCallback([_repeatedlyFoundDevices copy]);
-
+            
             break;
         }
     }
@@ -256,11 +256,11 @@ static void const *kDiscoveryTimerDummyKey = &kDiscoveryTimerDummyKey;
     _continiousScanCallback = NULL;
     !_continiousFailureCallback ? : _continiousFailureCallback(error);
     _continiousFailureCallback = NULL;
-
+    
     for (YRBTServerDevice *device in _repeatedlyFoundDevices) {
         [self invalidateDiscoveryTimeoutForDevice:device];
     }
-
+    
     _repeatedlyFoundDevices = nil;
     
     _scanningState = kYRBTScanningStatePending;

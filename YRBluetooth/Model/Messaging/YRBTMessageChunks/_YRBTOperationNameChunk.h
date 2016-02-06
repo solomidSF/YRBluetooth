@@ -35,6 +35,6 @@
 @property (nonatomic, readonly) NSData *operationNameUTFChunk;
 
 + (instancetype)operationNameChunkWithMessageID:(message_id_t)messageID
-										  chunk:(NSData *)chunk;
+                                          chunk:(NSData *)chunk;
 
 @end

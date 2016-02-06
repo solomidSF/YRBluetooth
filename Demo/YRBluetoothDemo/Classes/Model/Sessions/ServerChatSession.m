@@ -34,11 +34,6 @@
 // 3rdParty
 #import "GCDMulticastDelegate.h"
 
-static NSString *const kSubscribeOperation = @"SBS";
-static NSString *const kMessageOperation = @"MSG";
-static NSString *const kUserEventOperation = @"UET";
-static NSString *const kUserNameChangedOperation = @"UNC";
-
 @implementation ServerChatSession {
     YRBTServer *_server;
     ServerUser *_currentUserInfo;
@@ -57,7 +52,7 @@ static NSString *const kUserNameChangedOperation = @"UNC";
         _server = [[YRBTServer alloc] initWithAppID:kChatAppID peerName:nickname];
         _observers = (GCDMulticastDelegate <ServerChatSessionObserver> *)[GCDMulticastDelegate new];
         _chat = [ServerChat chatWithCreatorInfo:[self currentUserInfo]];
-
+        
         [self setupServer];
     }
     
@@ -126,6 +121,7 @@ static NSString *const kUserNameChangedOperation = @"UNC";
 #pragma mark - Private
 
 - (void)setupServer {
+    // TODO: Refactor a bit.
     __typeof(self) __weak weakSelf = self;
     
     _server.bluetoothStateChanged = ^(YRBluetoothState newState) {
@@ -156,7 +152,7 @@ static NSString *const kUserNameChangedOperation = @"UNC";
         
         if (strongSelf) {
             ServerUser *disconnectedUser = [strongSelf userForDevice:device];
-
+            
             if (disconnectedUser.isSubscribed) {
                 disconnectedUser.isSubscribed = NO;
                 [disconnectedUser.messageQueue removeAllObjects];
@@ -176,98 +172,91 @@ static NSString *const kUserNameChangedOperation = @"UNC";
                                                                                   user:disconnectedUser
                                                                              timestamp:timestamp];
                 
-                [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[strongSelf subscribedUsers]];                
+                [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[strongSelf subscribedUsers]];
             }
         }
     };
     
     // Register callbacks for SUBSCRIBE operation.
-    [_server registerWillReceiveRequestCallback:^(YRBTRemoteMessageRequest *request) {
-        NSLog(@"Will receive request: %@ for 'SUBSCRIBE' operation", request);
-    } didReceiveRequestCallback:^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
-                                                        YRBTMessage *requestMessage,
-                                                        BOOL wantsResponse) {
-        __typeof(weakSelf) __strong strongSelf = weakSelf;
-        
-        if (!strongSelf) {
-            return nil;
-        }
-        
-        SubscribeRequest *subscribeRequest = [[SubscribeRequest alloc] initWithName:[requestMessage stringValue]];
-        ServerUser *subscribedUser = [strongSelf userForDevice:request.sender];
-        
-        NSMutableArray *usersToNotify = [[strongSelf subscribedUsers] mutableCopy];
-        [usersToNotify removeObject:subscribedUser];
-        
-        if (!subscribedUser.isSubscribed) {
-            subscribedUser.name = subscribeRequest.subscriberName;
-            subscribedUser.isSubscribed = YES;
-            
-            // Notify users about connection event
-            NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
-            
-            ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:strongSelf.chat
-                                                                      user:subscribedUser
-                                                                 eventType:kEventTypeConnected
-                                                                 timestamp:timestamp];
-
-            [strongSelf.chat.mutableEvents addObject:event];
-            
-            [strongSelf->_observers chatSession:strongSelf userDidConnectWithEvent:event];
-
-            UserConnection *connection = [[UserConnection alloc] initWithEventType:kUserConnectionTypeConnected
-                                                                              user:subscribedUser
-                                                                         timestamp:timestamp];
-            
-            [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[usersToNotify copy]];
-        } else {
-            if (![subscribedUser.name isEqualToString:subscribeRequest.subscriberName]) {
-                // User changed his name.
-                subscribedUser.name = subscribeRequest.subscriberName;
-                
-                [strongSelf->_observers chatSession:strongSelf userDidUpdateName:subscribedUser];
-                
-                UsernameChanged *usernameChanged = [[UsernameChanged alloc] initWithUser:subscribedUser];
-                
-                [strongSelf scheduleMessage:usernameChanged.rawMessage
-                               forOperation:kUserNameChangedOperation
-                                   forUsers:[usersToNotify copy]];
-            }
-        }
-        
-        NSArray *chatMembers = [usersToNotify arrayByAddingObject:[strongSelf currentUserInfo]];
-        
-        SubscribeResponse *response = [[SubscribeResponse alloc] initWithSubscribedUserInfo:subscribedUser
-                                                                                 otherUsers:chatMembers];
-
-        return [YRBTMessageOperation responseOperationForRemoteRequest:request
-                                                              response:response.rawMessage
-                                                                   MTU:128
-                                                           successSend:^(YRBTMessageOperation *operation) {
-                                                               NSLog(@"Successfuly responded to request! %@", operation);
-                                                           } sendingProgress:^(uint32_t currentBytes, uint32_t totalBytes) {
-                                                               NSLog(@"Response progress: %d/%d", currentBytes, totalBytes);
-                                                           } failure:^(YRBTMessageOperation *operation, NSError *error) {
-                                                               NSLog(@"Failed to respond %@. ERR: %@", operation, error);
-                                                           }];
-    } receivingProgressCallback:^(uint32_t currentBytes, uint32_t totalBytes) {
-        NSLog(@"RCV progress: %d/%d", currentBytes, totalBytes);
-    } failedToReceiveCallback:^(YRBTRemoteMessageRequest *request, NSError *error) {
-        NSLog(@"Failed to rcv 'SBS' request from client: %@, error: %@", request, error);
-    } forOperation:kSubscribeOperation];
-    
-    [_server registerWillReceiveRequestCallback:NULL
-                      didReceiveRequestCallback:^YRBTMessageOperation *(YRBTRemoteMessageRequest *request,
-                                                                        YRBTMessage *requestMessage,
-                                                                        BOOL wantsResponse) {
+    [_server registerWillReceiveRemoteOperationCallback:NULL
+                      didReceiveRemoteOperationCallback:^YRBTMessageOperation *(YRBTRemoteMessageOperation *operation,
+                                                                                YRBTMessage *receivedMessage,
+                                                                                BOOL wantsResponse) {
                           __typeof(weakSelf) __strong strongSelf = weakSelf;
                           
                           if (!strongSelf) {
                               return nil;
                           }
                           
-                          ServerUser *sender = [strongSelf userForDevice:request.sender];
-                          NSString *messageText = [requestMessage stringValue];
+                          SubscribeRequest *subscribeRequest = [[SubscribeRequest alloc] initWithName:[receivedMessage stringValue]];
+                          ServerUser *subscribedUser = [strongSelf userForDevice:operation.sender];
+                          
+                          NSMutableArray *usersToNotify = [[strongSelf subscribedUsers] mutableCopy];
+                          [usersToNotify removeObject:subscribedUser];
+                          
+                          if (!subscribedUser.isSubscribed) {
+                              subscribedUser.name = subscribeRequest.subscriberName;
+                              subscribedUser.isSubscribed = YES;
+                              
+                              // Notify users about connection event
+                              NSTimeInterval timestamp = [[NSDate date] timeIntervalSince1970];
+                              
+                              ConnectionEvent *event = [[ConnectionEvent alloc] initWithChat:strongSelf.chat
+                                                                                        user:subscribedUser
+                                                                                   eventType:kEventTypeConnected
+                                                                                   timestamp:timestamp];
+                              
+                              [strongSelf.chat.mutableEvents addObject:event];
+                              
+                              [strongSelf->_observers chatSession:strongSelf userDidConnectWithEvent:event];
+                              
+                              UserConnection *connection = [[UserConnection alloc] initWithEventType:kUserConnectionTypeConnected
+                                                                                                user:subscribedUser
+                                                                                           timestamp:timestamp];
+                              
+                              [strongSelf scheduleMessage:connection.rawMessage forOperation:kUserEventOperation forUsers:[usersToNotify copy]];
+                          } else {
+                              if (![subscribedUser.name isEqualToString:subscribeRequest.subscriberName]) {
+                                  // User changed his name.
+                                  subscribedUser.name = subscribeRequest.subscriberName;
+                                  
+                                  [strongSelf->_observers chatSession:strongSelf userDidUpdateName:subscribedUser];
+                                  
+                                  UsernameChanged *usernameChanged = [[UsernameChanged alloc] initWithUser:subscribedUser];
+                                  
+                                  [strongSelf scheduleMessage:usernameChanged.rawMessage
+                                                 forOperation:kUserNameChangedOperation
+                                                     forUsers:[usersToNotify copy]];
+                              }
+                          }
+                          
+                          NSArray *chatMembers = [usersToNotify arrayByAddingObject:[strongSelf currentUserInfo]];
+                          
+                          SubscribeResponse *response = [[SubscribeResponse alloc] initWithSubscribedUserInfo:subscribedUser
+                                                                                                   otherUsers:chatMembers];
+                          
+                          return [YRBTMessageOperation responseOperationForRemoteOperation:operation
+                                                                                  response:response.rawMessage
+                                                                                       MTU:128
+                                                                               successSend:NULL
+                                                                           sendingProgress:NULL
+                                                                                   failure:NULL];
+                      } receivingProgressCallback:NULL
+                                failedToReceiveCallback:NULL
+                                           forOperation:kSubscribeOperation];
+    
+    [_server registerWillReceiveRemoteOperationCallback:NULL
+                      didReceiveRemoteOperationCallback:^YRBTMessageOperation *(YRBTRemoteMessageOperation *operation,
+                                                                                YRBTMessage *receivedMessage,
+                                                                                BOOL wantsResponse) {
+                          __typeof(weakSelf) __strong strongSelf = weakSelf;
+                          
+                          if (!strongSelf) {
+                              return nil;
+                          }
+                          
+                          ServerUser *sender = [strongSelf userForDevice:operation.sender];
+                          NSString *messageText = [receivedMessage stringValue];
                           
                           Message *message = [[Message alloc] initWithChat:strongSelf.chat
                                                                     sender:sender
@@ -291,15 +280,15 @@ static NSString *const kUserNameChangedOperation = @"UNC";
                           
                           [strongSelf scheduleMessage:newMessage.rawMessage forOperation:kMessageOperation forUsers:usersToNotify];
                           
-                          return [YRBTMessageOperation responseOperationForRemoteRequest:request
-                                                                                response:newMessage.rawMessage
-                                                                                     MTU:128
-                                                                             successSend:NULL
-                                                                         sendingProgress:NULL
-                                                                                 failure:NULL];
+                          return [YRBTMessageOperation responseOperationForRemoteOperation:operation
+                                                                                  response:newMessage.rawMessage
+                                                                                       MTU:128
+                                                                               successSend:NULL
+                                                                           sendingProgress:NULL
+                                                                                   failure:NULL];
                       } receivingProgressCallback:NULL
-                        failedToReceiveCallback:NULL
-                                   forOperation:kMessageOperation];
+                                failedToReceiveCallback:NULL
+                                           forOperation:kMessageOperation];
 }
 
 - (NSArray <ServerUser *> *)subscribedUsers {

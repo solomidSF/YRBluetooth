@@ -25,7 +25,7 @@
 
 @import Foundation;
 
-#import "_YRBTRemoteRequestCallbacks.h"
+#import "_YRBTRemoteOperationCallbacks.h"
 
 /**
  *  Class that contains registered callbacks.
@@ -35,18 +35,18 @@
 /**
  *  Registers callbacks for given operation type.
  */
-- (void)registerCallbacks:(_YRBTRemoteRequestCallbacks *)callbacks
+- (void)registerCallbacks:(_YRBTRemoteOperationCallbacks *)callbacks
              forOperation:(NSString *)operation;
 
 /**
- *  Registers received remote request callback for unknown operation.
+ *  Registers received remote operation callback for unknown operation.
  */
-- (void)registerCallbacksForUnknownOperation:(_YRBTRemoteRequestCallbacks *)callback;
+- (void)registerCallbacksForUnknownOperation:(_YRBTRemoteOperationCallbacks *)callbacks;
 
 /**
  *  Returns callbacks for given operation type.
  */
-- (_YRBTRemoteRequestCallbacks *)callbacksForOperationType:(NSString *)operationType;
+- (_YRBTRemoteOperationCallbacks *)callbacksForOperationType:(NSString *)operationType;
 
 /**
  *  Removes all callbacks contained in instance.
