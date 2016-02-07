@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		7D3EB3161C4D7DCE007825E5 /* GCDMulticastDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3EB3151C4D7DCE007825E5 /* GCDMulticastDelegate.m */; };
+		7D3EC6331C66C3CD00446054 /* _YRBTRemoteOperationCallbacks.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3EC6301C66C3CD00446054 /* _YRBTRemoteOperationCallbacks.m */; };
+		7D3EC6341C66C3CD00446054 /* YRBTMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D3EC6321C66C3CD00446054 /* YRBTMessage.m */; };
 		7D5284941C3429F200775DD1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284891C3429F200775DD1 /* AppDelegate.m */; };
 		7D5284961C3429F200775DD1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D52848D1C3429F200775DD1 /* Assets.xcassets */; };
 		7D5284971C3429F200775DD1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D52848F1C3429F200775DD1 /* LaunchScreen.storyboard */; };
@@ -33,8 +35,6 @@
 		7D52851D1C342AEB00775DD1 /* _YRBTChunkGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284CB1C342AEB00775DD1 /* _YRBTChunkGenerator.m */; };
 		7D52851E1C342AEB00775DD1 /* _YRBTChunkParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284CD1C342AEB00775DD1 /* _YRBTChunkParser.m */; };
 		7D52851F1C342AEB00775DD1 /* _YRBTMessageBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284CF1C342AEB00775DD1 /* _YRBTMessageBuffer.m */; };
-		7D5285201C342AEB00775DD1 /* _YRBTRemoteOperationCallbacks.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284D41C342AEB00775DD1 /* _YRBTRemoteOperationCallbacks.m */; };
-		7D5285211C342AEB00775DD1 /* YRBTMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284D81C342AEB00775DD1 /* YRBTMessage.m */; };
 		7D5285221C342AEB00775DD1 /* _YRBTChunkProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284DB1C342AEB00775DD1 /* _YRBTChunkProvider.m */; };
 		7D5285231C342AEB00775DD1 /* _YRBTChunksContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284DD1C342AEB00775DD1 /* _YRBTChunksContainer.m */; };
 		7D5285241C342AEB00775DD1 /* _YRBTContainerPriorityQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5284DF1C342AEB00775DD1 /* _YRBTContainerPriorityQueue.m */; };
@@ -89,6 +89,10 @@
 		7D365FC21C33FC2900E29ECA /* YRBluetoothDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YRBluetoothDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D3EB3141C4D7DCE007825E5 /* GCDMulticastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDMulticastDelegate.h; sourceTree = "<group>"; };
 		7D3EB3151C4D7DCE007825E5 /* GCDMulticastDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDMulticastDelegate.m; sourceTree = "<group>"; };
+		7D3EC62F1C66C3CD00446054 /* _YRBTRemoteOperationCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTRemoteOperationCallbacks.h; sourceTree = "<group>"; };
+		7D3EC6301C66C3CD00446054 /* _YRBTRemoteOperationCallbacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTRemoteOperationCallbacks.m; sourceTree = "<group>"; };
+		7D3EC6311C66C3CD00446054 /* YRBTMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YRBTMessage.h; sourceTree = "<group>"; };
+		7D3EC6321C66C3CD00446054 /* YRBTMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YRBTMessage.m; sourceTree = "<group>"; };
 		7D5284881C3429F200775DD1 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7D5284891C3429F200775DD1 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		7D52848D1C3429F200775DD1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -139,10 +143,6 @@
 		7D5284CF1C342AEB00775DD1 /* _YRBTMessageBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTMessageBuffer.m; sourceTree = "<group>"; };
 		7D5284D01C342AEB00775DD1 /* _YRBTMessaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTMessaging.h; sourceTree = "<group>"; };
 		7D5284D11C342AEB00775DD1 /* _YRBTMessagingTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTMessagingTypes.h; sourceTree = "<group>"; };
-		7D5284D31C342AEB00775DD1 /* _YRBTRemoteOperationCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _YRBTRemoteOperationCallbacks.h; path = OLD/_YRBTRemoteOperationCallbacks.h; sourceTree = "<group>"; };
-		7D5284D41C342AEB00775DD1 /* _YRBTRemoteOperationCallbacks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _YRBTRemoteOperationCallbacks.m; path = OLD/_YRBTRemoteOperationCallbacks.m; sourceTree = "<group>"; };
-		7D5284D71C342AEB00775DD1 /* YRBTMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = YRBTMessage.h; path = OLD/YRBTMessage.h; sourceTree = "<group>"; };
-		7D5284D81C342AEB00775DD1 /* YRBTMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = YRBTMessage.m; path = OLD/YRBTMessage.m; sourceTree = "<group>"; };
 		7D5284DA1C342AEB00775DD1 /* _YRBTChunkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTChunkProvider.h; sourceTree = "<group>"; };
 		7D5284DB1C342AEB00775DD1 /* _YRBTChunkProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _YRBTChunkProvider.m; sourceTree = "<group>"; };
 		7D5284DC1C342AEB00775DD1 /* _YRBTChunksContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _YRBTChunksContainer.h; sourceTree = "<group>"; };
@@ -460,10 +460,10 @@
 			children = (
 				7D5284D91C342AEB00775DD1 /* YRBTChunkProvider */,
 				7D5284E01C342AEB00775DD1 /* YRBTMessageChunks */,
-				7D5284D71C342AEB00775DD1 /* YRBTMessage.h */,
-				7D5284D81C342AEB00775DD1 /* YRBTMessage.m */,
-				7D5284D31C342AEB00775DD1 /* _YRBTRemoteOperationCallbacks.h */,
-				7D5284D41C342AEB00775DD1 /* _YRBTRemoteOperationCallbacks.m */,
+				7D3EC6311C66C3CD00446054 /* YRBTMessage.h */,
+				7D3EC6321C66C3CD00446054 /* YRBTMessage.m */,
+				7D3EC62F1C66C3CD00446054 /* _YRBTRemoteOperationCallbacks.h */,
+				7D3EC6301C66C3CD00446054 /* _YRBTRemoteOperationCallbacks.m */,
 				7D5284CA1C342AEB00775DD1 /* _YRBTChunkGenerator.h */,
 				7D5284CB1C342AEB00775DD1 /* _YRBTChunkGenerator.m */,
 				7D5284CC1C342AEB00775DD1 /* _YRBTChunkParser.h */,
@@ -802,7 +802,7 @@
 				7D52852D1C342AEB00775DD1 /* _YRBTConnectionService.m in Sources */,
 				7D5285271C342AEB00775DD1 /* _YRBTInternalChunk.m in Sources */,
 				7DBE5A641C5826C60068469C /* ServerChat.m in Sources */,
-				7D5285211C342AEB00775DD1 /* YRBTMessage.m in Sources */,
+				7D3EC6341C66C3CD00446054 /* YRBTMessage.m in Sources */,
 				7D52852A1C342AEB00775DD1 /* _YRBTRegularMessageChunk.m in Sources */,
 				7D5285401C36ABF000775DD1 /* ClientChatViewController.m in Sources */,
 				7D52849A1C3429F200775DD1 /* main.m in Sources */,
@@ -810,7 +810,6 @@
 				7DE31AA01C52EB4100047EE0 /* BaseEventTableCell.m in Sources */,
 				7DE31A831C51A9DF00047EE0 /* NewMessage.m in Sources */,
 				7DE31AA31C52F55700047EE0 /* SearchChatsViewController.m in Sources */,
-				7D5285201C342AEB00775DD1 /* _YRBTRemoteOperationCallbacks.m in Sources */,
 				7D52849F1C342A9D00775DD1 /* HomeViewController.m in Sources */,
 				7D5285121C342AEB00775DD1 /* YRBTPeer.m in Sources */,
 				7D5285111C342AEB00775DD1 /* YRBTClient.m in Sources */,
@@ -828,6 +827,7 @@
 				7D5285431C36ABFD00775DD1 /* ServerChatViewController.m in Sources */,
 				7D5284941C3429F200775DD1 /* AppDelegate.m in Sources */,
 				7D52851A1C342AEB00775DD1 /* YRBTServerDevice+Private.m in Sources */,
+				7D3EC6331C66C3CD00446054 /* _YRBTRemoteOperationCallbacks.m in Sources */,
 				7D52852C1C342AEB00775DD1 /* YRBTRemoteMessageOperation.m in Sources */,
 				7D5285181C342AEB00775DD1 /* YRBTRemoteDevice+Private.m in Sources */,
 				7DF567411C59850F00CD016B /* ChatMembersController.m in Sources */,

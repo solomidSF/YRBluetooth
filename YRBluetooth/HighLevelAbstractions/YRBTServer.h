@@ -80,7 +80,7 @@ typedef void (^YRBTBroadcastingStateChanged) (BOOL isBroadcasting);
 
 - (YRBTMessageOperation *)broadcastMessage:(YRBTMessage *)message
                              operationName:(NSString *)operationName
-                                 toClients:(NSArray *)clients
+                                 toClients:(NSArray <YRBTClientDevice *> *)clients
                                withSuccess:(YRBTSuccessSendCallback)success
                            sendingProgress:(YRBTProgressCallback)sendingProgress
                                    failure:(YRBTOperationFailureCallback)failure;
